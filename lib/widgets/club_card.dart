@@ -20,7 +20,7 @@ class ClubCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
