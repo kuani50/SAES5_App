@@ -1,11 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:saps5app/screens/home_screen.dart';
-import 'package:saps5app/screens/register_form.dart';
 import 'package:saps5app/services/auth.dart';
-import '../providers/project_provider.dart';
 import 'login_form.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -28,9 +24,9 @@ class _AuthScreenState extends State<AuthScreen> {
         builder: (context, auth, child) {
           switch (auth.isAuthenticated) {
             case true:
-              return HomeScreen();
+              return const HomeScreen();
             default:
-              return LoginForm();
+              return const LoginForm();
           }
         },
       ),

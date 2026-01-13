@@ -66,7 +66,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
         path: '/login',
         builder: (context, state) {
-          return AuthScreen();
+          return const AuthScreen();
         }
     )
   ],
