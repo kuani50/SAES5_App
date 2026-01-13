@@ -26,20 +26,15 @@ class ClubCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // Important pour Wrap
         children: [
-          // En-tête (Logo + Nom)
           ClubCardHeader(club: club),
-          const SizedBox(height: 16),
-          
-          // Description
+          const SizedBox(height: 12),
           ClubCardDescription(description: club.description),
-          const Spacer(), // Pousse le bouton vers le bas si la carte a une hauteur fixe
-          const SizedBox(height: 24),
-          
-          // Actions
+          const SizedBox(height: 16),
           ClubCardActions(onTap: onViewRaids),
         ],
       ),
@@ -47,7 +42,7 @@ class ClubCard extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Header (Logo + Infos) ---
+// ... (Header and Actions remain the same)
 class ClubCardHeader extends StatelessWidget {
   final ClubModel club;
 
@@ -58,21 +53,18 @@ class ClubCardHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Logo Rond (Placeholder)
         Container(
-          width: 60,
-          height: 60,
+          width: 50,
+          height: 50,
           decoration: BoxDecoration(
             color: Colors.grey[300],
             shape: BoxShape.circle,
           ),
           child: club.logoUrl != null
               ? ClipOval(child: Image.network(club.logoUrl!, fit: BoxFit.cover))
-              : Icon(Icons.shield, color: Colors.grey[500], size: 30),
+              : Icon(Icons.shield, color: Colors.grey[500], size: 28),
         ),
-        const SizedBox(width: 16),
-        
-        // Nom et Lieu
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,7 +93,7 @@ class ClubCardHeader extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Description ---
+// --- Sous-composant : Description (MODIFIÉ) ---
 class ClubCardDescription extends StatelessWidget {
   final String description;
 
@@ -109,20 +101,18 @@ class ClubCardDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // --- MODIFICATION : Suppression de maxLines et overflow ---
     return Text(
       description,
       style: TextStyle(
         fontSize: 14,
         color: Colors.grey[700],
-        height: 1.5, // Meilleure lisibilité
+        height: 1.4,
       ),
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
     );
   }
 }
 
-// --- Sous-composant : Actions ---
 class ClubCardActions extends StatelessWidget {
   final VoidCallback? onTap;
 
@@ -135,7 +125,7 @@ class ClubCardActions extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           side: BorderSide(color: Colors.grey.shade300),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),

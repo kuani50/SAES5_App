@@ -7,10 +7,13 @@ import 'debug/my_http_overrides.dart';
 import 'models/project.dart';
 import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
-import 'screens/event_detail_screen.dart'; 
-import 'models/event_model.dart'; 
+import 'screens/event_detail_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/club_screen.dart'; // Import
+import 'screens/club_screen.dart';
+import 'screens/club_detail_screen.dart';
+import 'models/event_model.dart';
+import 'models/club_model.dart';
+import 'data/dummy_data.dart';
 
 void main() {
   if (kDebugMode) {
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProjectProvider()),
       ],
       child: MaterialApp.router(
-        title: 'Portfolio Viewer',
+        title: 'Orient Express',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
@@ -59,8 +62,18 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/clubs', // Nouvelle route
-      builder: (context, state) => const ClubScreen(),
+      path: '/clubs',
+      builder: (context, state) => ClubScreen(allEvents: dummyEvents),
+    ),
+    GoRoute(
+      path: '/club-details',
+      builder: (context, state) {
+        final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
+        return ClubDetailScreen(
+          club: extra['club'] as ClubModel,
+          allEvents: extra['events'] as List<EventModel>,
+        );
+      },
     ),
   ],
 );
