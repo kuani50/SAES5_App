@@ -10,6 +10,8 @@ import 'screens/event_detail_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/club_screen.dart';
 import 'screens/club_detail_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
 import 'models/event_model.dart';
 import 'models/club_model.dart';
 import 'data/dummy_data.dart';
@@ -73,6 +75,14 @@ final GoRouter _router = GoRouter(
           allEvents: extra['events'] as List<EventModel>,
         );
       },
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
     ),
   ],
 );

@@ -88,8 +88,11 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
+                // Visiteur (Paysage)
                 ElevatedButton(
-                  onPressed: () {}, // TODO: Inscription
+                  onPressed: () {
+                    context.go('/register');
+                  }, 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -98,7 +101,9 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () {}, // TODO: Connexion
+                  onPressed: () {
+                    context.go('/login');
+                  }, 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.black,
@@ -107,13 +112,18 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ]
             ] else ...[
-              // MODE PORTRAIT
+              // MODE PORTRAIT : Menu déroulant pour l'auth
               PopupMenuButton<String>(
                 icon: const Icon(Icons.account_circle, size: 28),
                 onSelected: (value) {
+                  // Gestion des clics du menu
                   switch (value) {
                     case 'login':
+                      context.go('/login');
+                      break;
                     case 'register':
+                      context.go('/register');
+                      break;
                     case 'profile':
                       break;
                     case 'logout':
@@ -121,6 +131,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       break;
                   }
                 },
+
                 itemBuilder: (BuildContext context) {
                   return [
                     if (isLoggedIn) ...[
