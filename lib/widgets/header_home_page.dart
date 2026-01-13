@@ -21,6 +21,8 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return AppBar(
+      // --- MODIFICATION : Couleur de fond "Vert Ficus" ---
+      backgroundColor: const Color(0xFF334C33),
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       title: Padding(
@@ -51,10 +53,11 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
+                    // --- MODIFICATION : Texte en blanc pour le contraste ---
                     child: const Text('Accueil',
-                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
-                  const SizedBox(width: 30), // Espace plus large pour la clarté
+                  const SizedBox(width: 30),
                   TextButton(
                     onPressed: () {
                       context.go('/clubs');
@@ -64,8 +67,9 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
+                    // --- MODIFICATION : Texte en blanc pour le contraste ---
                     child: const Text('Club',
-                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                        style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
                 ],
               ),
@@ -73,11 +77,10 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
 
             // --- Logique Responsive pour l'Authentification à droite ---
             if (isLandscape) ...[
-              // MODE PAYSAGE : Tout est visible
+              // MODE PAYSAGE
               if (isLoggedIn) ...[
-                // Connecté (Paysage)
                 IconButton(
-                  icon: const Icon(Icons.person),
+                  icon: const Icon(Icons.person), // La couleur s'adapte au thème de l'AppBar
                   onPressed: () {},
                   tooltip: 'Mon Profil',
                 ),
@@ -87,7 +90,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
-                // Visiteur (Paysage)
                 ElevatedButton(
                   onPressed: () {}, // TODO: Inscription
                   style: ElevatedButton.styleFrom(
@@ -107,11 +109,10 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ]
             ] else ...[
-              // MODE PORTRAIT : Menu déroulant pour l'auth
+              // MODE PORTRAIT
               PopupMenuButton<String>(
-                icon: const Icon(Icons.account_circle, size: 28),
+                icon: const Icon(Icons.account_circle, size: 28), // La couleur s'adapte
                 onSelected: (value) {
-                  // Gestion des clics du menu
                   switch (value) {
                     case 'login':
                     case 'register':
