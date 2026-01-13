@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/course_model.dart';
 
 class CourseCard extends StatelessWidget {
@@ -20,7 +21,7 @@ class CourseCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black,
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -32,7 +33,7 @@ class CourseCard extends StatelessWidget {
               children: [
                 CourseInfo(course: course),
                 const SizedBox(height: 16),
-                CourseActions(isMobile: true),
+                const CourseActions(isMobile: true),
               ],
             )
           : Row(
@@ -90,7 +91,7 @@ class CourseActions extends StatelessWidget {
       mainAxisAlignment: isMobile ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () => context.go('/login'),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             side: BorderSide(color: Colors.grey.shade300),
@@ -102,7 +103,7 @@ class CourseActions extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () => context.go('/login'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
