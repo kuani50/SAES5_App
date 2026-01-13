@@ -19,7 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _licenseController = TextEditingController();
-  
+
   // Gestion de la date
   final _dateController = TextEditingController();
   DateTime? _selectedDate;
@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)), // Par défaut 18 ans
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
@@ -46,7 +46,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        // Format simple jj/mm/aaaa
         _dateController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       });
     }
@@ -100,25 +99,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // Date de naissance (avec sélecteur)
                 GestureDetector(
                   onTap: () => _selectDate(context),
-                  child: AbsorbPointer( // Empêche le clavier de s'ouvrir
+                  child: AbsorbPointer(
                     child: CustomTextField(
                       label: "Date de naissance *",
                       hintText: "jj/mm/aaaa",
                       controller: _dateController,
-                      // On pourrait ajouter une icône suffixe dans CustomTextField, 
-                      // mais pour l'instant restons simples.
+
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Section Licence (Logique spéciale)
                 LicenseSection(licenseController: _licenseController),
                 const SizedBox(height: 24),
-
-                // Club (Dropdown simulé pour l'instant ou Textfield simple)
-                // Pour faire simple et respecter le design "Input", je mets un TextField
-                // mais idéalement ce serait un DropdownButtonFormField
                 const CustomTextField(
                   label: "Choisir votre club (facultatif)",
                   hintText: "Sélectionner un club...",
@@ -127,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // Téléphone
                 CustomTextField(
-                  label: "Téléphone (facultatif)",
+                  label: "Téléphone *",
                   hintText: "0601020304",
                   keyboardType: TextInputType.phone,
                   controller: _phoneController,
@@ -147,12 +139,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 PrimaryButton(
                   text: "S'inscrire",
                   onPressed: () {
-                    // TODO: Logique d'inscription
                     context.go('/home');
                   },
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Lien Connexion
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

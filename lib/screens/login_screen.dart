@@ -9,18 +9,17 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Controller pour récupérer les valeurs (simulé ici)
     final emailController = TextEditingController(text: "thomas.dupont@email.com");
     final passwordController = TextEditingController(text: "password123");
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const HeaderHomePage(), // On garde le header pour la cohérence
+      appBar: const HeaderHomePage(),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400), // Limite la largeur sur PC
+            constraints: const BoxConstraints(maxWidth: 400),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -30,7 +29,7 @@ class LoginScreen extends StatelessWidget {
                   "Connexion",
                   style: TextStyle(
                     fontSize: 32,
-                    fontWeight: FontWeight.w900, // Très gras comme sur l'image
+                    fontWeight: FontWeight.w900,
                     color: Color(0xFF0F172A),
                   ),
                 ),
@@ -58,7 +57,6 @@ class LoginScreen extends StatelessWidget {
                 PrimaryButton(
                   text: "Se connecter",
                   onPressed: () {
-                    // TODO: Logique de connexion
                     // Pour l'instant, on simule une connexion et on retourne à l'accueil
                     context.go('/home'); 
                   },
@@ -74,7 +72,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // TODO: Vers Inscription
                         context.go('/register');
                       },
                       child: const Text(

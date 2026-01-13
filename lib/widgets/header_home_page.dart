@@ -21,7 +21,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return AppBar(
-      // --- MODIFICATION : Couleur de fond "Vert Ficus" ---
       backgroundColor: const Color(0xFF334C33),
       automaticallyImplyLeading: false,
       titleSpacing: 0,
@@ -29,7 +28,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
-            // Titre / Logo à gauche
             const Text(
               "Orient'Express",
               style: TextStyle(
@@ -53,7 +51,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('Prochains Événements',
+                    child: const Text('Raids',
                         style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
                   const SizedBox(width: 30),
@@ -88,7 +86,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
-                // Visiteur (Paysage)
                 ElevatedButton(
                   onPressed: () {
                     context.go('/register');
@@ -116,7 +113,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               PopupMenuButton<String>(
                 icon: const Icon(Icons.account_circle, size: 28),
                 onSelected: (value) {
-                  // Gestion des clics du menu
                   switch (value) {
                     case 'login':
                       context.go('/login');

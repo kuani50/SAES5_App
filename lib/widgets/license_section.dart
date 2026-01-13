@@ -11,7 +11,6 @@ class LicenseSection extends StatefulWidget {
 }
 
 class _LicenseSectionState extends State<LicenseSection> {
-  // null = pas encore répondu, true = oui, false = non
   bool? _isLicensed; 
 
   @override
@@ -54,7 +53,7 @@ class _LicenseSectionState extends State<LicenseSection> {
                 onChanged: (value) {
                   setState(() {
                     _isLicensed = value;
-                    widget.licenseController.clear(); // On efface si Non
+                    widget.licenseController.clear();
                   });
                 },
               ),
@@ -62,7 +61,6 @@ class _LicenseSectionState extends State<LicenseSection> {
           ],
         ),
         
-        // Affichage conditionnel du champ Numéro de licence
         if (_isLicensed == true) ...[
           const SizedBox(height: 16),
           CustomTextField(
