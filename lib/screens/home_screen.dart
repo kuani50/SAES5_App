@@ -1,122 +1,128 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import '../providers/project_provider.dart';
+import 'package:go_router/go_router.dart'; // Import GoRouter
+import '../models/course_model.dart'; // Import CourseModel
+import '../models/event_model.dart';
+import '../widgets/event_list_section.dart';
+import '../widgets/header_home_page.dart';
+import '../widgets/hero_banner.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  Widget build(BuildContext context) {
+    // Données factices complètes
+    final List<EventModel> dummyEvents = [
+      EventModel(
+        title: "Raid Suisse Normande",
+        clubName: "Le Club De Caen",
+        location: "Clécy, 14",
+        date: "12 Octobre 2025",
+        status: "Inscriptions ouvertes",
+        courses: [
+          CourseModel(
+            name: "Parcours Aventure",
+            distance: "45km",
+            teamSize: "Équipe de 2 à 4",
+            difficulty: "Expert",
+          ),
+           CourseModel(
+            name: "Parcours Sportif",
+            distance: "25km",
+            teamSize: "Équipe de 2",
+            difficulty: "Confirmé",
+          ),
+        ]
+      ),
+      EventModel(
+        title: "Raid Urbain Caen",
+        clubName: "Club ALBE Orientation",
+        location: "Caen, 14",
+        date: "15 Nov",
+        status: "Inscriptions ouvertes",
+        courses: [
+           CourseModel(
+            name: "Parcours Découverte",
+            distance: "10km",
+            teamSize: "Solo ou Duo",
+            difficulty: "Débutant",
+          ),
+        ]
+      ),
+      EventModel(
+        title: "Course d'Orientation Nocturne",
+        clubName: "Vikings 76",
+        location: "Rouen, 76",
+        date: "20 Dec",
+        status: "Complet",
+      ),
+      EventModel(
+        title: "Trail des Forêts",
+        clubName: "ASL Condé",
+        location: "Condé-sur-Noireau",
+        date: "05 Fév",
+        status: "Inscriptions ouvertes",
+      ),
+      EventModel(
+        title: "Challenge Orientation 14",
+        clubName: "CDCO 14",
+        location: "Falaise, 14",
+        date: "12 Mars",
+        status: "Bientôt",
+      ),
+      EventModel(
+        title: "Raid des Plages",
+        clubName: "Club Orientation Mer",
+        location: "Ouistreham, 14",
+        date: "25 Juin",
+        status: "Fermé",
+      ),
+    ];
+
+    return Scaffold(
+      appBar: const HeaderHomePage(
+        isLoggedIn: false, 
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            HeroBanner(
+              title: 'Prochain défi : Raid Suisse Normande',
+              onTap: () {
+                 // Navigation vers le premier événement de la liste (Raid Suisse Normande)
+                 context.push('/details', extra: dummyEvents[0]);
+              },
+            ),
+            const SizedBox(height: 16),
+            // On doit passer le contexte ou un callback à EventListSection pour gérer la navigation
+            // Pour l'instant, je vais modifier EventListSection pour qu'il accepte un callback générique ou je gère la navigation ici si je passe le builder.
+            // Simplifions : EventListSection prend la liste et gère l'affichage. 
+            // Mais EventListSection a besoin de savoir comment naviguer.
+            // Le plus propre est de passer la fonction de navigation.
+            _EventListSectionWrapper(events: dummyEvents),
+            const SizedBox(height: 40), 
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Fetch projects when screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = context.read<ProjectProvider>();
-      // Ensure the saved URL is loaded if we skipped the config screen (Release mode)
-      await provider.loadSavedUrl();
-      provider.fetchProjects();
-    });
-  }
+// Petit wrapper local pour gérer la navigation proprement sans toucher à EventListSection si on ne veut pas modifier sa signature tout de suite
+// Ou mieux, modifions EventListSection pour qu'il utilise le context pour naviguer ou accepte un callback.
+// Comme EventCard a déjà un onTap, on peut le gérer dans le builder de EventListSection.
+// Attendez, EventListSection utilise un builder interne. Je dois le modifier pour qu'il gère la navigation.
+// Je vais plutôt réécrire l'appel ici pour être clair.
+class _EventListSectionWrapper extends StatelessWidget {
+  final List<EventModel> events;
+  const _EventListSectionWrapper({required this.events});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('My Portfolio')),
-      body: Consumer<ProjectProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          if (provider.error != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Error: ${provider.error}', textAlign: TextAlign.center),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => provider.fetchProjects(),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (provider.projects.isEmpty) {
-            return const Center(child: Text('No projects found.'));
-          }
-
-          return RefreshIndicator(
-            onRefresh: () => provider.fetchProjects(),
-            child: ListView.builder(
-              itemCount: provider.projects.length,
-              itemBuilder: (context, index) {
-                final project = provider.projects[index];
-                final imageUrl = project.getFullImageUrl(provider.baseUrl);
-
-                return Card(
-                  margin: const EdgeInsets.all(8.0),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: () {
-                      context.push('/details', extra: project);
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (imageUrl != null)
-                          SizedBox(
-                            height: 200,
-                            width: double.infinity,
-                            child: CachedNetworkImage(
-                              imageUrl: imageUrl,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                    color: Colors.grey,
-                                    child: const Icon(Icons.error),
-                                  ),
-                            ),
-                          ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                project.title,
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 8),
-                              Chip(label: Text(project.category)),
-                              const SizedBox(height: 8),
-                              Text(
-                                project.description,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
+    // Je réutilise le widget EventListSection mais je dois m'assurer qu'il gère le onTap.
+    // Regardons le code de EventListSection... il a un TODO Navigation.
+    // Je vais devoir modifier EventListSection pour qu'il soit interactif.
+    return EventListSection(events: events);
   }
 }

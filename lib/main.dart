@@ -7,8 +7,10 @@ import 'debug/my_http_overrides.dart';
 import 'models/project.dart';
 import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
-import 'screens/detail_screen.dart';
+import 'screens/event_detail_screen.dart'; 
+import 'models/event_model.dart'; 
 import 'screens/home_screen.dart';
+import 'screens/club_screen.dart'; // Import
 
 void main() {
   if (kDebugMode) {
@@ -52,9 +54,13 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/details',
       builder: (context, state) {
-        final project = state.extra as Project;
-        return DetailScreen(project: project);
+        final event = state.extra as EventModel;
+        return EventDetailScreen(event: event);
       },
+    ),
+    GoRoute(
+      path: '/clubs', // Nouvelle route
+      builder: (context, state) => const ClubScreen(),
     ),
   ],
 );
