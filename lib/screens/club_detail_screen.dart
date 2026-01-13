@@ -67,10 +67,10 @@ class ClubDetailScreen extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).orientation == Orientation.landscape ? 3 : 2,
+                  crossAxisCount: MediaQuery.of(context).orientation == Orientation.landscape ? 4 : 3,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 0.85,
                 ),
                 itemCount: clubEvents.length,
                 itemBuilder: (context, index) {

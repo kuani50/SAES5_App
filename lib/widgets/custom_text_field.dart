@@ -7,8 +7,8 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final TextInputType keyboardType;
-  final String? Function(String?)? validator; // Pour la validation
-  final List<TextInputFormatter>? inputFormatters; // Pour filtrer la saisie
+  final String? Function(String?)? validator; // For validation
+  final List<TextInputFormatter>? inputFormatters; // To filter input
 
   const CustomTextField({
     super.key,
@@ -35,14 +35,14 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        // On utilise TextFormField pour la validation
+        // Using TextFormField for validation features
         TextFormField(
           controller: controller,
           obscureText: isPassword,
           keyboardType: keyboardType,
-          inputFormatters: inputFormatters, // Appliquer le filtre
-          validator: validator, // Appliquer la validation
-          autovalidateMode: AutovalidateMode.onUserInteraction, // Valider en direct
+          inputFormatters: inputFormatters, // Apply input formatters
+          validator: validator, // Apply validator
+          autovalidateMode: AutovalidateMode.onUserInteraction, // Validate on user interaction
           style: const TextStyle(fontSize: 16),
           decoration: InputDecoration(
             hintText: hintText,
@@ -56,7 +56,7 @@ class CustomTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
               borderSide: const BorderSide(color: Colors.orange, width: 2),
             ),
-            // Style pour les erreurs
+            // Style for validation errors
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: const BorderSide(color: Colors.red, width: 1),

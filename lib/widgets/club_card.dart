@@ -20,7 +20,7 @@ class ClubCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -29,6 +29,8 @@ class ClubCard extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        // --- MODIFICATION: Make the column take minimum size.
+        mainAxisSize: MainAxisSize.min,
         children: [
           // Header (Logo + Name)
           ClubCardHeader(club: club),
@@ -36,9 +38,8 @@ class ClubCard extends StatelessWidget {
           
           // Description
           ClubCardDescription(description: club.description),
-          const Spacer(), // Pushes button down if card has fixed height
           const SizedBox(height: 24),
-          
+
           // Actions
           ClubCardActions(onTap: onViewRaids),
         ],
@@ -116,8 +117,7 @@ class ClubCardDescription extends StatelessWidget {
         color: Colors.grey[700],
         height: 1.5, // Better readability
       ),
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
+      // --- MODIFICATION: Removed maxLines and overflow to allow text to wrap.
     );
   }
 }

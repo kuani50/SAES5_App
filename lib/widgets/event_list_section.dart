@@ -30,25 +30,25 @@ class EventListSection extends StatelessWidget {
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Color(0xFF0F172A),
-            ),
-          ),
-        ),
-        GridView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: 1.20,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-          ),
-          itemCount: events.length,
-          itemBuilder: (context, index) {
-            final event = events[index];
-            return EventCard(
-              event: event,
-              onTap: () {
+                ),
+                ),
+                ),
+                GridView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: 1.30,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                ),
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                final event = events[index];
+                return EventCard(
+                event: event,
+                onTap: () {
                 context.push('/details', extra: event);
               },
             );

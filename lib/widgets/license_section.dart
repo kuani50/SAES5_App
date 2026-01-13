@@ -11,6 +11,7 @@ class LicenseSection extends StatefulWidget {
 }
 
 class _LicenseSectionState extends State<LicenseSection> {
+  // null = no choice, true = yes, false = no
   bool? _isLicensed; 
 
   @override
@@ -26,33 +27,30 @@ class _LicenseSectionState extends State<LicenseSection> {
             color: Color(0xFF0F172A),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
+        
+        // Using a Row with two custom selectable buttons instead of RadioListTile
         Row(
           children: [
             Expanded(
-              child: RadioListTile<bool>(
-                title: const Text("Oui"),
-                value: true,
-                groupValue: _isLicensed,
-                contentPadding: EdgeInsets.zero,
-                activeColor: Colors.orange,
-                onChanged: (value) {
+              child: _buildChoiceButton(
+                label: "Oui",
+                isSelected: _isLicensed == true,
+                onTap: () {
                   setState(() {
-                    _isLicensed = value;
+                    _isLicensed = true;
                   });
                 },
               ),
             ),
+            const SizedBox(width: 16),
             Expanded(
-              child: RadioListTile<bool>(
-                title: const Text("Non"),
-                value: false,
-                groupValue: _isLicensed,
-                contentPadding: EdgeInsets.zero,
-                activeColor: Colors.orange,
-                onChanged: (value) {
+              child: _buildChoiceButton(
+                label: "Non",
+                isSelected: _isLicensed == false,
+                onTap: () {
                   setState(() {
-                    _isLicensed = value;
+                    _isLicensed = false;
                     widget.licenseController.clear();
                   });
                 },
@@ -61,8 +59,9 @@ class _LicenseSectionState extends State<LicenseSection> {
           ],
         ),
         
+        // Dynamic field display
         if (_isLicensed == true) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           CustomTextField(
             label: "Numéro de licence",
             hintText: "Ex: 12345678",
@@ -70,6 +69,39 @@ class _LicenseSectionState extends State<LicenseSection> {
           ),
         ],
       ],
+    );
+  }
+
+  // Helper to build a clean selection button
+  Widget _buildChoiceButton({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.orange: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? Colors.orange : Colors.grey.shade300,
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? Colors.orange : Colors.grey.shade600,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

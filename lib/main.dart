@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'debug/my_http_overrides.dart';
-import 'models/project.dart';
 import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
 import 'screens/event_detail_screen.dart';

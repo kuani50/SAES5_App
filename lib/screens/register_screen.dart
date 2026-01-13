@@ -29,15 +29,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  // -- English Comment: Date management.
+  // Date management.
   DateTime? _selectedDate;
-  // -- English Comment: Selected club state.
+  //  Selected club state.
   ClubModel? _selectedClub;
 
-  // -- English Comment: Loading state for submission button.
+  // Loading state for submission button.
   bool _isLoading = false;
 
-  // --- MODIFICATION: The context passed here is the valid one from the screen. ---
+  // The context passed here is the valid one from the screen.
   Future<void> _selectDate(BuildContext screenContext) async {
     final DateTime? picked = await showDatePicker(
       context: screenContext,
@@ -46,7 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       lastDate: DateTime.now(),
       // locale: const Locale("fr"), // Removed to prevent crash if localizations are not setup
       builder: (dialogContext, child) {
-        // --- MODIFICATION: Use the screenContext to find the theme, not the dialogContext. ---
+        // Use the screenContext to find the theme, not the dialogContext.
         return Theme(
           data: Theme.of(screenContext).copyWith(
             colorScheme: const ColorScheme.light(
@@ -66,14 +66,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // -- English Comment: Handles form submission.
+  // Handles form submission.
   void _submit() {
-    // -- English Comment: Check if all validators pass.
+    // Check if all validators pass.
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
 
-      // -- English Comment: Simulate a network call.
+
       Future.delayed(const Duration(seconds: 2), () {
+
+        if (!mounted) return;
+
         setState(() => _isLoading = false);
         context.go('/home');
       });
@@ -151,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   LicenseSection(licenseController: _licenseController),
                   const SizedBox(height: 24),
 
-                  // -- English Comment: Club dropdown field.
+                  // Club dropdown field.
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
