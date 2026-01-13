@@ -19,15 +19,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _licenseController = TextEditingController();
-
-  // Gestion de la date
+  
+  // Date Management
   final _dateController = TextEditingController();
   DateTime? _selectedDate;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)), // Default 18 years
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
@@ -46,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+        // Simple format dd/mm/yyyy
         _dateController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       });
     }
@@ -60,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600), // Un peu plus large que le login
+            constraints: const BoxConstraints(maxWidth: 600), // Slightly wider than login
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -74,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Ligne Prénom / Nom
+                // First Name / Last Name Row
                 Row(
                   children: [
                     Expanded(
@@ -96,30 +97,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Date de naissance (avec sélecteur)
+                // Date of birth (with picker)
                 GestureDetector(
                   onTap: () => _selectDate(context),
-                  child: AbsorbPointer(
+                  child: AbsorbPointer( // Prevents keyboard opening
                     child: CustomTextField(
                       label: "Date de naissance *",
                       hintText: "jj/mm/aaaa",
                       controller: _dateController,
-
+                      // Could add suffix icon here, keeping it simple for now.
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // License Section (Special Logic)
                 LicenseSection(licenseController: _licenseController),
                 const SizedBox(height: 24),
+
+                // Club (Simulated Dropdown or simple TextField)
+                // Using TextField to respect "Input" design, ideally DropdownButtonFormField
                 const CustomTextField(
                   label: "Choisir votre club (facultatif)",
                   hintText: "Sélectionner un club...",
                 ),
                 const SizedBox(height: 24),
 
-                // Téléphone
+                // Phone
                 CustomTextField(
-                  label: "Téléphone *",
+                  label: "Téléphone (facultatif)",
                   hintText: "0601020304",
                   keyboardType: TextInputType.phone,
                   controller: _phoneController,
@@ -135,16 +141,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 40),
 
-                // Bouton Valider
+                // Validate Button
                 PrimaryButton(
                   text: "S'inscrire",
                   onPressed: () {
+                    // TODO: Registration logic
                     context.go('/home');
                   },
                 ),
                 const SizedBox(height: 16),
-
-                // Lien Connexion
+                
+                // Login Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

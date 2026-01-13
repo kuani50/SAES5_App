@@ -9,33 +9,34 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Controller to get values (simulated here)
     final emailController = TextEditingController(text: "thomas.dupont@email.com");
     final passwordController = TextEditingController(text: "password123");
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const HeaderHomePage(),
+      appBar: const HeaderHomePage(), // Keeping header for consistency
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: const BoxConstraints(maxWidth: 400), // Limit width on PC
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Titre
+                // Title
                 const Text(
                   "Connexion",
                   style: TextStyle(
                     fontSize: 32,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w900, // Very bold like image
                     color: Color(0xFF0F172A),
                   ),
                 ),
                 const SizedBox(height: 40),
 
-                // Champ Email
+                // Email Field
                 CustomTextField(
                   label: "Email",
                   hintText: "exemple@email.com",
@@ -44,7 +45,7 @@ class LoginScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Champ Mot de passe
+                // Password Field
                 CustomTextField(
                   label: "Mot de passe",
                   hintText: "Votre mot de passe",
@@ -53,17 +54,18 @@ class LoginScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
-                // Bouton Se connecter
+                // Login Button
                 PrimaryButton(
                   text: "Se connecter",
                   onPressed: () {
-                    // Pour l'instant, on simule une connexion et on retourne à l'accueil
+                    // TODO: Login logic
+                    // Simulating login and returning to home
                     context.go('/home'); 
                   },
                 ),
                 const SizedBox(height: 16),
 
-                // Lien Inscription
+                // Register Link
                 Row(
                   children: [
                     const Text(
@@ -72,6 +74,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
+                        // Navigate to Register
                         context.go('/register');
                       },
                       child: const Text(

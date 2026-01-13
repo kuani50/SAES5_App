@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart'; 
 import '../data/dummy_data.dart'; // Import
 import '../widgets/event_list_section.dart';
 import '../widgets/header_home_page.dart';

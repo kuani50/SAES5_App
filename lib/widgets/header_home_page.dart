@@ -16,18 +16,18 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Détection de l'orientation
+    // Orientation detection
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return AppBar(
-      backgroundColor: const Color(0xFF334C33),
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
+            // Title / Logo on the left
             const Text(
               "Orient'Express",
               style: TextStyle(
@@ -37,7 +37,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
 
-            // --- Navigation centrale qui s'étend ---
+            // --- Central expanding navigation ---
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -51,10 +51,10 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('Raids',
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                    child: const Text('Accueil',
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
                   ),
-                  const SizedBox(width: 30),
+                  const SizedBox(width: 30), // Larger space for clarity
                   TextButton(
                     onPressed: () {
                       context.go('/clubs');
@@ -65,16 +65,17 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: const Text('Club',
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
                   ),
                 ],
               ),
             ),
 
-            // --- Logique Responsive pour l'Authentification à droite ---
+            // --- Responsive Logic for Authentication on the right ---
             if (isLandscape) ...[
-              // MODE PAYSAGE
+              // LANDSCAPE MODE: Everything visible
               if (isLoggedIn) ...[
+                // Logged in (Landscape)
                 IconButton(
                   icon: const Icon(Icons.person),
                   onPressed: () {},
@@ -86,6 +87,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
+                // Guest (Landscape)
                 ElevatedButton(
                   onPressed: () {
                     context.go('/register');
@@ -109,10 +111,11 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ]
             ] else ...[
-              // MODE PORTRAIT : Menu déroulant pour l'auth
+              // PORTRAIT MODE: Dropdown menu for auth
               PopupMenuButton<String>(
                 icon: const Icon(Icons.account_circle, size: 28),
                 onSelected: (value) {
+                  // Handle menu clicks
                   switch (value) {
                     case 'login':
                       context.go('/login');
@@ -127,7 +130,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       break;
                   }
                 },
-
                 itemBuilder: (BuildContext context) {
                   return [
                     if (isLoggedIn) ...[

@@ -8,7 +8,7 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Détection si l'écran est petit (Mobile)
+    // Detect if screen is small (Mobile)
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Container(
@@ -20,7 +20,7 @@ class CourseCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black,
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -46,7 +46,7 @@ class CourseCard extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Informations Course ---
+// --- Sub-component: Course Info ---
 class CourseInfo extends StatelessWidget {
   final CourseModel course;
 
@@ -78,7 +78,7 @@ class CourseInfo extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Boutons d'action ---
+// --- Sub-component: Action Buttons ---
 class CourseActions extends StatelessWidget {
   final bool isMobile;
 
@@ -118,7 +118,7 @@ class CourseActions extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Tag générique ---
+// --- Sub-component: Generic Tag ---
 class _CourseTag extends StatelessWidget {
   final String text;
 

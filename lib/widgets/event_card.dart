@@ -19,7 +19,7 @@ class EventCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey,
+            color: Colors.grey.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -32,10 +32,10 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Sous-composant Image
+            // Image Sub-component
             EventCardImage(imageUrl: event.imageUrl),
             
-            // Sous-composant Contenu
+            // Content Sub-component
             Expanded(
               child: EventCardContent(event: event),
             ),
@@ -46,7 +46,7 @@ class EventCard extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Image ---
+// --- Sub-component: Image ---
 class EventCardImage extends StatelessWidget {
   final String? imageUrl;
 
@@ -55,7 +55,7 @@ class EventCardImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120, // Hauteur fixe pour la partie image
+      height: 120, // Fixed height for image part
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -77,7 +77,7 @@ class EventCardImage extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Contenu Textuel ---
+// --- Sub-component: Text Content ---
 class EventCardContent extends StatelessWidget {
   final EventModel event;
 
@@ -157,6 +157,7 @@ class EventCardContent extends StatelessWidget {
   }
 }
 
+// --- Small sub-component for Badge ---
 class _StatusBadge extends StatelessWidget {
   final String status;
 

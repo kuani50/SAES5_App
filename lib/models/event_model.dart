@@ -5,8 +5,8 @@ class EventModel {
   final String clubName;
   final String location;
   final String date;
-  final String status; // État de l'inscription (Ouverte, Complet, etc.)
-  final String raidState; // État du raid (À venir, En cours, Terminé)
+  final String status; // Registration status (Open, Full, etc.)
+  final String raidState; // Raid status (Coming, Ongoing, Finished)
   final String? imageUrl;
   final List<CourseModel> courses;
 
