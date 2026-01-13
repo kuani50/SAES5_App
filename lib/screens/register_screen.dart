@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+// -- English Comment: Removed dummy_data.dart import for better encapsulation.
+import '../models/club_model.dart'; // -- English Comment: Import club model.
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/license_section.dart';
@@ -13,30 +16,42 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // Controllers
+  // -- English Comment: Key for form state management and validation.
+  final _formKey = GlobalKey<FormState>();
+
+  // -- English Comment: Controllers for each text field.
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _licenseController = TextEditingController();
-  
-  // Date Management
   final _dateController = TextEditingController();
-  DateTime? _selectedDate;
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
-  Future<void> _selectDate(BuildContext context) async {
+  // -- English Comment: Date management.
+  DateTime? _selectedDate;
+  // -- English Comment: Selected club state.
+  ClubModel? _selectedClub;
+
+  // -- English Comment: Loading state for submission button.
+  bool _isLoading = false;
+
+  // --- MODIFICATION: The context passed here is the valid one from the screen. ---
+  Future<void> _selectDate(BuildContext screenContext) async {
     final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)), // Default 18 years
+      context: screenContext,
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
+      // locale: const Locale("fr"), // Removed to prevent crash if localizations are not setup
+      builder: (dialogContext, child) {
+        // --- MODIFICATION: Use the screenContext to find the theme, not the dialogContext. ---
         return Theme(
-          data: Theme.of(context).copyWith(
+          data: Theme.of(screenContext).copyWith(
             colorScheme: const ColorScheme.light(
               primary: Colors.orange,
               onPrimary: Colors.white,
-              onSurface: Colors.black,
             ),
           ),
           child: child!,
@@ -46,14 +61,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        // Simple format dd/mm/yyyy
         _dateController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      });
+    }
+  }
+
+  // -- English Comment: Handles form submission.
+  void _submit() {
+    // -- English Comment: Check if all validators pass.
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => _isLoading = true);
+
+      // -- English Comment: Simulate a network call.
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() => _isLoading = false);
+        context.go('/home');
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    // -- English Comment: Local club list as an alternative to dummy_data.dart.
+    // This makes the widget self-contained and ready for a future provider.
+    final List<ClubModel> clubs = [
+      ClubModel(name: "Orient'Express", location: "Caen, 14", description: "Club..."),
+      ClubModel(name: "ALBE Orientation", location: "Elbeuf, 76", description: "Club..."),
+      ClubModel(name: "Vikings 76", location: "Rouen, 76", description: "Club..."),
+      ClubModel(name: "ASL Condé", location: "Condé-sur-Noireau, 14", description: "Club..."),
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const HeaderHomePage(),
@@ -61,116 +99,180 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 600), // Slightly wider than login
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Inscription",
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF0F172A),
+            constraints: const BoxConstraints(maxWidth: 600),
+            // -- English Comment: Form widget to enable validation.
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Inscription",
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
                   ),
-                ),
-                const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-                // First Name / Last Name Row
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomTextField(
-                        label: "Prénom *",
-                        hintText: "Thomas",
-                        controller: _firstNameController,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: CustomTextField(
-                        label: "Nom *",
-                        hintText: "Dupont",
-                        controller: _lastNameController,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Date of birth (with picker)
-                GestureDetector(
-                  onTap: () => _selectDate(context),
-                  child: AbsorbPointer( // Prevents keyboard opening
-                    child: CustomTextField(
-                      label: "Date de naissance *",
-                      hintText: "jj/mm/aaaa",
-                      controller: _dateController,
-                      // Could add suffix icon here, keeping it simple for now.
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // License Section (Special Logic)
-                LicenseSection(licenseController: _licenseController),
-                const SizedBox(height: 24),
-
-                // Club (Simulated Dropdown or simple TextField)
-                // Using TextField to respect "Input" design, ideally DropdownButtonFormField
-                const CustomTextField(
-                  label: "Choisir votre club (facultatif)",
-                  hintText: "Sélectionner un club...",
-                ),
-                const SizedBox(height: 24),
-
-                // Phone
-                CustomTextField(
-                  label: "Téléphone (facultatif)",
-                  hintText: "0601020304",
-                  keyboardType: TextInputType.phone,
-                  controller: _phoneController,
-                ),
-                const SizedBox(height: 24),
-
-                // Email
-                CustomTextField(
-                  label: "Email *",
-                  hintText: "thomas@exemple.com",
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                ),
-                const SizedBox(height: 40),
-
-                // Validate Button
-                PrimaryButton(
-                  text: "S'inscrire",
-                  onPressed: () {
-                    // TODO: Registration logic
-                    context.go('/home');
-                  },
-                ),
-                const SizedBox(height: 16),
-                
-                // Login Link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Déjà un compte ? "),
-                    GestureDetector(
-                      onTap: () => context.go('/login'),
-                      child: const Text(
-                        "Connectez-vous",
-                        style: TextStyle(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          label: "Prénom *",
+                          hintText: "Thomas",
+                          controller: _firstNameController,
+                          validator: (value) => value == null || value.isEmpty ? 'Le prénom est requis.' : null,
                         ),
                       ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomTextField(
+                          label: "Nom *",
+                          hintText: "Dupont",
+                          controller: _lastNameController,
+                          validator: (value) => value == null || value.isEmpty ? 'Le nom est requis.' : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: AbsorbPointer(
+                      child: CustomTextField(
+                        label: "Date de naissance *",
+                        hintText: "jj/mm/aaaa",
+                        controller: _dateController,
+                        validator: (value) => value == null || value.isEmpty ? 'La date est requise.' : null,
+                      ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-              ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  LicenseSection(licenseController: _licenseController),
+                  const SizedBox(height: 24),
+
+                  // -- English Comment: Club dropdown field.
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Choisir votre club (facultatif)",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<ClubModel>(
+                        value: _selectedClub,
+                        hint: Text("Sélectionner un club...", style: TextStyle(color: Colors.grey.shade400)),
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: const BorderSide(color: Colors.orange, width: 2),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        items: clubs.map((ClubModel club) {
+                          return DropdownMenuItem<ClubModel>(
+                            value: club,
+                            child: Text(club.name),
+                          );
+                        }).toList(),
+                        onChanged: (ClubModel? newValue) {
+                          setState(() {
+                            _selectedClub = newValue;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  CustomTextField(
+                    label: "Téléphone *",
+                    hintText: "0601020304",
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Le téléphone est requis.';
+                      if (value.length < 10) return 'Numéro invalide (10 chiffres).';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  CustomTextField(
+                    label: "Email *",
+                    hintText: "thomas@exemple.com",
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'L\'email est requis.';
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return 'Format d\'email invalide.';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  CustomTextField(
+                    label: "Mot de passe *",
+                    hintText: "Entrez votre mot de passe",
+                    controller: _passwordController,
+                    isPassword: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Le mot de passe est requis.';
+                      if (value.length < 8) return 'Le mot de passe doit faire au moins 8 caractères.';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  CustomTextField(
+                    label: "Confirmer le mot de passe *",
+                    hintText: "Confirmez votre mot de passe",
+                    controller: _confirmPasswordController,
+                    isPassword: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Veuillez confirmer le mot de passe.';
+                      if (value != _passwordController.text) return 'Les mots de passe ne correspondent pas.';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 40),
+
+                  PrimaryButton(
+                    text: "S'inscrire",
+                    onPressed: _submit,
+                    isLoading: _isLoading,
+                  ),
+                  const SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Déjà un compte ? "),
+                      GestureDetector(
+                        onTap: () => context.go('/login'),
+                        child: const Text(
+                          "Connectez-vous",
+                          style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ),

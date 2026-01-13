@@ -16,24 +16,33 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    // --- English Comment: Get current route to highlight the active tab. ---
+    final String currentPath = GoRouterState.of(context).uri.path;
+    final bool isRaidsActive = currentPath == '/home' || currentPath.startsWith('/details');
+    final bool isClubsActive = currentPath.startsWith('/clubs');
+
     // Orientation detection
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return AppBar(
+      backgroundColor: const Color(0xFF334C33),
       automaticallyImplyLeading: false,
       titleSpacing: 0,
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
-            // Title / Logo on the left
-            const Text(
-              "Orient'Express",
-              style: TextStyle(
-                color: Colors.orange,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+            // --- English Comment: Made the logo tappable to navigate home. ---
+            GestureDetector(
+              onTap: () => context.go('/home'),
+              child: const Text(
+                "Orient'Express",
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
             ),
 
@@ -51,8 +60,15 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('Accueil',
-                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                    // --- English Comment: Conditional styling for the active tab. ---
+                    child: Text(
+                      'Raids',
+                      style: TextStyle(
+                        color: isRaidsActive ? Colors.orange : Colors.white,
+                        fontWeight: isRaidsActive ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 30), // Larger space for clarity
                   TextButton(
@@ -64,8 +80,15 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('Club',
-                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                    // --- English Comment: Conditional styling for the active tab. ---
+                    child: Text(
+                      'Club',
+                      style: TextStyle(
+                        color: isClubsActive ? Colors.orange : Colors.white,
+                        fontWeight: isClubsActive ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -77,7 +100,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               if (isLoggedIn) ...[
                 // Logged in (Landscape)
                 IconButton(
-                  icon: const Icon(Icons.person),
+                  icon: const Icon(Icons.person, color: Colors.white),
                   onPressed: () {},
                   tooltip: 'Mon Profil',
                 ),
@@ -91,7 +114,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ElevatedButton(
                   onPressed: () {
                     context.go('/register');
-                  }, 
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -102,7 +125,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ElevatedButton(
                   onPressed: () {
                     context.go('/login');
-                  }, 
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.black,
@@ -113,7 +136,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
             ] else ...[
               // PORTRAIT MODE: Dropdown menu for auth
               PopupMenuButton<String>(
-                icon: const Icon(Icons.account_circle, size: 28),
+                icon: const Icon(Icons.account_circle, size: 28, color: Colors.white),
                 onSelected: (value) {
                   // Handle menu clicks
                   switch (value) {
