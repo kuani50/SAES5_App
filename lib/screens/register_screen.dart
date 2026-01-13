@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-// -- English Comment: Removed dummy_data.dart import for better encapsulation.
-import '../models/club_model.dart'; // -- English Comment: Import club model.
+import '../models/club_model.dart'; //
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/license_section.dart';
@@ -16,10 +15,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // -- English Comment: Key for form state management and validation.
+  // Key for form state management and validation.
   final _formKey = GlobalKey<FormState>();
 
-  // -- English Comment: Controllers for each text field.
+  // Controllers for each text field.
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -86,7 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
 
-    // -- English Comment: Local club list as an alternative to dummy_data.dart.
+    // Local club list as an alternative to dummy_data.dart.
     // This makes the widget self-contained and ready for a future provider.
     final List<ClubModel> clubs = [
       ClubModel(name: "Orient'Express", location: "Caen, 14", description: "Club..."),
@@ -103,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.all(24.0),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
-            // -- English Comment: Form widget to enable validation.
+            // Form widget to enable validation.
             child: Form(
               key: _formKey,
               child: Column(

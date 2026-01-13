@@ -29,7 +29,7 @@ class ClubCard extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        // --- MODIFICATION: Make the column take minimum size.
+        // Make the column take minimum size.
         mainAxisSize: MainAxisSize.min,
         children: [
           // Header (Logo + Name)
@@ -48,7 +48,7 @@ class ClubCard extends StatelessWidget {
   }
 }
 
-// --- Sub-component: Header (Logo + Info) ---
+// Header (Logo + Info)
 class ClubCardHeader extends StatelessWidget {
   final ClubModel club;
 
@@ -115,9 +115,8 @@ class ClubCardDescription extends StatelessWidget {
       style: TextStyle(
         fontSize: 14,
         color: Colors.grey[700],
-        height: 1.5, // Better readability
+        height: 1.5,
       ),
-      // --- MODIFICATION: Removed maxLines and overflow to allow text to wrap.
     );
   }
 }
