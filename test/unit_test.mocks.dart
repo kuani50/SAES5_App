@@ -13,9 +13,9 @@ import 'package:dio/src/options.dart' as _i2;
 import 'package:dio/src/response.dart' as _i6;
 import 'package:dio/src/transformer.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
-import 'package:saps5app/models/project.dart' as _i12;
-import 'package:saps5app/services/api_service.dart' as _i10;
+import 'package:mockito/src/dummies.dart' as _i12;
+import 'package:saps5app/models/project.dart' as _i11;
+import 'package:saps5app/services/api_client.dart' as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -808,36 +808,42 @@ class MockDio extends _i1.Mock implements _i7.Dio {
           as _i7.Dio);
 }
 
-/// A class which mocks [ApiService].
+/// A class which mocks [ApiClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiService extends _i1.Mock implements _i10.ApiService {
-  MockApiService() {
+class MockApiClient extends _i1.Mock implements _i10.ApiClient {
+  MockApiClient() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  String get baseUrl =>
+  _i8.Future<List<_i11.Project>> getProjects() =>
       (super.noSuchMethod(
-            Invocation.getter(#baseUrl),
-            returnValue: _i11.dummyValue<String>(
-              this,
-              Invocation.getter(#baseUrl),
+            Invocation.method(#getProjects, []),
+            returnValue: _i8.Future<List<_i11.Project>>.value(<_i11.Project>[]),
+          )
+          as _i8.Future<List<_i11.Project>>);
+
+  @override
+  _i8.Future<String> login(Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#login, [body]),
+            returnValue: _i8.Future<String>.value(
+              _i12.dummyValue<String>(this, Invocation.method(#login, [body])),
             ),
           )
-          as String);
+          as _i8.Future<String>);
 
   @override
-  set baseUrl(String? value) => super.noSuchMethod(
-    Invocation.setter(#baseUrl, value),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  _i8.Future<List<_i12.Project>> fetchProjects() =>
+  _i8.Future<String> register(Map<String, dynamic>? body) =>
       (super.noSuchMethod(
-            Invocation.method(#fetchProjects, []),
-            returnValue: _i8.Future<List<_i12.Project>>.value(<_i12.Project>[]),
+            Invocation.method(#register, [body]),
+            returnValue: _i8.Future<String>.value(
+              _i12.dummyValue<String>(
+                this,
+                Invocation.method(#register, [body]),
+              ),
+            ),
           )
-          as _i8.Future<List<_i12.Project>>);
+          as _i8.Future<String>);
 }

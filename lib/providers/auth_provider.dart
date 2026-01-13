@@ -1,8 +1,7 @@
-import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import '../services/api_client.dart';
 import '../services/device_info_service.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -11,31 +10,25 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _isAuthenticated;
 
   Future<bool> login(String email, String password, String host) async {
-    final uri = Uri(scheme: 'https', host: host, path: 'api/mobile/login');
+    final dio = Dio(BaseOptions(baseUrl: 'https://$host'));
+    final client = ApiClient(dio);
 
-    final deviceName = await DeviceInfoService.getDeviceName();
-
-    final response = await http.post(
-      uri,
-      body: jsonEncode({
+    try {
+      final deviceName = await DeviceInfoService.getDeviceName();
+      final token = await client.login({
         'email': email,
         'password': password,
         'device_name': deviceName,
-      }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    );
+      });
 
-    if (response.statusCode == 200) {
-      String token = response.body;
       await saveToken(token);
       _isAuthenticated = true;
       notifyListeners();
+      return true;
+    } catch (e) {
+      print('Login error: $e');
+      return false;
     }
-
-    return _isAuthenticated;
   }
 
   Future<bool> register(
@@ -53,13 +46,12 @@ class AuthProvider extends ChangeNotifier {
     String complementAddress,
     String host,
   ) async {
-    final uri = Uri(scheme: 'https', host: host, path: 'api/mobile/register');
+    final dio = Dio(BaseOptions(baseUrl: 'https://$host'));
+    final client = ApiClient(dio);
 
-    final deviceName = await DeviceInfoService.getDeviceName();
-
-    final response = await http.post(
-      uri,
-      body: jsonEncode({
+    try {
+      final deviceName = await DeviceInfoService.getDeviceName();
+      final token = await client.register({
         'email': email,
         'password': password,
         'first_name': firstName,
@@ -73,21 +65,16 @@ class AuthProvider extends ChangeNotifier {
         'country': country,
         'complement_address': complementAddress,
         'device_name': deviceName,
-      }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    );
+      });
 
-    if (response.statusCode == 200) {
-      String token = response.body;
       await saveToken(token);
       _isAuthenticated = true;
       notifyListeners();
+      return true;
+    } catch (e) {
+      print('Register error: $e');
+      return false;
     }
-
-    return _isAuthenticated;
   }
 
   Future<void> saveToken(String token) async {

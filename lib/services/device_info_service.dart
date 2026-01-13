@@ -1,3 +1,5 @@
+// ignore_for_file: dead_code
+
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 
@@ -11,7 +13,9 @@ class DeviceInfoService {
         final info = await _deviceInfo.androidInfo;
         final manufacturer = info.manufacturer ?? '';
         final model = info.model ?? info.device ?? '';
-        return ('$manufacturer $model').trim().isNotEmpty ? ('$manufacturer $model').trim() : 'Android device';
+        return ('$manufacturer $model').trim().isNotEmpty
+            ? ('$manufacturer $model').trim()
+            : 'Android device';
       } else if (Platform.isIOS) {
         final info = await _deviceInfo.iosInfo;
         return info.name ?? info.utsname.machine ?? info.model ?? 'iOS device';
