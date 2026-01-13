@@ -33,16 +33,15 @@ class EventListSection extends StatelessWidget {
             ),
           ),
         ),
-        // Utilisation d'une Grille au lieu d'une Liste
         GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            childAspectRatio: 1.20, // Je remets 0.75 pour avoir de la hauteur pour le contenu
-            crossAxisSpacing: 16, // Espace horizontal entre les cartes
-            mainAxisSpacing: 16,  // Espace vertical entre les cartes
+            childAspectRatio: 1.20,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
           ),
           itemCount: events.length,
           itemBuilder: (context, index) {

@@ -53,8 +53,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    // --- MODIFICATION : Texte en blanc pour le contraste ---
-                    child: const Text('Accueil',
+                    child: const Text('Prochains Événements',
                         style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
                   const SizedBox(width: 30),
@@ -67,7 +66,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    // --- MODIFICATION : Texte en blanc pour le contraste ---
                     child: const Text('Club',
                         style: TextStyle(color: Colors.white, fontSize: 14)),
                   ),
@@ -80,7 +78,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               // MODE PAYSAGE
               if (isLoggedIn) ...[
                 IconButton(
-                  icon: const Icon(Icons.person), // La couleur s'adapte au thème de l'AppBar
+                  icon: const Icon(Icons.person),
                   onPressed: () {},
                   tooltip: 'Mon Profil',
                 ),
@@ -111,7 +109,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
             ] else ...[
               // MODE PORTRAIT
               PopupMenuButton<String>(
-                icon: const Icon(Icons.account_circle, size: 28), // La couleur s'adapte
+                icon: const Icon(Icons.account_circle, size: 28),
                 onSelected: (value) {
                   switch (value) {
                     case 'login':

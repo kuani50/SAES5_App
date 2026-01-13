@@ -7,7 +7,8 @@ final List<EventModel> dummyEvents = [
       clubName: "Le Club De Caen",
       location: "Clécy, 14",
       date: "12 Octobre 2025",
-      status: "Inscriptions ouvertes",
+      status: "Inscription ouverte",
+      raidState: "Raid à venir",
       courses: [
         CourseModel(
           name: "Parcours Aventure",
@@ -15,19 +16,14 @@ final List<EventModel> dummyEvents = [
           teamSize: "Équipe de 2 à 4",
           difficulty: "Expert",
         ),
-        CourseModel(
-          name: "Parcours Sportif",
-          distance: "25km",
-          teamSize: "Équipe de 2",
-          difficulty: "Confirmé",
-        ),
       ]),
   EventModel(
       title: "Raid Urbain Caen",
-      clubName: "ALBE Orientation", // J'ai corrigé pour correspondre au club ALBE
+      clubName: "ALBE Orientation",
       location: "Caen, 14",
       date: "15 Nov 2025",
-      status: "Inscriptions ouvertes",
+      status: "Inscription ouverte",
+      raidState: "Raid à venir",
       courses: [
         CourseModel(
           name: "Parcours Découverte",
@@ -41,27 +37,23 @@ final List<EventModel> dummyEvents = [
     clubName: "Vikings 76",
     location: "Rouen, 76",
     date: "20 Dec",
-    status: "Bientôt",
+    status: "À partir du 01/12",
+    raidState: "Raid à venir",
   ),
   EventModel(
-    title: "Trail des Forêts",
+    title: "Entraînement Forêt",
     clubName: "ASL Condé",
     location: "Condé-sur-Noireau",
     date: "05 Fév",
-    status: "Inscriptions ouvertes",
+    status: "Complet",
+    raidState: "En cours",
   ),
   EventModel(
     title: "Challenge Orientation 14",
     clubName: "CDCO 14",
     location: "Falaise, 14",
     date: "12 Mars",
-    status: "Bientôt",
-  ),
-  EventModel(
-    title: "Raid des Plages",
-    clubName: "Club Orientation Mer",
-    location: "Ouistreham, 14",
-    date: "25 Juin",
-    status: "Fermé",
+    status: "Complet",
+    raidState: "Terminé",
   ),
 ];
