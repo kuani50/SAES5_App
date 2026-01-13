@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saps5app/screens/auth_screen.dart';
+import 'services/auth.dart';
 import 'debug/my_http_overrides.dart';
 import 'models/project.dart';
 import 'providers/project_provider.dart';
@@ -14,7 +16,12 @@ void main() {
   if (kDebugMode) {
     HttpOverrides.global = MyHttpOverrides();
   }
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+        create: (BuildContext context) => AuthProvider(),
+        child: MyApp(),
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -56,5 +63,11 @@ final GoRouter _router = GoRouter(
         return DetailScreen(project: project);
       },
     ),
+    GoRoute(
+        path: '/login',
+        builder: (context, state) {
+          return AuthScreen();
+        }
+    )
   ],
 );

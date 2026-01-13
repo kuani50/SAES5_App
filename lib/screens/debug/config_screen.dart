@@ -40,7 +40,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     final url = _urlController.text.trim();
     if (url.isNotEmpty) {
       context.read<ProjectProvider>().setBaseUrl(url);
-      context.go('/home');
+      context.go('/login');
     }
   }
 

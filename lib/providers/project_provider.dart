@@ -4,7 +4,7 @@ import '../models/project.dart';
 import '../services/api_service.dart';
 
 class ProjectProvider with ChangeNotifier {
-  String _baseUrl = 'https://sae.bananacloud.tech';
+  String _baseUrl = 'feat-auth.sae.bananacloud.tech';
   late ApiService _apiService;
   
   List<Project> _projects = [];
@@ -42,6 +42,10 @@ class ProjectProvider with ChangeNotifier {
       _apiService = ApiService(baseUrl: _baseUrl);
       notifyListeners();
     }
+  }
+
+  String getBaseUrl() {
+    return _baseUrl;
   }
 
   Future<void> fetchProjects() async {
