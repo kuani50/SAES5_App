@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/project_provider.dart';
-import '../services/auth.dart';
+import '../providers/auth_provider.dart';
 
 class RegisterForm extends StatefulWidget {
-  const RegisterForm({
-    super.key,
-  });
+  const RegisterForm({super.key});
 
   @override
   RegisterFormState createState() => RegisterFormState();
@@ -32,12 +30,26 @@ class RegisterFormState extends State<RegisterForm> {
     final provider = context.read<ProjectProvider>();
     final url = provider.getBaseUrl();
 
-    print(url);
     setState(() {
       errorMessage = '';
     });
 
-    bool result = await Provider.of<AuthProvider>(context, listen: false).register(email, password, firstName, lastName, gender, phone, birthDate, address, postalCode, city, country, complementAddress, url);
+    bool result = await Provider.of<AuthProvider>(context, listen: false)
+        .register(
+          email,
+          password,
+          firstName,
+          lastName,
+          gender,
+          phone,
+          birthDate,
+          address,
+          postalCode,
+          city,
+          country,
+          complementAddress,
+          url,
+        );
     if (result == false) {
       setState(() {
         errorMessage = 'There was a problem with your registration.';
@@ -58,7 +70,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Email',
                 icon: Icon(Icons.mail),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter an email address' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter an email address' : null,
               onSaved: (value) => email = value!,
             ),
             const SizedBox(height: 16),
@@ -68,7 +81,8 @@ class RegisterFormState extends State<RegisterForm> {
                 icon: Icon(Icons.lock),
               ),
               obscureText: true,
-              validator: (value) => value!.isEmpty ? 'Please enter a password' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a password' : null,
               onSaved: (value) => password = value!,
             ),
             const SizedBox(height: 16),
@@ -77,7 +91,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'First name',
                 icon: Icon(Icons.person),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a first name' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a first name' : null,
               onSaved: (value) => firstName = value!,
             ),
             const SizedBox(height: 16),
@@ -86,7 +101,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Last name',
                 icon: Icon(Icons.person_outline),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a last name' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a last name' : null,
               onSaved: (value) => lastName = value!,
             ),
             const SizedBox(height: 16),
@@ -95,7 +111,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Gender',
                 icon: Icon(Icons.wc),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a gender' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a gender' : null,
               onSaved: (value) => gender = value!,
             ),
             const SizedBox(height: 16),
@@ -104,7 +121,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Phone',
                 icon: Icon(Icons.phone),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a phone number' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a phone number' : null,
               onSaved: (value) => phone = value!,
             ),
             const SizedBox(height: 16),
@@ -113,7 +131,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Address',
                 icon: Icon(Icons.home),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter an address' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter an address' : null,
               onSaved: (value) => address = value!,
             ),
             const SizedBox(height: 16),
@@ -130,7 +149,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Postal code',
                 icon: Icon(Icons.markunread_mailbox),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a postal code' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a postal code' : null,
               onSaved: (value) => postalCode = value!,
             ),
             const SizedBox(height: 16),
@@ -139,7 +159,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'City',
                 icon: Icon(Icons.location_city),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a city' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a city' : null,
               onSaved: (value) => city = value!,
             ),
             const SizedBox(height: 16),
@@ -148,7 +169,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Country',
                 icon: Icon(Icons.flag),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a country' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a country' : null,
               onSaved: (value) => country = value!,
             ),
             const SizedBox(height: 16),
@@ -157,7 +179,8 @@ class RegisterFormState extends State<RegisterForm> {
                 hintText: 'Date de naissance',
                 icon: Icon(Icons.flag),
               ),
-              validator: (value) => value!.isEmpty ? 'Please enter a birth date' : null,
+              validator: (value) =>
+                  value!.isEmpty ? 'Please enter a birth date' : null,
               onSaved: (value) => birthDate = value!,
             ),
             Padding(

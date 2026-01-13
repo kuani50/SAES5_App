@@ -57,8 +57,31 @@ class _HomeScreenState extends State<HomeScreen> {
           return RefreshIndicator(
             onRefresh: () => provider.fetchProjects(),
             child: ListView.builder(
-              itemCount: provider.projects.length,
+              itemCount: provider.projects.length + 1,
               itemBuilder: (context, index) {
+                if (index == provider.projects.length) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 32.0,
+                      horizontal: 16.0,
+                    ),
+                    child: ElevatedButton.icon(
+                      onPressed: () => context.push('/login'),
+                      icon: const Icon(Icons.login),
+                      label: const Text('Se connecter'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(16.0),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                  );
+                }
+
                 final project = provider.projects[index];
                 final imageUrl = project.getFullImageUrl(provider.baseUrl);
 
@@ -79,13 +102,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: CachedNetworkImage(
                               imageUrl: imageUrl,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Center(
+                              placeholder: (context, url) => const Center(
                                 child: CircularProgressIndicator(),
                               ),
                               errorWidget: (context, url, error) => Container(
-                                    color: Colors.grey,
-                                    child: const Icon(Icons.error),
-                                  ),
+                                color: Colors.grey,
+                                child: const Icon(Icons.error),
+                              ),
                             ),
                           ),
                         Padding(

@@ -4,7 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 class DeviceInfoService {
   static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 
-  /// Retourne un nom lisible du device, ou 'unknown' en cas d'erreur.
+  /// Returns the device name or 'unknown' if it cannot be determined.
   static Future<String> getDeviceName() async {
     try {
       if (Platform.isAndroid) {

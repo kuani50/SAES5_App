@@ -19,7 +19,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     // Load the current URL from provider into the controller
     final provider = context.read<ProjectProvider>();
     _urlController.text = provider.baseUrl;
-    
+
     // Attempt to load saved URL from disk
     provider.loadSavedUrl().then((_) {
       if (mounted) {
@@ -40,7 +40,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     final url = _urlController.text.trim();
     if (url.isNotEmpty) {
       context.read<ProjectProvider>().setBaseUrl(url);
-      context.go('/login');
+      context.go('/home');
     }
   }
 
