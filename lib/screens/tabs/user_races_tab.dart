@@ -294,13 +294,13 @@ class _RegistrationCard extends StatelessWidget {
 
     final gererDocsBtn = ElevatedButton(
       onPressed: () {
-        // Navigate to Event Registration Step 4 (Docs)
-        // Pass event name and initialStep=4
+        // Navigate to Raid Registration Step 4 (Docs)
+        // Pass raid name and initialStep=4
         context.go(
           Uri(
-            path: '/event-registration',
+            path: '/raid-registration',
             queryParameters: {
-              'eventName': registration.eventName,
+              'raidName': registration.eventName,
               'initialStep': '4',
             },
           ).toString(),

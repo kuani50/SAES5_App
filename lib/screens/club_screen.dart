@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/club_model.dart';
-import '../models/event_model.dart';
+import '../models/raid_model.dart';
 import '../data/club_data.dart';
 import '../widgets/club_card.dart';
 import '../widgets/header_home_page.dart';
 
 class ClubScreen extends StatelessWidget {
-  final List<EventModel> allEvents;
+  final List<RaidModel>
+  allEvents; // name passed from main is 'allEvents' but type is now RaidModel
 
   const ClubScreen({super.key, required this.allEvents});
 

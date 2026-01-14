@@ -118,11 +118,11 @@ class CourseActions extends StatelessWidget {
             final isLoggedIn = context.read<ProjectProvider>().isLoggedIn;
             if (isLoggedIn) {
               context.push(
-                '/event-registration?eventName=${Uri.encodeComponent(course.name)}',
+                '/raid-registration?raidName=${Uri.encodeComponent(course.name)}',
               );
             } else {
               context.push(
-                '/login?redirect=/event-registration?eventName=${Uri.encodeComponent(course.name)}',
+                '/login?redirect=/raid-registration?raidName=${Uri.encodeComponent(course.name)}',
               );
             }
           },

@@ -1,6 +1,6 @@
 import 'course_model.dart';
 
-class EventModel {
+class RaidModel {
   final String title;
   final String clubName;
   final String location;
@@ -11,7 +11,7 @@ class EventModel {
   final String? imageUrl;
   final List<CourseModel> courses;
 
-  EventModel({
+  RaidModel({
     required this.title,
     required this.clubName,
     required this.location,

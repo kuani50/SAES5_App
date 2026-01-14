@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/event_registration/registration_stepper.dart';
-import '../widgets/event_registration/team_creation_step.dart';
-import '../widgets/event_registration/teammates_step.dart';
-import '../widgets/event_registration/docs_step.dart';
-import '../widgets/event_registration/validation_step.dart';
+import '../widgets/raid_registration/registration_stepper.dart';
+import '../widgets/raid_registration/team_creation_step.dart';
+import '../widgets/raid_registration/teammates_step.dart';
+import '../widgets/raid_registration/docs_step.dart';
+import '../widgets/raid_registration/validation_step.dart';
 
-class EventRegistrationScreen extends StatefulWidget {
-  final String? eventName;
+class RaidRegistrationScreen extends StatefulWidget {
+  final String? raidName; // Renamed from eventName
   final int initialStep;
 
-  const EventRegistrationScreen({
+  const RaidRegistrationScreen({
     super.key,
-    this.eventName,
+    this.raidName,
     this.initialStep = 2,
   });
 
   @override
-  State<EventRegistrationScreen> createState() =>
-      _EventRegistrationScreenState();
+  State<RaidRegistrationScreen> createState() => _RaidRegistrationScreenState();
 }
 
-class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
+class _RaidRegistrationScreenState extends State<RaidRegistrationScreen> {
   late int _currentStep;
   final _teamNameController = TextEditingController();
 
@@ -59,7 +58,7 @@ class _EventRegistrationScreenState extends State<EventRegistrationScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          "Inscription : ${widget.eventName ?? 'Raid Urbain Caen'}",
+          "Inscription : ${widget.raidName ?? 'Raid Urbain Caen'}",
           style: const TextStyle(
             color: Colors.orange,
             fontWeight: FontWeight.bold,

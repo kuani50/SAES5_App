@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/event_model.dart';
+import '../models/raid_model.dart';
 
-class EventCard extends StatelessWidget {
-  final EventModel event;
+class RaidCard extends StatelessWidget {
+  final RaidModel raid; // Renamed from event
   final VoidCallback? onTap;
 
-  const EventCard({super.key, required this.event, this.onTap});
+  const RaidCard({super.key, required this.raid, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +28,8 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            EventCardImage(imageUrl: event.imageUrl),
-            Expanded(child: EventCardContent(event: event)),
+            RaidCardImage(imageUrl: raid.imageUrl),
+            Expanded(child: RaidCardContent(raid: raid)),
           ],
         ),
       ),
@@ -38,10 +38,10 @@ class EventCard extends StatelessWidget {
 }
 
 // --- Sub-component: Image ---
-class EventCardImage extends StatelessWidget {
+class RaidCardImage extends StatelessWidget {
   final String? imageUrl;
 
-  const EventCardImage({super.key, this.imageUrl});
+  const RaidCardImage({super.key, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +69,10 @@ class EventCardImage extends StatelessWidget {
 }
 
 // --- Sub-component: Text Content ---
-class EventCardContent extends StatelessWidget {
-  final EventModel event;
+class RaidCardContent extends StatelessWidget {
+  final RaidModel raid;
 
-  const EventCardContent({super.key, required this.event});
+  const RaidCardContent({super.key, required this.raid});
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +85,9 @@ class EventCardContent extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _StatusBadge(status: event.status),
+              _StatusBadge(status: raid.status),
               Text(
-                event.raidState,
+                raid.raidState,
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.grey[500],
@@ -98,7 +98,7 @@ class EventCardContent extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            event.title,
+            raid.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -108,15 +108,15 @@ class EventCardContent extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  event.clubName,
+                  raid.clubName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
                 ),
               ),
-              if (event.date.isNotEmpty)
+              if (raid.date.isNotEmpty)
                 Text(
-                  event.date,
+                  raid.date,
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -131,13 +131,13 @@ class EventCardContent extends StatelessWidget {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
-                  event.location,
+                  raid.location,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
                 ),
               ),
-              if (event.remainingTeams != null) ...[
+              if (raid.remainingTeams != null) ...[
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -155,7 +155,7 @@ class EventCardContent extends StatelessWidget {
                       Icon(Icons.group, size: 10, color: Colors.red.shade700),
                       const SizedBox(width: 4),
                       Text(
-                        'Plus que ${event.remainingTeams} équipes',
+                        'Plus que ${raid.remainingTeams} équipes',
                         style: TextStyle(
                           fontSize: 10,
                           color: Colors.red.shade700,

@@ -1,8 +1,8 @@
-import '../models/event_model.dart';
+import '../models/raid_model.dart';
 import '../models/course_model.dart';
 
-final List<EventModel> allEvents = [
-  EventModel(
+final List<RaidModel> allRaids = [
+  RaidModel(
     title: "Raid Suisse Normande",
     clubName: "Le Club De Caen",
     location: "Clécy, 14",
@@ -19,7 +19,7 @@ final List<EventModel> allEvents = [
       ),
     ],
   ),
-  EventModel(
+  RaidModel(
     title: "Raid Urbain Caen",
     clubName: "ALBE Orientation",
     location: "Caen, 14",
@@ -35,7 +35,7 @@ final List<EventModel> allEvents = [
       ),
     ],
   ),
-  EventModel(
+  RaidModel(
     title: "Course d'Orientation Nocturne",
     clubName: "Vikings 76",
     location: "Rouen, 76",
@@ -43,7 +43,7 @@ final List<EventModel> allEvents = [
     status: "À partir du 01/12",
     raidState: "Raid à venir",
   ),
-  EventModel(
+  RaidModel(
     title: "Entraînement Forêt",
     clubName: "ASL Condé",
     location: "Condé-sur-Noireau",
@@ -51,7 +51,7 @@ final List<EventModel> allEvents = [
     status: "Complet",
     raidState: "En cours",
   ),
-  EventModel(
+  RaidModel(
     title: "Challenge Orientation 14",
     clubName: "CDCO 14",
     location: "Falaise, 14",

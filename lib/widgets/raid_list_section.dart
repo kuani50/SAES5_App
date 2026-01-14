@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../models/event_model.dart';
-import 'event_card.dart';
+import '../models/raid_model.dart';
+import 'raid_card.dart';
 
-class EventListSection extends StatelessWidget {
-  final List<EventModel> events;
+class RaidListSection extends StatelessWidget {
+  final List<RaidModel> raids;
 
-  const EventListSection({super.key, required this.events});
+  const RaidListSection({super.key, required this.raids});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class EventListSection extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
-            'Tous les événements',
+            'Tous les raids', // Updated text slightly to match
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -38,13 +38,13 @@ class EventListSection extends StatelessWidget {
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
           ),
-          itemCount: events.length,
+          itemCount: raids.length,
           itemBuilder: (context, index) {
-            final event = events[index];
-            return EventCard(
-              event: event,
+            final raid = raids[index];
+            return RaidCard(
+              raid: raid,
               onTap: () {
-                context.push('/details', extra: event);
+                context.push('/details', extra: raid);
               },
             );
           },

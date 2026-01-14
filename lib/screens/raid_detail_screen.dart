@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../models/event_model.dart';
+import '../models/raid_model.dart';
 import '../widgets/course_card.dart';
 
-class EventDetailScreen extends StatelessWidget {
-  final EventModel event;
+class RaidDetailScreen extends StatelessWidget {
+  final RaidModel raid; // Renamed from event
 
-  const EventDetailScreen({super.key, required this.event});
+  const RaidDetailScreen({super.key, required this.raid});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +35,8 @@ class EventDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header sub-component
-            EventDetailHeader(event: event),
-            
+            RaidDetailHeader(raid: raid),
+
             const SizedBox(height: 40),
             const Text(
               "Les Courses",
@@ -47,15 +47,15 @@ class EventDetailScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Course List
-            if (event.courses.isEmpty)
+            if (raid.courses.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Text("Aucune course disponible pour le moment."),
               )
             else
-              ...event.courses.map((course) => CourseCard(course: course)),
+              ...raid.courses.map((course) => CourseCard(course: course)),
           ],
         ),
       ),
@@ -64,10 +64,10 @@ class EventDetailScreen extends StatelessWidget {
 }
 
 // --- Detail Header Sub-component ---
-class EventDetailHeader extends StatelessWidget {
-  final EventModel event;
+class RaidDetailHeader extends StatelessWidget {
+  final RaidModel raid;
 
-  const EventDetailHeader({super.key, required this.event});
+  const RaidDetailHeader({super.key, required this.raid});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class EventDetailHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          event.title,
+          raid.title,
           style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.w900,
@@ -87,10 +87,10 @@ class EventDetailHeader extends StatelessWidget {
           spacing: 16,
           runSpacing: 8,
           children: [
-            _InfoItem(icon: Icons.calendar_today, text: event.date),
-            _InfoItem(icon: Icons.location_on, text: event.location),
+            _InfoItem(icon: Icons.calendar_today, text: raid.date),
+            _InfoItem(icon: Icons.location_on, text: raid.location),
             Text(
-              "(${event.clubName})",
+              "(${raid.clubName})",
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,

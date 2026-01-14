@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'debug/my_http_overrides.dart';
 import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
-import 'screens/event_detail_screen.dart';
+import 'screens/raid_detail_screen.dart'; // Renamed from event_detail_screen
 import 'screens/home_screen.dart';
 import 'screens/club_screen.dart';
 import 'screens/club_detail_screen.dart';
@@ -14,10 +14,10 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/user_races_screen.dart';
 import 'screens/manage_team_screen.dart';
-import 'models/event_model.dart';
+import 'models/raid_model.dart'; // Renamed from event_model
 import 'models/club_model.dart';
-import 'data/event_data.dart';
-import 'screens/event_registration_screen.dart';
+import 'data/raid_data.dart'; // Renamed from event_data
+import 'screens/raid_registration_screen.dart'; // Renamed from event_registration_screen
 
 void main() {
   if (kDebugMode) {
@@ -54,13 +54,14 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/details',
       builder: (context, state) {
-        final event = state.extra as EventModel;
-        return EventDetailScreen(event: event);
+        final raid = state.extra as RaidModel;
+        return RaidDetailScreen(raid: raid);
       },
     ),
     GoRoute(
       path: '/clubs',
-      builder: (context, state) => ClubScreen(allEvents: allEvents),
+      builder: (context, state) =>
+          ClubScreen(allEvents: allRaids), // allRaids renamed from allEvents
     ),
     GoRoute(
       path: '/club-details',
@@ -68,7 +69,7 @@ final GoRouter _router = GoRouter(
         final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
         return ClubDetailScreen(
           club: extra['club'] as ClubModel,
-          allEvents: extra['events'] as List<EventModel>,
+          allEvents: extra['events'] as List<RaidModel>,
         );
       },
     ),
@@ -83,14 +84,14 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const UserRacesScreen(),
     ),
     GoRoute(
-      path: '/event-registration',
+      path: '/raid-registration', // Renamed from event-registration
       builder: (context, state) {
-        final eventName = state.uri.queryParameters['eventName'];
+        final raidName = state.uri.queryParameters['raidName'];
         final initialStepStr = state.uri.queryParameters['initialStep'];
         final initialStep = int.tryParse(initialStepStr ?? '') ?? 2;
 
-        return EventRegistrationScreen(
-          eventName: eventName,
+        return RaidRegistrationScreen(
+          raidName: raidName,
           initialStep: initialStep,
         );
       },
