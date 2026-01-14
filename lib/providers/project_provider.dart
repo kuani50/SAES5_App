@@ -23,7 +23,6 @@ class ProjectProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // On utilise l'apiClient fourni par ApiProvider
       _projects = await _apiProvider.apiClient.getProjects();
     } catch (e) {
       _projects = [];
