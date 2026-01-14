@@ -234,6 +234,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     validator: (value) {
                       if (value == null || value.isEmpty) return 'Le mot de passe est requis.';
                       if (value.length < 8) return 'Le mot de passe doit faire au moins 8 caractères.';
+                      final hasUppercase = RegExp(r'[A-Z]').hasMatch(value);
+                      final hasLowercase = RegExp(r'[a-z]').hasMatch(value);
+                      final hasDigit = RegExp(r'\d').hasMatch(value);
+                      final hasSpecialChar = RegExp(r'[^A-Za-z0-9]').hasMatch(value);
+                      if (!hasUppercase || !hasLowercase || !hasDigit || !hasSpecialChar) {
+                        return 'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.';
+                      }
                       return null;
                     },
                   ),
