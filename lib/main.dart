@@ -9,9 +9,17 @@ import 'debug/my_http_overrides.dart';
 import 'models/project.dart';
 import 'providers/api_provider.dart';
 import 'package:saps5app/providers/project_provider.dart';
+import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
-import 'screens/detail_screen.dart';
+import 'screens/event_detail_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/club_screen.dart';
+import 'screens/club_detail_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/register_screen.dart';
+import 'models/event_model.dart';
+import 'models/club_model.dart';
+import 'data/dummy_data.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -35,9 +43,16 @@ class MyApp extends StatelessWidget {
           create: (context) => ProjectProvider(context.read<ApiProvider>()),
           update: (context, apiProvider, previousProject) =>
               ProjectProvider(apiProvider),
-        ),
+        ChangeNotifierProvider(create: (_) => ProjectProvider()),
       ],
-      child: MaterialApp.router(title: "Orient'Express", routerConfig: _router),
+      child: MaterialApp.router(
+        title: 'Orient Express',
+        theme: ThemeData(
+          // Using deepPurple as requested
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+      ]
     );
   }
 }
@@ -53,8 +68,8 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/details',
       builder: (context, state) {
-        final project = state.extra as Project;
-        return DetailScreen(project: project);
+        final event = state.extra as EventModel;
+        return EventDetailScreen(event: event);
       },
     ),
     GoRoute(
@@ -62,6 +77,27 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         return const AuthScreen();
       },
+    ),
+      path: '/clubs',
+      builder: (context, state) => ClubScreen(allEvents: dummyEvents),
+    ),
+    GoRoute(
+      path: '/club-details',
+      builder: (context, state) {
+        final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
+        return ClubDetailScreen(
+          club: extra['club'] as ClubModel,
+          allEvents: extra['events'] as List<EventModel>,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
     ),
   ],
 );
