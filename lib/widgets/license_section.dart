@@ -97,7 +97,7 @@ class _LicenseSectionState extends State<LicenseSection> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.orange : Colors.grey.shade600,
+              color: isSelected ? Colors.white : Colors.grey.shade600,
             ),
           ),
         ),
