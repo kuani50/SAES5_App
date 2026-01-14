@@ -9,9 +9,9 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Controller to get values (simulated here)
-    final emailController = TextEditingController(text: "thomas.dupont@email.com");
-    final passwordController = TextEditingController(text: "password123");
+    // Controllers to get values
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
 
     return Scaffold(
       backgroundColor: Colors.white,
