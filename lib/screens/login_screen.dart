@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Connexion",
                   style: TextStyle(
                     fontSize: 32,
-                    fontWeight: FontWeight.w900, // Very bold like image
+                    fontWeight: FontWeight.w900,
                     color: Color(0xFF0F172A),
                   ),
                 ),
