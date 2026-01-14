@@ -16,7 +16,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // --- English Comment: Get current route to highlight the active tab. ---
+    // Get current route to highlight the active tab. ---
     final String currentPath = GoRouterState.of(context).uri.path;
     final bool isRaidsActive = currentPath == '/home' || currentPath.startsWith('/details');
     final bool isClubsActive = currentPath.startsWith('/clubs');
