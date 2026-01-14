@@ -38,8 +38,6 @@ class EventDetailScreen extends StatelessWidget {
             EventDetailHeader(event: event),
             
             const SizedBox(height: 40),
-            
-            // "Courses" Title Section
             const Text(
               "Les Courses",
               style: TextStyle(

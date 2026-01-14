@@ -7,7 +7,7 @@ import '../widgets/header_home_page.dart';
 
 class ClubDetailScreen extends StatelessWidget {
   final ClubModel club;
-  final List<EventModel> allEvents; // Passing all events to filter
+  final List<EventModel> allEvents;
 
   const ClubDetailScreen({
     super.key,
@@ -42,8 +42,6 @@ class ClubDetailScreen extends StatelessWidget {
             // Club Infos
             _ClubDetailInfo(club: club),
             const SizedBox(height: 40),
-
-            // Section Title
             const Text(
               "Raids organisés par ce club",
               style: TextStyle(

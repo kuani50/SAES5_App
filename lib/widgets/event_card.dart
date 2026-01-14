@@ -32,10 +32,7 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Sub-component
             EventCardImage(imageUrl: event.imageUrl),
-            
-            // Content Sub-component
             Expanded(
               child: EventCardContent(event: event),
             ),
@@ -55,7 +52,7 @@ class EventCardImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120, // Fixed height for image part
+      height: 120, 
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.grey[200],

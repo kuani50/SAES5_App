@@ -9,7 +9,6 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Detect if screen is small (Mobile)
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Container(

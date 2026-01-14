@@ -17,8 +17,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
     final bool isRaidsActive =
         currentPath == '/home' || currentPath.startsWith('/details');
     final bool isClubsActive = currentPath.startsWith('/clubs');
-
-    // Orientation detection
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -69,7 +67,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 30), // Larger space for clarity
+                  const SizedBox(width: 30),
                   TextButton(
                     onPressed: () {
                       context.go('/clubs');
@@ -122,7 +120,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
             if (isLandscape) ...[
               // LANDSCAPE MODE: Everything visible
               if (isLoggedIn) ...[
-                // Logged in (Landscape)
                 IconButton(
                   icon: const Icon(Icons.person, color: Colors.white),
                   onPressed: () {},
@@ -166,7 +163,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   color: Colors.white,
                 ),
                 onSelected: (value) {
-                  // Handle menu clicks
                   switch (value) {
                     case 'login':
                       context.go('/login');

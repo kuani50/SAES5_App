@@ -28,7 +28,6 @@ class _UserRacesScreenState extends State<UserRacesScreen> {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Sidebar (Desktop)
                 Container(
                   width: 250,
                   color: const Color(0xFF0F172A),
@@ -62,8 +61,6 @@ class _UserRacesScreenState extends State<UserRacesScreen> {
                     ],
                   ),
                 ),
-
-                // Main Content
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(32.0),
@@ -73,7 +70,6 @@ class _UserRacesScreenState extends State<UserRacesScreen> {
               ],
             );
           } else {
-            // Mobile Layout
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: _buildContent(),

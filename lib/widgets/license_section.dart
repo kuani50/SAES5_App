@@ -28,8 +28,6 @@ class _LicenseSectionState extends State<LicenseSection> {
           ),
         ),
         const SizedBox(height: 12),
-        
-        // Using a Row with two custom selectable buttons instead of RadioListTile
         Row(
           children: [
             Expanded(

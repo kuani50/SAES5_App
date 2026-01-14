@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => ProjectProvider())],
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         title: 'Orient Express',
         theme: ThemeData(
           // Using deepPurple as requested

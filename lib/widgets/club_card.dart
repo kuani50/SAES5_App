@@ -29,18 +29,13 @@ class ClubCard extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        // Make the column take minimum size.
         mainAxisSize: MainAxisSize.min,
         children: [
           // Header (Logo + Name)
           ClubCardHeader(club: club),
           const SizedBox(height: 16),
-          
-          // Description
           ClubCardDescription(description: club.description),
           const SizedBox(height: 24),
-
-          // Actions
           ClubCardActions(onTap: onViewRaids),
         ],
       ),
