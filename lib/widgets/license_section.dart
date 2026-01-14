@@ -47,7 +47,6 @@ class LicenseSection extends StatelessWidget {
           ],
         ),
 
-        // Dynamic field display
         if (isLicensed == true) ...[
           const SizedBox(height: 24),
           CustomTextField(

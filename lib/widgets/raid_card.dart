@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/raid_model.dart';
 
 class RaidCard extends StatelessWidget {
-  final RaidModel raid; // Renamed from event
+  final RaidModel raid; 
   final VoidCallback? onTap;
 
   const RaidCard({super.key, required this.raid, this.onTap});

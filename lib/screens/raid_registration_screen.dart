@@ -7,7 +7,7 @@ import '../widgets/raid_registration/docs_step.dart';
 import '../widgets/raid_registration/validation_step.dart';
 
 class RaidRegistrationScreen extends StatefulWidget {
-  final String? raidName; // Renamed from eventName
+  final String? raidName; 
   final int initialStep;
 
   const RaidRegistrationScreen({
@@ -24,13 +24,11 @@ class _RaidRegistrationScreenState extends State<RaidRegistrationScreen> {
   late int _currentStep;
   final _teamNameController = TextEditingController();
 
-  // Mock state for Step 4 (Docs)
   bool _marieDocUploaded = false;
 
   @override
   void initState() {
     super.initState();
-    // Ensure initialStep is valid
     _currentStep = widget.initialStep.clamp(1, 5);
   }
 

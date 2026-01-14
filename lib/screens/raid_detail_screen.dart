@@ -4,7 +4,7 @@ import '../models/raid_model.dart';
 import '../widgets/course_card.dart';
 
 class RaidDetailScreen extends StatelessWidget {
-  final RaidModel raid; // Renamed from event
+  final RaidModel raid; 
 
   const RaidDetailScreen({super.key, required this.raid});
 

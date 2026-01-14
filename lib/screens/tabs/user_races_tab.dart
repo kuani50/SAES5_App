@@ -5,8 +5,8 @@ class _UserRegistrationMock {
   final String eventName;
   final String courseName;
   final String dateAndTeam;
-  final List<String> roles; // e.g. ["Participant", "Responsable"]
-  final bool isComplete; // true if all docs returned etc.
+  final List<String> roles; 
+  final bool isComplete; 
   final bool isMissingDocs;
 
   _UserRegistrationMock({
@@ -295,7 +295,6 @@ class _RegistrationCard extends StatelessWidget {
     final gererDocsBtn = ElevatedButton(
       onPressed: () {
         // Navigate to Raid Registration Step 4 (Docs)
-        // Pass raid name and initialStep=4
         context.go(
           Uri(
             path: '/raid-registration',

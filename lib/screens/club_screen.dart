@@ -8,7 +8,7 @@ import '../widgets/header_home_page.dart';
 
 class ClubScreen extends StatelessWidget {
   final List<RaidModel>
-  allEvents; // name passed from main is 'allEvents' but type is now RaidModel
+  allEvents; 
 
   const ClubScreen({super.key, required this.allEvents});
 
@@ -44,8 +44,7 @@ class ClubScreen extends StatelessWidget {
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio:
-                    2.0, // adjusted aspect ratio for narrower cards
+                childAspectRatio: 2.0, 
               ),
               itemCount: clubs.length,
               itemBuilder: (context, index) {

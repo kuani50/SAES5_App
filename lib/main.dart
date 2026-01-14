@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'debug/my_http_overrides.dart';
 import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
-import 'screens/raid_detail_screen.dart'; // Renamed from event_detail_screen
+import 'screens/raid_detail_screen.dart'; 
 import 'screens/home_screen.dart';
 import 'screens/club_screen.dart';
 import 'screens/club_detail_screen.dart';
@@ -14,11 +14,10 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/user_races_screen.dart';
 import 'screens/manage_team_screen.dart';
-import 'models/raid_model.dart'; // Renamed from event_model
+import 'models/raid_model.dart'; 
 import 'models/club_model.dart';
-import 'data/raid_data.dart'; // Renamed from event_data
-import 'screens/raid_registration_screen.dart'; // Renamed from event_registration_screen
-
+import 'data/raid_data.dart';
+import 'screens/raid_registration_screen.dart'; 
 void main() {
   if (kDebugMode) {
     HttpOverrides.global = MyHttpOverrides();
@@ -61,7 +60,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/clubs',
       builder: (context, state) =>
-          ClubScreen(allEvents: allRaids), // allRaids renamed from allEvents
+          ClubScreen(allEvents: allRaids), 
     ),
     GoRoute(
       path: '/club-details',
@@ -84,7 +83,7 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const UserRacesScreen(),
     ),
     GoRoute(
-      path: '/raid-registration', // Renamed from event-registration
+      path: '/raid-registration', 
       builder: (context, state) {
         final raidName = state.uri.queryParameters['raidName'];
         final initialStepStr = state.uri.queryParameters['initialStep'];

@@ -1,4 +1,3 @@
-// Données de l'équipe
 const String teamName = "Les Gazelles";
 const String eventName = "Raid Suisse Normande 2025";
 

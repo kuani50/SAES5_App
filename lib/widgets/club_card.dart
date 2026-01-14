@@ -46,7 +46,6 @@ class ClubCardHeader extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Round Logo (Placeholder)
         Container(
           width: 48,
           height: 48,

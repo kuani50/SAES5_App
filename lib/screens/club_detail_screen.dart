@@ -41,8 +41,6 @@ class ClubDetailScreen extends StatelessWidget {
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
             ),
             const SizedBox(height: 24),
-
-            // Club Infos
             _ClubDetailInfo(club: club),
             const SizedBox(height: 40),
             const Text(

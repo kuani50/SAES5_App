@@ -5,8 +5,8 @@ class RaidModel {
   final String clubName;
   final String location;
   final String date;
-  final String status; // Registration status (Open, Full, etc.)
-  final String raidState; // Raid status (Coming, Ongoing, Finished)
+  final String status; 
+  final String raidState; 
   final int? remainingTeams;
   final String? imageUrl;
   final List<CourseModel> courses;

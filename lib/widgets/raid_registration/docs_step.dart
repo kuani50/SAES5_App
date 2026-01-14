@@ -96,7 +96,6 @@ class DocsStep extends StatelessWidget {
           ),
         ),
 
-        // Marie - Missing
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -171,7 +170,7 @@ class DocsStep extends StatelessWidget {
             ElevatedButton(
               onPressed: onNext,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange, // Changed from deepOrange
+                backgroundColor: Colors.orange, 
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
