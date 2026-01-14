@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../models/club_model.dart';
+import '../data/club_data.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/license_section.dart';
@@ -73,28 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<ClubModel> clubs = [
-      ClubModel(
-        name: "Orient'Express",
-        location: "Caen, 14",
-        description: "Club...",
-      ),
-      ClubModel(
-        name: "ALBE Orientation",
-        location: "Elbeuf, 76",
-        description: "Club...",
-      ),
-      ClubModel(
-        name: "Vikings 76",
-        location: "Rouen, 76",
-        description: "Club...",
-      ),
-      ClubModel(
-        name: "ASL Condé",
-        location: "Condé-sur-Noireau, 14",
-        description: "Club...",
-      ),
-    ];
+    final List<ClubModel> clubs = allClubs;
 
     return Scaffold(
       backgroundColor: Colors.white,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../data/login_data.dart';
+
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/header_home_page.dart';
@@ -9,10 +11,8 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController(
-      text: "thomas.dupont@email.com",
-    );
-    final passwordController = TextEditingController(text: "password123");
+    final emailController = TextEditingController(text: email);
+    final passwordController = TextEditingController(text: password);
 
     return Scaffold(
       backgroundColor: Colors.white,

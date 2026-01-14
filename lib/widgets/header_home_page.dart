@@ -31,13 +31,26 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
             // --- Made the logo tappable to navigate home. ---
             GestureDetector(
               onTap: () => context.go('/home'),
-              child: const Text(
-                "Orient'Express",
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      height: 40,
+                      width: 40,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    "Cari'Boussole",
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -116,9 +129,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
 
-            // --- Responsive Logic for Authentication on the right ---
             if (isLandscape) ...[
-              // LANDSCAPE MODE: Everything visible
               if (isLoggedIn) ...[
                 IconButton(
                   icon: const Icon(Icons.person, color: Colors.white),
@@ -131,7 +142,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
-                // Guest (Landscape)
                 ElevatedButton(
                   onPressed: () {
                     context.go('/register');

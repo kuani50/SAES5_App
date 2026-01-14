@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/header_home_page.dart';
+import '../data/team_data.dart';
 
 class ManageTeamScreen extends StatefulWidget {
   const ManageTeamScreen({super.key});
@@ -9,20 +10,7 @@ class ManageTeamScreen extends StatefulWidget {
 }
 
 class _ManageTeamScreenState extends State<ManageTeamScreen> {
-  final List<Map<String, dynamic>> _members = [
-    {
-      'name': 'Thomas Dupont',
-      'role': 'Capitaine',
-      'initials': 'TD',
-      'isCaptain': true,
-    },
-    {
-      'name': 'Marie Martin',
-      'role': null,
-      'initials': 'MM',
-      'isCaptain': false,
-    },
-  ];
+  final List<Map<String, dynamic>> _members = List.from(teamMembers);
 
   final TextEditingController _emailController = TextEditingController();
 
@@ -66,7 +54,7 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Gérer l'équipe \"Les Gazelles\"",
+                  "Gérer l'équipe \"$teamName\"",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -75,7 +63,7 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Raid Suisse Normande 2025",
+                  eventName,
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 32),

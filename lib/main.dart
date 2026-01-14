@@ -16,7 +16,7 @@ import 'screens/user_races_screen.dart';
 import 'screens/manage_team_screen.dart';
 import 'models/event_model.dart';
 import 'models/club_model.dart';
-import 'data/dummy_data.dart';
+import 'data/event_data.dart';
 
 void main() {
   if (kDebugMode) {
@@ -60,7 +60,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/clubs',
-      builder: (context, state) => ClubScreen(allEvents: dummyEvents),
+      builder: (context, state) => ClubScreen(allEvents: allEvents),
     ),
     GoRoute(
       path: '/club-details',
