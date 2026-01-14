@@ -12,36 +12,38 @@ class ClubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dummy data matching your screenshot
     final List<ClubModel> dummyClubs = [
       ClubModel(
         name: "Orient'Express",
         location: "Caen, 14",
-        description: "Club organisateur du Raid Suisse Normande.",
+        description: "Club organisateur du Raid Suisse Normande et des entraînements hebdomadaires.",
       ),
       ClubModel(
         name: "ALBE Orientation",
         location: "Elbeuf, 76",
-        description:
-            "Club de course d'orientation et de raid multisport en Seine-Maritime.",
+        description: "Club de course d'orientation et de raid multisport en Seine-Maritime.",
       ),
       ClubModel(
         name: "Vikings 76",
         location: "Rouen, 76",
-        description: "Association sportive dédiée à la course d'orientation.",
+        description: "Association sportive dédiée à la course d'orientation et aux sports nature.",
       ),
       ClubModel(
         name: "ASL Condé",
         location: "Condé-sur-Noireau, 14",
-        description: "Pratique de la course d'orientation pour tous.",
+        description: "Pratique de la course d'orientation pour tous, du loisir à la compétition.",
       ),
     ];
 
-    const double spacing = 24.0;
+    // Responsive: 1 column on mobile, 2 on tablet/landscape
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final crossAxisCount = isLandscape ? 2 : 1;
 
     return Scaffold(
       appBar: const HeaderHomePage(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(spacing),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -53,37 +55,30 @@ class ClubScreen extends StatelessWidget {
                 color: Color(0xFF0F172A),
               ),
             ),
-            const SizedBox(height: spacing),
-
-            Wrap(
-              spacing: spacing,
-              runSpacing: spacing,
-              children: dummyClubs.map((club) {
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    double screenWidth = MediaQuery.of(context).size.width;
-                    int crossAxisCount = (screenWidth > 800) ? 2 : 1;
-
-                    double cardWidth =
-                        (constraints.maxWidth -
-                            (crossAxisCount - 1) * spacing) /
-                        crossAxisCount;
-
-                    return SizedBox(
-                      width: cardWidth,
-                      child: ClubCard(
-                        club: club,
-                        onViewRaids: () {
-                          context.push(
-                            '/club-details',
-                            extra: {'club': club, 'events': allEvents},
-                          );
-                        },
-                      ),
-                    );
+            const SizedBox(height: 24),
+            
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 24,
+                mainAxisSpacing: 24,
+                childAspectRatio: 1.9,
+              ),
+              itemCount: dummyClubs.length,
+              itemBuilder: (context, index) {
+                final club = dummyClubs[index];
+                return ClubCard(
+                  club: club,
+                  onViewRaids: () {
+                    context.push('/club-details', extra: {
+                      'club': club,
+                      'events': allEvents,
+                    });
                   },
                 );
-              }).toList(),
+              },
             ),
           ],
         ),

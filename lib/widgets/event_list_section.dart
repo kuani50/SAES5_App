@@ -34,7 +34,7 @@ class EventListSection extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            childAspectRatio: 1.20,
+            childAspectRatio: 1.30,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
           ),

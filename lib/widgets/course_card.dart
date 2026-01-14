@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/course_model.dart';
 
 class CourseCard extends StatelessWidget {
@@ -8,6 +9,7 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Detect if screen is small (Mobile)
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Container(
@@ -19,7 +21,7 @@ class CourseCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black,
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -31,7 +33,7 @@ class CourseCard extends StatelessWidget {
               children: [
                 CourseInfo(course: course),
                 const SizedBox(height: 16),
-                CourseActions(isMobile: true),
+                const CourseActions(isMobile: true),
               ],
             )
           : Row(
@@ -45,6 +47,7 @@ class CourseCard extends StatelessWidget {
   }
 }
 
+// --- Sub-component: Course Info ---
 class CourseInfo extends StatelessWidget {
   final CourseModel course;
 
@@ -76,6 +79,7 @@ class CourseInfo extends StatelessWidget {
   }
 }
 
+// --- Sub-component: Action Buttons ---
 class CourseActions extends StatelessWidget {
   final bool isMobile;
 
@@ -84,12 +88,10 @@ class CourseActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: isMobile
-          ? MainAxisAlignment.start
-          : MainAxisAlignment.end,
+      mainAxisAlignment: isMobile ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () => context.go('/login'),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             side: BorderSide(color: Colors.grey.shade300),
@@ -97,14 +99,11 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text(
-            'Voir les inscrits',
-            style: TextStyle(color: Colors.black),
-          ),
+          child: const Text('Voir les inscrits', style: TextStyle(color: Colors.black)),
         ),
         const SizedBox(width: 12),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () => context.go('/login'),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
@@ -113,16 +112,14 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text(
-            "S'inscrire",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          child: const Text("S'inscrire", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );
   }
 }
 
+// --- Sub-component: Generic Tag ---
 class _CourseTag extends StatelessWidget {
   final String text;
 

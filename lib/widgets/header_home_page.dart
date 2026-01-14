@@ -5,13 +5,23 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
   final bool isLoggedIn;
   final VoidCallback? onLogout;
 
-  const HeaderHomePage({super.key, this.isLoggedIn = false, this.onLogout});
+  const HeaderHomePage({
+    super.key,
+    this.isLoggedIn = false,
+    this.onLogout,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
+    // Get current route to highlight the active tab. ---
+    final String currentPath = GoRouterState.of(context).uri.path;
+    final bool isRaidsActive = currentPath == '/home' || currentPath.startsWith('/details');
+    final bool isClubsActive = currentPath.startsWith('/clubs');
+
+    // Orientation detection
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -23,15 +33,20 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
-            const Text(
-              "Orient'Express",
-              style: TextStyle(
-                color: Colors.orange,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+            // --- Made the logo tappable to navigate home. ---
+            GestureDetector(
+              onTap: () => context.go('/home'),
+              child: const Text(
+                "Orient'Express",
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
             ),
 
+            // --- Central expanding navigation ---
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -45,9 +60,14 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text(
-                      'Prochains Événements',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    // --- Conditional styling for the active tab. ---
+                    child: Text(
+                      'Raids',
+                      style: TextStyle(
+                        color: isRaidsActive ? Colors.orange : Colors.white,
+                        fontWeight: isRaidsActive ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 30),
@@ -60,19 +80,27 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text(
+                    // --- Conditional styling for the active tab. ---
+                    child: Text(
                       'Club',
-                      style: TextStyle(color: Colors.white, fontSize: 14),
+                      style: TextStyle(
+                        color: isClubsActive ? Colors.orange : Colors.white,
+                        fontWeight: isClubsActive ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
 
+            // --- Responsive Logic for Authentication on the right ---
             if (isLandscape) ...[
+              // LANDSCAPE MODE: Everything visible
               if (isLoggedIn) ...[
+                // Logged in (Landscape)
                 IconButton(
-                  icon: const Icon(Icons.person),
+                  icon: const Icon(Icons.person, color: Colors.white),
                   onPressed: () {},
                   tooltip: 'Mon Profil',
                 ),
@@ -82,8 +110,11 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
+                // Guest (Landscape)
                 ElevatedButton(
-                  onPressed: () {}, // TODO: Inscription
+                  onPressed: () {
+                    context.go('/register');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -92,21 +123,29 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () {}, // TODO: Connexion
+                  onPressed: () {
+                    context.go('/login');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.black,
                   ),
                   child: const Text('Connexion'),
                 ),
-              ],
+              ]
             ] else ...[
+              // PORTRAIT MODE: Dropdown menu for auth
               PopupMenuButton<String>(
-                icon: const Icon(Icons.account_circle, size: 28),
+                icon: const Icon(Icons.account_circle, size: 28, color: Colors.white),
                 onSelected: (value) {
+                  // Handle menu clicks
                   switch (value) {
                     case 'login':
+                      context.go('/login');
+                      break;
                     case 'register':
+                      context.go('/register');
+                      break;
                     case 'profile':
                       break;
                     case 'logout':
@@ -123,10 +162,8 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       const PopupMenuItem(
                         value: 'logout',
-                        child: Text(
-                          'Se déconnecter',
-                          style: TextStyle(color: Colors.red),
-                        ),
+                        child: Text('Se déconnecter',
+                            style: TextStyle(color: Colors.red)),
                       ),
                     ] else ...[
                       const PopupMenuItem(

@@ -1,8 +1,8 @@
 class CourseModel {
-  final String name; // Ex: Parcours Aventure
-  final String distance; // Ex: 45km
-  final String teamSize; // Ex: Équipe de 2 à 4
-  final String difficulty; // Ex: Expert
+  final String name;
+  final String distance;
+  final String teamSize;
+  final String difficulty;
   final bool isRegistrationOpen;
 
   CourseModel({

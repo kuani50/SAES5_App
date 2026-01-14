@@ -17,7 +17,7 @@ class HeroBanner extends StatelessWidget {
       margin: const EdgeInsets.all(16.0),
       padding: const EdgeInsets.symmetric(vertical: 60.0, horizontal: 20.0),
       decoration: BoxDecoration(
-        color: Colors.grey[600],
+        color: Colors.black,
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Column(

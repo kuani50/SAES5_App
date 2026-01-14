@@ -7,7 +7,7 @@ import '../widgets/header_home_page.dart';
 
 class ClubDetailScreen extends StatelessWidget {
   final ClubModel club;
-  final List<EventModel> allEvents; // On passe tous les événements pour filtrer
+  final List<EventModel> allEvents; // Passing all events to filter
 
   const ClubDetailScreen({
     super.key,
@@ -17,7 +17,7 @@ class ClubDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Filtrage des raids organisés par ce club
+    // Filter raids organized by this club
     final clubEvents = allEvents.where((e) => e.clubName == club.name).toList();
 
     return Scaffold(
@@ -27,7 +27,7 @@ class ClubDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Bouton Retour
+            // Back Button
             TextButton.icon(
               onPressed: () => context.pop(),
               icon: const Icon(Icons.arrow_back, color: Colors.grey, size: 18),
@@ -39,11 +39,11 @@ class ClubDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Infos du Club
+            // Club Infos
             _ClubDetailInfo(club: club),
             const SizedBox(height: 40),
 
-            // Titre de la section
+            // Section Title
             const Text(
               "Raids organisés par ce club",
               style: TextStyle(
@@ -54,7 +54,7 @@ class ClubDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Grille des Raids
+            // Raids Grid
             if (clubEvents.isEmpty)
               const Center(
                 child: Padding(
@@ -67,12 +67,10 @@ class ClubDetailScreen extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  // --- MODIFICATION : Plus de cartes par ligne ---
                   crossAxisCount: MediaQuery.of(context).orientation == Orientation.landscape ? 4 : 3,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  // --- MODIFICATION : Ratio ajusté pour des cartes moins hautes ---
-                  childAspectRatio: 0.85, // Ancien : 0.75
+                  childAspectRatio: 0.85,
                 ),
                 itemCount: clubEvents.length,
                 itemBuilder: (context, index) {
@@ -89,7 +87,7 @@ class ClubDetailScreen extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Infos du Club ---
+// --- Sub-component: Club Info ---
 class _ClubDetailInfo extends StatelessWidget {
   final ClubModel club;
 
