@@ -6,10 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:saps5app/providers/auth_provider.dart';
 import 'package:saps5app/screens/auth_screen.dart';
 import 'debug/my_http_overrides.dart';
-import 'models/project.dart';
 import 'providers/api_provider.dart';
 import 'package:saps5app/providers/project_provider.dart';
-import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
 import 'screens/event_detail_screen.dart';
 import 'screens/home_screen.dart';
@@ -43,16 +41,17 @@ class MyApp extends StatelessWidget {
           create: (context) => ProjectProvider(context.read<ApiProvider>()),
           update: (context, apiProvider, previousProject) =>
               ProjectProvider(apiProvider),
-        ChangeNotifierProvider(create: (_) => ProjectProvider()),
+        ),
       ],
       child: MaterialApp.router(
+        routerConfig: _router,
         title: 'Orient Express',
         theme: ThemeData(
           // Using deepPurple as requested
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-      ]
+      ),
     );
   }
 }
@@ -78,6 +77,7 @@ final GoRouter _router = GoRouter(
         return const AuthScreen();
       },
     ),
+    GoRoute(
       path: '/clubs',
       builder: (context, state) => ClubScreen(allEvents: dummyEvents),
     ),
@@ -91,10 +91,7 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
