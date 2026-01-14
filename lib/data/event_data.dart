@@ -9,6 +9,7 @@ final List<EventModel> allEvents = [
     date: "12 Octobre 2025",
     status: "Inscription ouverte",
     raidState: "Raid à venir",
+    remainingTeams: 5,
     courses: [
       CourseModel(
         name: "Parcours Aventure",

@@ -5,11 +5,7 @@ class ClubCard extends StatelessWidget {
   final ClubModel club;
   final VoidCallback? onViewRaids;
 
-  const ClubCard({
-    super.key,
-    required this.club,
-    this.onViewRaids,
-  });
+  const ClubCard({super.key, required this.club, this.onViewRaids});
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +22,13 @@ class ClubCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Header (Logo + Name)
           ClubCardHeader(club: club),
           const SizedBox(height: 16),
-          ClubCardDescription(description: club.description),
-          const SizedBox(height: 24),
           ClubCardActions(onTap: onViewRaids),
         ],
       ),
@@ -43,7 +36,6 @@ class ClubCard extends StatelessWidget {
   }
 }
 
-// Header (Logo + Info)
 class ClubCardHeader extends StatelessWidget {
   final ClubModel club;
 
@@ -56,18 +48,18 @@ class ClubCardHeader extends StatelessWidget {
       children: [
         // Round Logo (Placeholder)
         Container(
-          width: 60,
-          height: 60,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
             color: Colors.grey[300],
             shape: BoxShape.circle,
           ),
           child: club.logoUrl != null
               ? ClipOval(child: Image.network(club.logoUrl!, fit: BoxFit.cover))
-              : Icon(Icons.shield, color: Colors.grey[500], size: 30),
+              : Icon(Icons.shield, color: Colors.grey[500], size: 24),
         ),
-        const SizedBox(width: 16),
-        
+        const SizedBox(width: 12),
+
         // Name and Location
         Expanded(
           child: Column(
@@ -76,42 +68,20 @@ class ClubCardHeader extends StatelessWidget {
               Text(
                 club.name,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF0F172A),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 club.location,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
               ),
             ],
           ),
         ),
       ],
-    );
-  }
-}
-
-// --- Sub-component: Description ---
-class ClubCardDescription extends StatelessWidget {
-  final String description;
-
-  const ClubCardDescription({super.key, required this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      description,
-      style: TextStyle(
-        fontSize: 14,
-        color: Colors.grey[700],
-        height: 1.5,
-      ),
     );
   }
 }
@@ -129,11 +99,9 @@ class ClubCardActions extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           side: BorderSide(color: Colors.grey.shade300),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: const Text(
           'Voir les raids',

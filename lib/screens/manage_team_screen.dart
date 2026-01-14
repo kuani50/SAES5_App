@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/header_home_page.dart';
 import '../data/team_data.dart';
+import 'package:go_router/go_router.dart';
 
 class ManageTeamScreen extends StatefulWidget {
   const ManageTeamScreen({super.key});
@@ -53,6 +54,25 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Back Button
+                TextButton.icon(
+                  onPressed: () => context.go('/my-races'),
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
+                  label: const Text(
+                    "Retour à mes courses",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.centerLeft,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
                 const Text(
                   "Gérer l'équipe \"$teamName\"",
                   style: TextStyle(
@@ -65,6 +85,63 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                 Text(
                   eventName,
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 32),
+
+                const Text(
+                  "Ajouter un participant",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          hintText: "Email du participant...",
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton(
+                      onPressed: _addMember,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
+                        side: BorderSide(color: Colors.grey.shade300),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        "Inviter",
+                        style: TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 32),
 
@@ -129,63 +206,6 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                       );
                     },
                   ),
-                ),
-                const SizedBox(height: 32),
-
-                const Text(
-                  "Ajouter un participant",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF0F172A),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          hintText: "Email du participant...",
-                          hintStyle: TextStyle(color: Colors.grey.shade400),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    OutlinedButton(
-                      onPressed: _addMember,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 16,
-                        ),
-                        side: BorderSide(color: Colors.grey.shade300),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text(
-                        "Inviter",
-                        style: TextStyle(
-                          color: Color(0xFF0F172A),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

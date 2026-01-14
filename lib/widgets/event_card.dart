@@ -5,11 +5,7 @@ class EventCard extends StatelessWidget {
   final EventModel event;
   final VoidCallback? onTap;
 
-  const EventCard({
-    super.key,
-    required this.event,
-    this.onTap,
-  });
+  const EventCard({super.key, required this.event, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +29,7 @@ class EventCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             EventCardImage(imageUrl: event.imageUrl),
-            Expanded(
-              child: EventCardContent(event: event),
-            ),
+            Expanded(child: EventCardContent(event: event)),
           ],
         ),
       ),
@@ -52,7 +46,7 @@ class EventCardImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120, 
+      height: 120,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -107,10 +101,7 @@ class EventCardContent extends StatelessWidget {
             event.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Row(
@@ -146,6 +137,35 @@ class EventCardContent extends StatelessWidget {
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
                 ),
               ),
+              if (event.remainingTeams != null) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.red.shade100),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.group, size: 10, color: Colors.red.shade700),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Plus que ${event.remainingTeams} équipes',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.red.shade700,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
           ),
         ],

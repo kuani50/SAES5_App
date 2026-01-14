@@ -33,10 +33,11 @@ class UserResultsTab extends StatelessWidget {
           child: Table(
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             columnWidths: const {
-              0: FlexColumnWidth(1.5),
-              1: FlexColumnWidth(2),
+              0: FlexColumnWidth(1.2),
+              1: FlexColumnWidth(1.8),
               2: FlexColumnWidth(1.5),
-              3: FlexColumnWidth(1.5),
+              3: FlexColumnWidth(1.2),
+              4: FlexColumnWidth(1.2),
             },
             children: [
               TableRow(
@@ -48,14 +49,16 @@ class UserResultsTab extends StatelessWidget {
                 children: const [
                   _TableHeaderCell("Date"),
                   _TableHeaderCell("Course"),
+                  _TableHeaderCell("Équipe"),
                   _TableHeaderCell("Temps"),
-                  _TableHeaderCell("Classement"),
+                  _TableHeaderCell("Class."),
                 ],
               ),
               TableRow(
                 children: [
                   const _TableDataCell("10 Sept 2024"),
                   const _TableDataCell("Sprint Urbain"),
+                  const _TableDataCell("Les Gazelles"),
                   const _TableDataCell("01:45:22"),
                   Padding(
                     padding: const EdgeInsets.all(16.0),

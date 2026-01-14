@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/status_badge.dart';
 
 class UserRacesTab extends StatelessWidget {
   const UserRacesTab({super.key});
@@ -81,7 +80,7 @@ class UserRacesTab extends StatelessWidget {
     return Container(
       width: 100,
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: const Color(0xFFF1F5F9), // Slate 50
         borderRadius: isNarrow
             ? const BorderRadius.only(topLeft: Radius.circular(12))
             : const BorderRadius.only(
@@ -90,78 +89,105 @@ class UserRacesTab extends StatelessWidget {
               ),
       ),
       child: Center(
-        child: Icon(Icons.map_outlined, size: 40, color: Colors.grey.shade400),
+        child: Icon(
+          Icons.map_outlined,
+          size: 40,
+          color: Colors.blueGrey.shade300,
+        ),
       ),
     );
   }
 
   Widget _buildContentSection() {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: const Text(
-                  "Raid Suisse Normande - Parcours Aventure",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF0F172A),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.error, size: 14, color: Colors.red.shade700),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        "Dossier incomplet",
-                        style: TextStyle(
-                          color: Colors.red.shade700,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          const Text(
+            "Raid Suisse Normande",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F172A),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          const Text(
+            "Parcours Aventure",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF0F172A),
+            ),
+          ),
+          const SizedBox(height: 12),
           Text(
             "12 Octobre • Équipe \"Les Gazelles\"",
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 16),
           Wrap(
-            spacing: 16,
+            spacing: 8,
             runSpacing: 8,
-            children: const [
-              StatusBadge(
-                icon: Icons.check,
-                text: "Inscrit",
-                color: Colors.green,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "Participant",
+                  style: TextStyle(
+                    color: Colors.blue.shade700,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
               ),
-              StatusBadge(
-                icon: Icons.description,
-                text: "Certificat manquant",
-                color: Colors.red,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.purple.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "Responsable d'équipe",
+                  style: TextStyle(
+                    color: Colors.purple.shade700,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 16,
+            children: [
+              Text(
+                "Inscrit",
+                style: TextStyle(
+                  color: Colors.green.shade600,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                "Certificat manquant",
+                style: TextStyle(
+                  color: Colors.red.shade600,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -171,83 +197,102 @@ class UserRacesTab extends StatelessWidget {
   }
 
   Widget _buildActionsSection(BuildContext context, {required bool isNarrow}) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: isNarrow
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+    // Determine layout based on width
+    final warningBadge = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.error, size: 16, color: Colors.red.shade700),
+          const SizedBox(width: 8),
+          Text(
+            "Dossier incomplet",
+            style: TextStyle(
+              color: Colors.red.shade700,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    final gererDocsBtn = ElevatedButton(
+      onPressed: () {},
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+        fixedSize: const Size(140, 45),
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: const Text(
+        "Gérer\nDocs",
+        textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: FontWeight.bold, height: 1.1),
+      ),
+    );
+
+    final modifierEquipeBtn = OutlinedButton(
+      onPressed: () {
+        context.push('/manage-team');
+      },
+      style: OutlinedButton.styleFrom(
+        fixedSize: const Size(140, 45),
+        side: BorderSide(color: Colors.grey.shade300),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      child: const Text(
+        "Modifier\nÉquipe",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Color(0xFF0F172A),
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          height: 1.1,
+        ),
+      ),
+    );
+
+    if (isNarrow) {
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Align(alignment: Alignment.centerLeft, child: warningBadge),
+            const SizedBox(height: 16),
+            Row(
               children: [
-                OutlinedButton(
-                  onPressed: () {
-                    context.push('/manage-team');
-                  },
-                  style: OutlinedButton.styleFrom(
-                    fixedSize: const Size(140, 40),
-                    side: BorderSide(color: Colors.grey.shade300),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Modifier Équipe",
-                    style: TextStyle(color: Color(0xFF0F172A), fontSize: 12),
-                  ),
-                ),
+                Expanded(child: modifierEquipeBtn),
                 const SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white,
-                    fixedSize: const Size(140, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Gérer Docs",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white,
-                    fixedSize: const Size(140, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Gérer Docs",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () {
-                    context.push('/manage-team');
-                  },
-                  style: OutlinedButton.styleFrom(
-                    fixedSize: const Size(140, 40),
-                    side: BorderSide(color: Colors.grey.shade300),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    "Modifier Équipe",
-                    style: TextStyle(color: Color(0xFF0F172A), fontSize: 12),
-                  ),
-                ),
+                Expanded(child: gererDocsBtn),
               ],
             ),
-    );
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            warningBadge,
+            Column(
+              children: [
+                gererDocsBtn,
+                const SizedBox(height: 12),
+                modifierEquipeBtn,
+              ],
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

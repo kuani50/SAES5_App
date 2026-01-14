@@ -29,6 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   DateTime? _selectedDate;
   ClubModel? _selectedClub;
+  bool? _isLicensed;
 
   bool _isLoading = false;
 
@@ -141,62 +142,78 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  LicenseSection(licenseController: _licenseController),
-                  const SizedBox(height: 24),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Choisir votre club (facultatif)",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF0F172A),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<ClubModel>(
-                        value: _selectedClub,
-                        hint: Text(
-                          "Sélectionner un club...",
-                          style: TextStyle(color: Colors.grey.shade400),
-                        ),
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: const BorderSide(
-                              color: Colors.orange,
-                              width: 2,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        items: clubs.map((ClubModel club) {
-                          return DropdownMenuItem<ClubModel>(
-                            value: club,
-                            child: Text(club.name),
-                          );
-                        }).toList(),
-                        onChanged: (ClubModel? newValue) {
-                          setState(() {
-                            _selectedClub = newValue;
-                          });
-                        },
-                      ),
-                    ],
+                  LicenseSection(
+                    licenseController: _licenseController,
+                    isLicensed: _isLicensed,
+                    onLicenseChanged: (value) {
+                      setState(() {
+                        _isLicensed = value;
+                        if (value == false) {
+                          _licenseController.clear();
+                          _selectedClub = null; // Clear club if not licensed
+                        }
+                      });
+                    },
                   ),
                   const SizedBox(height: 24),
+
+                  if (_isLicensed == true) ...[
+                    const SizedBox(height: 24),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Choisir votre club (facultatif)",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<ClubModel>(
+                          value: _selectedClub,
+                          hint: Text(
+                            "Sélectionner un club...",
+                            style: TextStyle(color: Colors.grey.shade400),
+                          ),
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Colors.orange,
+                                width: 2,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          items: clubs.map((ClubModel club) {
+                            return DropdownMenuItem<ClubModel>(
+                              value: club,
+                              child: Text(club.name),
+                            );
+                          }).toList(),
+                          onChanged: (ClubModel? newValue) {
+                            setState(() {
+                              _selectedClub = newValue;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
 
                   CustomTextField(
                     label: "Téléphone *",

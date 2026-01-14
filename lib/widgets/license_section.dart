@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'custom_text_field.dart';
 
-class LicenseSection extends StatefulWidget {
+class LicenseSection extends StatelessWidget {
   final TextEditingController licenseController;
+  final bool? isLicensed;
+  final ValueChanged<bool?> onLicenseChanged;
 
-  const LicenseSection({super.key, required this.licenseController});
-
-  @override
-  State<LicenseSection> createState() => _LicenseSectionState();
-}
-
-class _LicenseSectionState extends State<LicenseSection> {
-  // null = no choice, true = yes, false = no
-  bool? _isLicensed; 
+  const LicenseSection({
+    super.key,
+    required this.licenseController,
+    required this.isLicensed,
+    required this.onLicenseChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,37 +32,28 @@ class _LicenseSectionState extends State<LicenseSection> {
             Expanded(
               child: _buildChoiceButton(
                 label: "Oui",
-                isSelected: _isLicensed == true,
-                onTap: () {
-                  setState(() {
-                    _isLicensed = true;
-                  });
-                },
+                isSelected: isLicensed == true,
+                onTap: () => onLicenseChanged(true),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: _buildChoiceButton(
                 label: "Non",
-                isSelected: _isLicensed == false,
-                onTap: () {
-                  setState(() {
-                    _isLicensed = false;
-                    widget.licenseController.clear();
-                  });
-                },
+                isSelected: isLicensed == false,
+                onTap: () => onLicenseChanged(false),
               ),
             ),
           ],
         ),
-        
+
         // Dynamic field display
-        if (_isLicensed == true) ...[
+        if (isLicensed == true) ...[
           const SizedBox(height: 24),
           CustomTextField(
             label: "Numéro de licence",
             hintText: "Ex: 12345678",
-            controller: widget.licenseController,
+            controller: licenseController,
           ),
         ],
       ],
@@ -82,7 +72,7 @@ class _LicenseSectionState extends State<LicenseSection> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.orange: Colors.white,
+          color: isSelected ? Colors.orange : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? Colors.orange : Colors.grey.shade300,

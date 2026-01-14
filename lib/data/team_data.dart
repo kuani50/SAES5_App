@@ -5,7 +5,7 @@ const String eventName = "Raid Suisse Normande 2025";
 final List<Map<String, dynamic>> teamMembers = [
   {
     'name': 'Thomas Dupont',
-    'role': 'Capitaine',
+    'role': 'Chef d\'équipe',
     'initials': 'TD',
     'isCaptain': true,
   },

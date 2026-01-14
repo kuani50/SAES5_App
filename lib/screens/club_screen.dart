@@ -13,12 +13,11 @@ class ClubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Data from lib/data/club_data.dart
     final List<ClubModel> clubs = allClubs;
 
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    final crossAxisCount = isLandscape ? 2 : 1;
+    final crossAxisCount = isLandscape ? 3 : 2;
 
     return Scaffold(
       appBar: const HeaderHomePage(),
@@ -42,9 +41,10 @@ class ClubScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
-                crossAxisSpacing: 24,
-                mainAxisSpacing: 24,
-                childAspectRatio: 1.9,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio:
+                    2.0, // adjusted aspect ratio for narrower cards
               ),
               itemCount: clubs.length,
               itemBuilder: (context, index) {
