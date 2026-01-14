@@ -13,6 +13,7 @@ import 'screens/club_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/user_races_screen.dart';
+import 'screens/manage_team_screen.dart';
 import 'models/event_model.dart';
 import 'models/club_model.dart';
 import 'data/dummy_data.dart';
@@ -78,6 +79,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/my-races',
       builder: (context, state) => const UserRacesScreen(),
+    ),
+    GoRoute(
+      path: '/manage-team',
+      builder: (context, state) => const ManageTeamScreen(),
     ),
   ],
 );

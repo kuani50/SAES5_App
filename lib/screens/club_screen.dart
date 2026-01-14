@@ -12,32 +12,35 @@ class ClubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dummy data matching your screenshot
     final List<ClubModel> dummyClubs = [
       ClubModel(
         name: "Orient'Express",
         location: "Caen, 14",
-        description: "Club organisateur du Raid Suisse Normande et des entraînements hebdomadaires.",
+        description:
+            "Club organisateur du Raid Suisse Normande et des entraînements hebdomadaires.",
       ),
       ClubModel(
         name: "ALBE Orientation",
         location: "Elbeuf, 76",
-        description: "Club de course d'orientation et de raid multisport en Seine-Maritime.",
+        description:
+            "Club de course d'orientation et de raid multisport en Seine-Maritime.",
       ),
       ClubModel(
         name: "Vikings 76",
         location: "Rouen, 76",
-        description: "Association sportive dédiée à la course d'orientation et aux sports nature.",
+        description:
+            "Association sportive dédiée à la course d'orientation et aux sports nature.",
       ),
       ClubModel(
         name: "ASL Condé",
         location: "Condé-sur-Noireau, 14",
-        description: "Pratique de la course d'orientation pour tous, du loisir à la compétition.",
+        description:
+            "Pratique de la course d'orientation pour tous, du loisir à la compétition.",
       ),
     ];
 
-    // Responsive: 1 column on mobile, 2 on tablet/landscape
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final crossAxisCount = isLandscape ? 2 : 1;
 
     return Scaffold(
@@ -56,7 +59,7 @@ class ClubScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -72,10 +75,10 @@ class ClubScreen extends StatelessWidget {
                 return ClubCard(
                   club: club,
                   onViewRaids: () {
-                    context.push('/club-details', extra: {
-                      'club': club,
-                      'events': allEvents,
-                    });
+                    context.push(
+                      '/club-details',
+                      extra: {'club': club, 'events': allEvents},
+                    );
                   },
                 );
               },

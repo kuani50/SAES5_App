@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../widgets/status_badge.dart';
 
 class UserRacesTab extends StatelessWidget {
@@ -53,7 +54,7 @@ class UserRacesTab extends StatelessWidget {
                       ),
                     ),
                     const Divider(height: 1),
-                    _buildActionsSection(isNarrow: true),
+                    _buildActionsSection(context, isNarrow: true),
                   ],
                 );
               } else {
@@ -64,7 +65,7 @@ class UserRacesTab extends StatelessWidget {
                     children: [
                       _buildIconSection(context),
                       Expanded(child: _buildContentSection()),
-                      _buildActionsSection(isNarrow: false),
+                      _buildActionsSection(context, isNarrow: false),
                     ],
                   ),
                 );
@@ -169,7 +170,7 @@ class UserRacesTab extends StatelessWidget {
     );
   }
 
-  Widget _buildActionsSection({required bool isNarrow}) {
+  Widget _buildActionsSection(BuildContext context, {required bool isNarrow}) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: isNarrow
@@ -177,7 +178,9 @@ class UserRacesTab extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/manage-team');
+                  },
                   style: OutlinedButton.styleFrom(
                     fixedSize: const Size(140, 40),
                     side: BorderSide(color: Colors.grey.shade300),
@@ -228,7 +231,9 @@ class UserRacesTab extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/manage-team');
+                  },
                   style: OutlinedButton.styleFrom(
                     fixedSize: const Size(140, 40),
                     side: BorderSide(color: Colors.grey.shade300),
