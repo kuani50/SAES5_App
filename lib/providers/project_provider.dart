@@ -13,7 +13,6 @@ class ProjectProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  // Helper pour accéder à la baseUrl si besoin (ex: pour construire des URLs d'images)
   String get baseUrl => _apiProvider.baseUrl;
 
   ProjectProvider(this._apiProvider);
