@@ -33,7 +33,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
-            // --- English Comment: Made the logo tappable to navigate home. ---
+            // --- Made the logo tappable to navigate home. ---
             GestureDetector(
               onTap: () => context.go('/home'),
               child: const Text(
@@ -60,7 +60,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    // --- English Comment: Conditional styling for the active tab. ---
+                    // --- Conditional styling for the active tab. ---
                     child: Text(
                       'Raids',
                       style: TextStyle(
@@ -80,7 +80,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    // --- English Comment: Conditional styling for the active tab. ---
+                    // --- Conditional styling for the active tab. ---
                     child: Text(
                       'Club',
                       style: TextStyle(
