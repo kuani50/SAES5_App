@@ -73,6 +73,31 @@ class CourseInfo extends StatelessWidget {
             _CourseTag(text: course.teamSize),
             const SizedBox(width: 8),
             _CourseTag(text: course.difficulty),
+            if (course.remainingTeams != null) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.red.shade100),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.group, size: 12, color: Colors.red.shade700),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Plus que ${course.remainingTeams} places',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.red.shade700,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ],

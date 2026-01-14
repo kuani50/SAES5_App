@@ -9,13 +9,13 @@ final List<RaidModel> allRaids = [
     date: "12 Octobre 2025",
     status: "Inscription ouverte",
     raidState: "Raid à venir",
-    remainingTeams: 5,
     courses: [
       CourseModel(
         name: "Parcours Aventure",
         distance: "45km",
         teamSize: "Équipe de 2 à 4",
         difficulty: "Expert",
+        remainingTeams: 5,
       ),
     ],
   ),

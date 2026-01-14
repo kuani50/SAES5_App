@@ -4,6 +4,7 @@ class CourseModel {
   final String teamSize;
   final String difficulty;
   final bool isRegistrationOpen;
+  final int? remainingTeams;
 
   CourseModel({
     required this.name,
@@ -11,5 +12,6 @@ class CourseModel {
     required this.teamSize,
     required this.difficulty,
     this.isRegistrationOpen = true,
+    this.remainingTeams,
   });
 }

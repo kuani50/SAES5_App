@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/raid_model.dart';
 
 class RaidCard extends StatelessWidget {
-  final RaidModel raid; 
+  final RaidModel raid;
   final VoidCallback? onTap;
 
   const RaidCard({super.key, required this.raid, this.onTap});
@@ -137,35 +137,6 @@ class RaidCardContent extends StatelessWidget {
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
                 ),
               ),
-              if (raid.remainingTeams != null) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: Colors.red.shade100),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.group, size: 10, color: Colors.red.shade700),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Plus que ${raid.remainingTeams} équipes',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.red.shade700,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
             ],
           ),
         ],
