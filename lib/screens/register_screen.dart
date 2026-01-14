@@ -172,7 +172,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 8),
                         DropdownButtonFormField<ClubModel>(
-                          value: _selectedClub,
+                          initialValue: _selectedClub,
                           hint: Text(
                             "Sélectionner un club...",
                             style: TextStyle(color: Colors.grey.shade400),
@@ -222,10 +222,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.phone,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'Le téléphone est requis.';
-                      if (value.length < 10)
+                      }
+                      if (value.length < 10) {
                         return 'Numéro invalide (10 chiffres).';
+                      }
                       return null;
                     },
                   ),
@@ -237,12 +239,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'L\'email est requis.';
+                      }
                       if (!RegExp(
                         r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(value))
+                      ).hasMatch(value)) {
                         return 'Format d\'email invalide.';
+                      }
                       return null;
                     },
                   ),
@@ -254,10 +258,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _passwordController,
                     isPassword: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'Le mot de passe est requis.';
-                      if (value.length < 8)
+                      }
+                      if (value.length < 8) {
                         return 'Le mot de passe doit faire au moins 8 caractères.';
+                      }
                       return null;
                     },
                   ),
@@ -269,10 +275,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _confirmPasswordController,
                     isPassword: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty)
+                      if (value == null || value.isEmpty) {
                         return 'Veuillez confirmer le mot de passe.';
-                      if (value != _passwordController.text)
+                      }
+                      if (value != _passwordController.text) {
                         return 'Les mots de passe ne correspondent pas.';
+                      }
                       return null;
                     },
                   ),
