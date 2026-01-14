@@ -84,7 +84,7 @@ class _LicenseSectionState extends State<LicenseSection> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.orange: Colors.white,
+          color: isSelected ? Colors.orange : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? Colors.orange : Colors.grey.shade300,
