@@ -4,15 +4,27 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/header_home_page.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Controllers to get values
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
+  // Controllers to get values
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const HeaderHomePage(), // Keeping header for consistency
