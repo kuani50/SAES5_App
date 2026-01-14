@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/project.dart';
-import '../services/api_service.dart';
+import 'api_provider.dart';
 
 class ProjectProvider with ChangeNotifier {
-  String _baseUrl = 'https://sae.bananacloud.tech';
-  late ApiService _apiService;
-  
+  final ApiProvider _apiProvider;
+
   List<Project> _projects = [];
   bool _isLoading = false;
   String? _error;
@@ -14,35 +12,10 @@ class ProjectProvider with ChangeNotifier {
   List<Project> get projects => _projects;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  String get baseUrl => _baseUrl;
 
-  // Allow injecting ApiService for testing
-  ProjectProvider({ApiService? apiService}) {
-    _apiService = apiService ?? ApiService(baseUrl: _baseUrl);
-  }
+  String get baseUrl => _apiProvider.baseUrl;
 
-  Future<void> setBaseUrl(String url) async {
-    _baseUrl = url;
-    // Note: If we are testing, this might overwrite our mock service if we don't handle it.
-    // For this simple app, we'll accept that changing the URL resets the service.
-    _apiService = ApiService(baseUrl: _baseUrl);
-    
-    // Save to preferences
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('api_base_url', url);
-    
-    notifyListeners();
-  }
-
-  Future<void> loadSavedUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedUrl = prefs.getString('api_base_url');
-    if (savedUrl != null && savedUrl.isNotEmpty) {
-      _baseUrl = savedUrl;
-      _apiService = ApiService(baseUrl: _baseUrl);
-      notifyListeners();
-    }
-  }
+  ProjectProvider(this._apiProvider);
 
   Future<void> fetchProjects() async {
     _isLoading = true;
@@ -50,9 +23,11 @@ class ProjectProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _projects = await _apiService.fetchProjects();
+      _projects = await _apiProvider.apiClient.getProjects();
     } catch (e) {
-      _error = e.toString();
+      _projects = [];
+      // _error = e.toString();
+      print("Error fetching projects: $e");
     } finally {
       _isLoading = false;
       notifyListeners();

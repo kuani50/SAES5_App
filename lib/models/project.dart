@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'project.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Project {
   final int id;
   final String title;
@@ -17,17 +22,8 @@ class Project {
     required this.updatedAt,
   });
 
-  factory Project.fromJson(Map<String, dynamic> json) {
-    return Project(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      image: json['image'] as String?,
-      category: json['category'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-    );
-  }
+  factory Project.fromJson(Map<String, dynamic> json) =>
+      _$ProjectFromJson(json);
 
   /// Helper to get the full image URL.
   /// [baseUrl] should be the root of the API, e.g., "http://10.0.2.2:8000".

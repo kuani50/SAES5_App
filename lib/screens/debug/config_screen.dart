@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../providers/project_provider.dart';
+import '../../providers/api_provider.dart';
 
 class ConfigScreen extends StatefulWidget {
   const ConfigScreen({super.key});
@@ -17,17 +17,12 @@ class _ConfigScreenState extends State<ConfigScreen> {
   void initState() {
     super.initState();
     // Load the current URL from provider into the controller
-    final provider = context.read<ProjectProvider>();
+    final provider = context.read<ApiProvider>();
     _urlController.text = provider.baseUrl;
-    
+
     // Attempt to load saved URL from disk
-    provider.loadSavedUrl().then((_) {
-      if (mounted) {
-        setState(() {
-          _urlController.text = provider.baseUrl;
-        });
-      }
-    });
+    // Note: ApiProvider loads saved data in constructor, so baseUrl might already be set.
+    // If not, it's fine.
   }
 
   @override
@@ -39,7 +34,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
   void _validateAndContinue() {
     final url = _urlController.text.trim();
     if (url.isNotEmpty) {
-      context.read<ProjectProvider>().setBaseUrl(url);
+      context.read<ApiProvider>().setBaseUrl(url);
       context.go('/home');
     }
   }

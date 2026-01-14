@@ -3,8 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:saps5app/providers/auth_provider.dart';
+import 'package:saps5app/screens/auth_screen.dart';
 import 'debug/my_http_overrides.dart';
-import 'providers/project_provider.dart';
+import 'providers/api_provider.dart';
+import 'package:saps5app/providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
 import 'screens/event_detail_screen.dart';
 import 'screens/home_screen.dart';
@@ -17,10 +20,8 @@ import 'models/club_model.dart';
 import 'data/dummy_data.dart';
 
 void main() {
-  if (kDebugMode) {
-    HttpOverrides.global = MyHttpOverrides();
-  }
-  runApp(const MyApp());
+  HttpOverrides.global = MyHttpOverrides();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -30,37 +31,50 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProjectProvider()),
+        ChangeNotifierProvider(create: (_) => ApiProvider()),
+        ChangeNotifierProxyProvider<ApiProvider, AuthProvider>(
+          create: (context) => AuthProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previousAuth) =>
+              AuthProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, ProjectProvider>(
+          create: (context) => ProjectProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previousProject) =>
+              ProjectProvider(apiProvider),
+        ),
       ],
       child: MaterialApp.router(
+        routerConfig: _router,
         title: 'Orient Express',
         theme: ThemeData(
           // Using deepPurple as requested
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        routerConfig: _router,
       ),
     );
   }
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: kDebugMode ? '/' : '/home',
+  initialLocation: kDebugMode ? '/debug/apiconfig' : '/home',
   routes: [
     GoRoute(
-      path: '/',
+      path: '/debug/apiconfig',
       builder: (context, state) => const ConfigScreen(),
     ),
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => const HomeScreen(),
-    ),
+    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
     GoRoute(
       path: '/details',
       builder: (context, state) {
         final event = state.extra as EventModel;
         return EventDetailScreen(event: event);
+      },
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) {
+        return const AuthScreen();
       },
     ),
     GoRoute(
@@ -77,10 +91,7 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
