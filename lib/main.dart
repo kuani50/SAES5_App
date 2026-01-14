@@ -17,6 +17,7 @@ import 'screens/manage_team_screen.dart';
 import 'models/event_model.dart';
 import 'models/club_model.dart';
 import 'data/event_data.dart';
+import 'screens/event_registration_screen.dart';
 
 void main() {
   if (kDebugMode) {
@@ -36,7 +37,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Orient Express',
         theme: ThemeData(
-          // Using deepPurple as requested
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
@@ -73,6 +73,7 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
@@ -80,6 +81,19 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/my-races',
       builder: (context, state) => const UserRacesScreen(),
+    ),
+    GoRoute(
+      path: '/event-registration',
+      builder: (context, state) {
+        final eventName = state.uri.queryParameters['eventName'];
+        final initialStepStr = state.uri.queryParameters['initialStep'];
+        final initialStep = int.tryParse(initialStepStr ?? '') ?? 2;
+
+        return EventRegistrationScreen(
+          eventName: eventName,
+          initialStep: initialStep,
+        );
+      },
     ),
     GoRoute(
       path: '/manage-team',

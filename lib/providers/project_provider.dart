@@ -6,15 +6,27 @@ import '../services/api_service.dart';
 class ProjectProvider with ChangeNotifier {
   String _baseUrl = 'https://sae.bananacloud.tech';
   late ApiService _apiService;
-  
+
   List<Project> _projects = [];
   bool _isLoading = false;
   String? _error;
+  bool _isLoggedIn = false;
 
   List<Project> get projects => _projects;
   bool get isLoading => _isLoading;
   String? get error => _error;
   String get baseUrl => _baseUrl;
+  bool get isLoggedIn => _isLoggedIn;
+
+  void login() {
+    _isLoggedIn = true;
+    notifyListeners();
+  }
+
+  void logout() {
+    _isLoggedIn = false;
+    notifyListeners();
+  }
 
   // Allow injecting ApiService for testing
   ProjectProvider({ApiService? apiService}) {
@@ -26,11 +38,11 @@ class ProjectProvider with ChangeNotifier {
     // Note: If we are testing, this might overwrite our mock service if we don't handle it.
     // For this simple app, we'll accept that changing the URL resets the service.
     _apiService = ApiService(baseUrl: _baseUrl);
-    
+
     // Save to preferences
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('api_base_url', url);
-    
+
     notifyListeners();
   }
 

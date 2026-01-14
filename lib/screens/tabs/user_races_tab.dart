@@ -1,16 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+class _UserRegistrationMock {
+  final String eventName;
+  final String courseName;
+  final String dateAndTeam;
+  final List<String> roles; // e.g. ["Participant", "Responsable"]
+  final bool isComplete; // true if all docs returned etc.
+  final bool isMissingDocs;
+
+  _UserRegistrationMock({
+    required this.eventName,
+    required this.courseName,
+    required this.dateAndTeam,
+    required this.roles,
+    required this.isComplete,
+    required this.isMissingDocs,
+  });
+}
+
 class UserRacesTab extends StatelessWidget {
   const UserRacesTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Mock Data List
+    final registrations = [
+      _UserRegistrationMock(
+        eventName: "Raid Suisse Normande",
+        courseName: "Parcours Aventure",
+        dateAndTeam: "12 Octobre • Équipe \"Les Gazelles\"",
+        roles: ["Participant", "Responsable d'équipe"],
+        isComplete: false,
+        isMissingDocs: true,
+      ),
+      _UserRegistrationMock(
+        eventName: "Raid Urbain Caen",
+        courseName: "Parcours Découverte",
+        dateAndTeam: "24 Novembre • Équipe \"Les Vikings\"",
+        roles: ["Participant"],
+        isComplete: true,
+        isMissingDocs: false,
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: const [
+        const Row(
+          children: [
             Text(
               "Mes Inscriptions",
               style: TextStyle(
@@ -22,57 +60,75 @@ class UserRacesTab extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 32),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 650;
 
-              if (isNarrow) {
-                // Mobile/Narrow Layout: Stacked
-                return Column(
-                  children: [
-                    IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          _buildIconSection(context, isNarrow: true),
-                          Expanded(child: _buildContentSection()),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    _buildActionsSection(context, isNarrow: true),
-                  ],
-                );
-              } else {
-                // Desktop/Wide Layout: Horizontal
-                return IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _buildIconSection(context),
-                      Expanded(child: _buildContentSection()),
-                      _buildActionsSection(context, isNarrow: false),
-                    ],
-                  ),
-                );
-              }
-            },
+        // Render List of Registrations
+        ...registrations.map(
+          (reg) => Padding(
+            padding: const EdgeInsets.only(bottom: 24.0),
+            child: _RegistrationCard(registration: reg),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _RegistrationCard extends StatelessWidget {
+  final _UserRegistrationMock registration;
+
+  const _RegistrationCard({required this.registration});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12, // slightly lighter shadow
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow = constraints.maxWidth < 650;
+
+          if (isNarrow) {
+            // Mobile/Narrow Layout: Stacked
+            return Column(
+              children: [
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildIconSection(context, isNarrow: true),
+                      Expanded(child: _buildContentSection()),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                _buildActionsSection(context, isNarrow: true),
+              ],
+            );
+          } else {
+            // Desktop/Wide Layout: Horizontal
+            return IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildIconSection(context),
+                  Expanded(child: _buildContentSection()),
+                  _buildActionsSection(context, isNarrow: false),
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -104,18 +160,18 @@ class UserRacesTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Raid Suisse Normande",
-            style: TextStyle(
+          Text(
+            registration.eventName,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF0F172A),
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            "Parcours Aventure",
-            style: TextStyle(
+          Text(
+            registration.courseName,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Color(0xFF0F172A),
@@ -123,51 +179,38 @@ class UserRacesTab extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            "12 Octobre • Équipe \"Les Gazelles\"",
+            registration.dateAndTeam,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: [
-              Container(
+            children: registration.roles.map((role) {
+              final isResponsable = role.contains("Responsable");
+              return Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
+                  color: isResponsable
+                      ? Colors.purple.shade50
+                      : Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  "Participant",
+                  role,
                   style: TextStyle(
-                    color: Colors.blue.shade700,
+                    color: isResponsable
+                        ? Colors.purple.shade700
+                        : Colors.blue.shade700,
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.purple.shade50,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  "Responsable d'équipe",
-                  style: TextStyle(
-                    color: Colors.purple.shade700,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
+              );
+            }).toList(),
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -181,14 +224,15 @@ class UserRacesTab extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              Text(
-                "Certificat manquant",
-                style: TextStyle(
-                  color: Colors.red.shade600,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+              if (registration.isMissingDocs)
+                Text(
+                  "Certificat manquant",
+                  style: TextStyle(
+                    color: Colors.red.shade600,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                 ),
-              ),
             ],
           ),
         ],
@@ -197,32 +241,71 @@ class UserRacesTab extends StatelessWidget {
   }
 
   Widget _buildActionsSection(BuildContext context, {required bool isNarrow}) {
-    // Determine layout based on width
-    final warningBadge = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.error, size: 16, color: Colors.red.shade700),
-          const SizedBox(width: 8),
-          Text(
-            "Dossier incomplet",
-            style: TextStyle(
-              color: Colors.red.shade700,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
+    Widget? warningBadge;
+
+    if (registration.isMissingDocs) {
+      warningBadge = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error, size: 16, color: Colors.red.shade700),
+            const SizedBox(width: 8),
+            Text(
+              "Dossier incomplet",
+              style: TextStyle(
+                color: Colors.red.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    } else {
+      // Placeholder or Success badge if needed, for now empty or check
+      warningBadge = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.green.shade50,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.check_circle, size: 16, color: Colors.green.shade700),
+            const SizedBox(width: 8),
+            Text(
+              "Dossier complet",
+              style: TextStyle(
+                color: Colors.green.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     final gererDocsBtn = ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        // Navigate to Event Registration Step 4 (Docs)
+        // Pass event name and initialStep=4
+        context.go(
+          Uri(
+            path: '/event-registration',
+            queryParameters: {
+              'eventName': registration.eventName,
+              'initialStep': '4',
+            },
+          ).toString(),
+        );
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,

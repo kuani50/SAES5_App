@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../providers/project_provider.dart';
 import '../data/login_data.dart';
 
 import '../widgets/custom_text_field.dart';
@@ -55,9 +57,18 @@ class LoginScreen extends StatelessWidget {
                 PrimaryButton(
                   text: "Se connecter",
                   onPressed: () {
-                    // TODO: Login logic
-                    // Simulating login and returning to home
-                    context.go('/home');
+                    // Login logic
+                    context.read<ProjectProvider>().login();
+
+                    // Check for redirect param
+                    final redirect = GoRouterState.of(
+                      context,
+                    ).uri.queryParameters['redirect'];
+                    if (redirect != null) {
+                      context.go(redirect);
+                    } else {
+                      context.go('/home');
+                    }
                   },
                 ),
                 const SizedBox(height: 16),

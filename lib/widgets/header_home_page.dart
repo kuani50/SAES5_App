@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../providers/project_provider.dart';
 
 class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
-  final bool isLoggedIn;
+  final bool? isLoggedIn;
   final VoidCallback? onLogout;
 
-  const HeaderHomePage({super.key, this.isLoggedIn = false, this.onLogout});
+  const HeaderHomePage({super.key, this.isLoggedIn, this.onLogout});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    // ---  Get current route to highlight the active tab. ---
+    final provider = context.watch<ProjectProvider>();
+    final bool loggedIn = isLoggedIn ?? provider.isLoggedIn;
     final String currentPath = GoRouterState.of(context).uri.path;
     final bool isRaidsActive =
         currentPath == '/home' || currentPath.startsWith('/details');
@@ -28,7 +31,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
-            // --- Made the logo tappable to navigate home. ---
             GestureDetector(
               onTap: () => context.go('/home'),
               child: Row(
@@ -130,7 +132,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
             ),
 
             if (isLandscape) ...[
-              if (isLoggedIn) ...[
+              if (loggedIn) ...[
                 IconButton(
                   icon: const Icon(Icons.person, color: Colors.white),
                   onPressed: () {},
@@ -189,7 +191,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 },
                 itemBuilder: (BuildContext context) {
                   return [
-                    if (isLoggedIn) ...[
+                    if (loggedIn) ...[
                       const PopupMenuItem(
                         value: 'profile',
                         child: Text('Mon Profil'),

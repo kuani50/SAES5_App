@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../providers/project_provider.dart';
 import '../models/course_model.dart';
 
 class CourseCard extends StatelessWidget {
@@ -32,14 +34,14 @@ class CourseCard extends StatelessWidget {
               children: [
                 CourseInfo(course: course),
                 const SizedBox(height: 16),
-                const CourseActions(isMobile: true),
+                CourseActions(isMobile: true, course: course),
               ],
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child: CourseInfo(course: course)),
-                const CourseActions(isMobile: false),
+                CourseActions(isMobile: false, course: course),
               ],
             ),
     );
@@ -81,13 +83,20 @@ class CourseInfo extends StatelessWidget {
 // --- Sub-component: Action Buttons ---
 class CourseActions extends StatelessWidget {
   final bool isMobile;
+  final CourseModel course;
 
-  const CourseActions({super.key, required this.isMobile});
+  const CourseActions({
+    super.key,
+    required this.isMobile,
+    required this.course,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: isMobile ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisAlignment: isMobile
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
       children: [
         OutlinedButton(
           onPressed: () => context.go('/login'),
@@ -98,11 +107,25 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text('Voir les inscrits', style: TextStyle(color: Colors.black)),
+          child: const Text(
+            'Voir les inscrits',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         const SizedBox(width: 12),
         ElevatedButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () {
+            final isLoggedIn = context.read<ProjectProvider>().isLoggedIn;
+            if (isLoggedIn) {
+              context.push(
+                '/event-registration?eventName=${Uri.encodeComponent(course.name)}',
+              );
+            } else {
+              context.push(
+                '/login?redirect=/event-registration?eventName=${Uri.encodeComponent(course.name)}',
+              );
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
@@ -111,7 +134,10 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text("S'inscrire", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: const Text(
+            "S'inscrire",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
