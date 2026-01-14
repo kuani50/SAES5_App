@@ -73,11 +73,18 @@ class RaidDetailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Basic date formatting
+    final startStr =
+        "${raid.startDate.day}/${raid.startDate.month}/${raid.startDate.year}";
+    final endStr =
+        "${raid.endDate.day}/${raid.endDate.month}/${raid.endDate.year}";
+    final dateDisplay = startStr == endStr ? startStr : "$startStr - $endStr";
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          raid.title,
+          raid.name,
           style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.w900,
@@ -89,10 +96,13 @@ class RaidDetailHeader extends StatelessWidget {
           spacing: 16,
           runSpacing: 8,
           children: [
-            _InfoItem(icon: Icons.calendar_today, text: raid.date),
-            _InfoItem(icon: Icons.location_on, text: raid.location),
+            _InfoItem(icon: Icons.calendar_today, text: dateDisplay),
+            _InfoItem(
+              icon: Icons.location_on,
+              text: "Adresse #${raid.addressId}",
+            ), // Placeholder
             Text(
-              "(${raid.clubName})",
+              "(Club #${raid.clubId})", // Placeholder
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,

@@ -18,7 +18,7 @@ class ClubDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Filter raids organized by this club
-    final clubEvents = allEvents.where((e) => e.clubName == club.name).toList();
+    final clubEvents = allEvents.where((e) => e.clubId == club.id).toList();
 
     return Scaffold(
       appBar: const HeaderHomePage(),
@@ -127,7 +127,7 @@ class _ClubDetailInfo extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                "Club - ${club.location}",
+                "Manager ID: ${club.managerId}", // Placeholder
                 style: TextStyle(fontSize: 18, color: Colors.grey[600]),
               ),
             ],

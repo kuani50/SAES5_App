@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'debug/my_http_overrides.dart';
 import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
@@ -16,15 +17,16 @@ import 'screens/user_races_screen.dart';
 import 'screens/manage_team_screen.dart';
 import 'models/raid_model.dart';
 import 'models/club_model.dart';
-import 'models/course_model.dart'; // Added import
+import 'models/course_model.dart';
 import 'data/raid_data.dart';
 import 'screens/raid_registration_screen.dart';
-import 'screens/course_detail_screen.dart'; // Added import
+import 'screens/course_detail_screen.dart';
 
-void main() {
+void main() async {
   if (kDebugMode) {
     HttpOverrides.global = MyHttpOverrides();
   }
+  await initializeDateFormatting('fr_FR', null);
   runApp(const MyApp());
 }
 

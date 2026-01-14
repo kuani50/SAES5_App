@@ -3,17 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/project_provider.dart';
 import '../models/course_model.dart';
-import '../models/raid_model.dart'; // Added import
+import '../models/raid_model.dart';
 
 class CourseCard extends StatelessWidget {
   final CourseModel course;
-  final RaidModel raid; // Added raid
+  final RaidModel raid;
 
-  const CourseCard({
-    super.key,
-    required this.course,
-    required this.raid,
-  }); // Updated constructor
+  const CourseCard({super.key, required this.course, required this.raid});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +62,7 @@ class CourseInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "${course.name} (${course.distance})",
+          course.name,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -76,34 +72,11 @@ class CourseInfo extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-            _CourseTag(text: course.teamSize),
+            _CourseTag(text: "Par équipe de ${course.maxPersonsPerTeam}"),
             const SizedBox(width: 8),
             _CourseTag(text: course.difficulty),
-            if (course.remainingTeams != null) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: Colors.red.shade100),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.group, size: 12, color: Colors.red.shade700),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Plus que ${course.remainingTeams} places',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.red.shade700,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            const SizedBox(width: 8),
+            _CourseTag(text: "${course.remainingTeams ?? 0} places restantes"),
           ],
         ),
       ],
@@ -115,13 +88,13 @@ class CourseInfo extends StatelessWidget {
 class CourseActions extends StatelessWidget {
   final bool isMobile;
   final CourseModel course;
-  final RaidModel raid; // Added raid
+  final RaidModel raid;
 
   const CourseActions({
     super.key,
     required this.isMobile,
     required this.course,
-    required this.raid, // Added to constructor
+    required this.raid,
   });
 
   @override
@@ -151,15 +124,12 @@ class CourseActions extends StatelessWidget {
         const SizedBox(width: 12),
         ElevatedButton(
           onPressed: () {
-            final isLoggedIn = context.read<ProjectProvider>().isLoggedIn;
-            if (isLoggedIn) {
-              context.push(
-                '/raid-registration?raidName=${Uri.encodeComponent(course.name)}',
-              );
+            final provider = context.read<ProjectProvider>();
+            if (provider.isLoggedIn) {
+              provider.registerForCourse(course);
+              context.push('/my-races');
             } else {
-              context.push(
-                '/login?redirect=/raid-registration?raidName=${Uri.encodeComponent(course.name)}',
-              );
+              context.push('/login?redirect=/my-races');
             }
           },
           style: ElevatedButton.styleFrom(

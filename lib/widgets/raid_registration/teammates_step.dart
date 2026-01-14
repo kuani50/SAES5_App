@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
-class TeammatesStep extends StatelessWidget {
+class TeammatesStep extends StatefulWidget {
   final VoidCallback onNext;
   final VoidCallback onPrev;
 
   const TeammatesStep({super.key, required this.onNext, required this.onPrev});
+
+  @override
+  State<TeammatesStep> createState() => _TeammatesStepState();
+}
+
+class _TeammatesStepState extends State<TeammatesStep> {
+  // State to track if the main user participates
+  bool _isParticipating = true;
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +92,12 @@ class TeammatesStep extends StatelessWidget {
               Row(
                 children: [
                   Checkbox(
-                    value: true,
-                    onChanged: (_) {},
+                    value: _isParticipating,
+                    onChanged: (val) {
+                      setState(() {
+                        _isParticipating = val ?? false;
+                      });
+                    },
                     activeColor: Colors.black54,
                   ),
                   const Text("Participe à la course"),
@@ -101,7 +113,7 @@ class TeammatesStep extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             OutlinedButton(
-              onPressed: onPrev,
+              onPressed: widget.onPrev,
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(
@@ -113,7 +125,7 @@ class TeammatesStep extends StatelessWidget {
               child: const Text("Précédent"),
             ),
             ElevatedButton(
-              onPressed: onNext,
+              onPressed: widget.onNext,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,

@@ -73,10 +73,6 @@ class ClubCardHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                club.location,
-                style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-              ),
             ],
           ),
         ),

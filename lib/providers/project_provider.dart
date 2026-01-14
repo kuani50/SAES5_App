@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/project.dart';
+import '../models/course_model.dart'; // Added import
 import '../services/api_service.dart';
 
 class ProjectProvider with ChangeNotifier {
@@ -69,5 +70,20 @@ class ProjectProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Mock registration method
+  Future<void> registerForCourse(CourseModel course) async {
+    _isLoading = true;
+    notifyListeners();
+
+    // Simulate API delay
+    await Future.delayed(const Duration(seconds: 1));
+
+    // For now, we simulate success.
+    // In a real app, calls ApiService.register(...)
+
+    _isLoading = false;
+    notifyListeners();
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../models/raid_model.dart';
 import '../models/course_model.dart';
+import '../providers/project_provider.dart';
 
 class CourseDetailScreen extends StatelessWidget {
   final CourseModel course;
@@ -172,20 +175,7 @@ class CourseHeader extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.flag_outlined,
-                          color: Colors.orange,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          course.distance,
-                          style: TextStyle(color: Colors.grey.shade600),
-                        ),
-                      ],
-                    ),
+                    // Removed distance
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -196,7 +186,7 @@ class CourseHeader extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          raid.location,
+                          "Adresse ${raid.addressId}",
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
                         const SizedBox(width: 16),
@@ -207,7 +197,7 @@ class CourseHeader extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          course.organizer ?? "Inconnu",
+                          "Responsable ${course.managerId}",
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ],
@@ -220,6 +210,15 @@ class CourseHeader extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       // Subscribe action
+                      final provider = context.read<ProjectProvider>();
+                      if (provider.isLoggedIn) {
+                        // Register and redirect to My Races
+                        provider.registerForCourse(course);
+                        context.push('/my-races');
+                      } else {
+                        // Redirect to Login, then to My Races (implying registration continues or is just the target)
+                        context.push('/login?redirect=/my-races');
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepOrange,
@@ -240,10 +239,7 @@ class CourseHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    "${course.remainingTeams ?? 0} place(s) restante(s)",
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
-                  ),
+                  // Removed remaining teams because not in model
                 ],
               ),
             ],
@@ -279,12 +275,12 @@ class CourseInfoGrid extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Début : ${course.startDate != null ? DateFormat('dd MMM yyyy', 'fr_FR').format(course.startDate!) : '-'}",
+                    "Début : ${DateFormat('dd MMM yyyy', 'fr_FR').format(course.startDate)}",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Fin : ${course.endDate != null ? DateFormat('dd MMM yyyy', 'fr_FR').format(course.endDate!) : '-'}",
+                    "Fin : ${DateFormat('dd MMM yyyy', 'fr_FR').format(course.endDate)}",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -297,12 +293,12 @@ class CourseInfoGrid extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Personnes par équipe : ${course.teamSize}",
+                    "Personnes par équipe : ${course.maxPersonsPerTeam}",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Équipes inscrites : ${(course.maxTeams ?? 0) - (course.remainingTeams ?? 0)} / ${course.maxTeams ?? '-'}",
+                    "Max d'équipes : ${course.maxTeams}",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -311,12 +307,24 @@ class CourseInfoGrid extends StatelessWidget {
             _InfoCard(
               title: "CATÉGORIE",
               icon: Icons.local_offer,
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _Tag(
-                    text: course.category ?? "Mixte",
-                    color: Colors.blue.shade50,
-                    textColor: Colors.blue.shade700,
+                  Wrap(
+                    spacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      _Tag(
+                        text: course.gender,
+                        color: Colors.blue.shade50,
+                        textColor: Colors.blue.shade700,
+                      ),
+                      _Tag(
+                        text: course.type,
+                        color: Colors.purple.shade50,
+                        textColor: Colors.purple.shade700,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -328,21 +336,22 @@ class CourseInfoGrid extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Mineur : ${course.priceJunior}€",
+                    "Mineur : ${course.minPrice}€", // Assuming minPrice roughly maps or is displayed
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    "Majeur : ${course.priceAdult}€",
+                    "Majeur : ${course.majPrice}€",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    "Réduit : ${course.priceReduced}€",
+                    "Réduit : ${course.reducedPrice}€",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  Text(
-                    "Repas : ${course.priceMeal}€",
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
+                  if (course.mealPrice != null)
+                    Text(
+                      "Repas : ${course.mealPrice}€",
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
                 ],
               ),
             ),
@@ -357,7 +366,7 @@ class CourseInfoGrid extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    "Autonome dès : ${course.autonomousAge} ans",
+                    "Autonome dès : ${course.independentAge} ans",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   Text(
@@ -382,7 +391,7 @@ class CourseInfoGrid extends StatelessWidget {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: course.chipRequired == true ? "Oui" : "Non",
+                          text: course.isChipMandatory ? "Oui" : "Non",
                           style: TextStyle(color: Colors.orange),
                         ),
                       ],
@@ -390,7 +399,7 @@ class CourseInfoGrid extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Responsable : ${course.organizer}",
+                    "Responsable #${course.managerId}",
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                 ],
