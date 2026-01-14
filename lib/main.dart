@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'debug/my_http_overrides.dart';
-import 'providers/project_provider.dart';
+import 'providers/api_provider.dart';
+import 'package:saps5app/providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
 import 'screens/raid_detail_screen.dart';
 import 'screens/home_screen.dart';
@@ -44,14 +45,13 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        routerConfig: _router,
       ),
     );
   }
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: kDebugMode ? '/' : '/home',
+  initialLocation: kDebugMode ? '/debug/apiconfig' : '/home',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const ConfigScreen()),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
@@ -60,6 +60,12 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         final raid = state.extra as RaidModel;
         return RaidDetailScreen(raid: raid);
+      },
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) {
+        return const AuthScreen();
       },
     ),
     GoRoute(
