@@ -70,7 +70,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 30), // Larger space for clarity
+                  const SizedBox(width: 30),
                   TextButton(
                     onPressed: () {
                       context.go('/clubs');
