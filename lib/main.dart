@@ -7,21 +7,14 @@ import 'package:saps5app/providers/auth_provider.dart';
 import 'package:saps5app/screens/auth_screen.dart';
 import 'debug/my_http_overrides.dart';
 import 'models/project.dart';
-import 'providers/project_provider.dart';
+import 'providers/api_provider.dart';
+import 'package:saps5app/providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
 import 'screens/detail_screen.dart';
 import 'screens/home_screen.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
-  // runApp(
-  //     ChangeNotifierProvider(
-  //       create: (BuildContext context) => AuthProvider(),
-  //       child: MyApp(),
-  //     )
-  // );
-
-  //Launch class with default App class
   runApp(MyApp());
 }
 
@@ -32,8 +25,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProjectProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => ApiProvider()),
+        ChangeNotifierProxyProvider<ApiProvider, AuthProvider>(
+          create: (context) => AuthProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previousAuth) =>
+              AuthProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, ProjectProvider>(
+          create: (context) => ProjectProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previousProject) =>
+              ProjectProvider(apiProvider),
+        ),
       ],
       child: MaterialApp.router(title: "Orient'Express", routerConfig: _router),
     );

@@ -1,12 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/project.dart';
-import '../services/api_client.dart';
+import 'api_provider.dart';
 
 class ProjectProvider with ChangeNotifier {
-  String _baseUrl = 'feat-auth.sae.bananacloud.tech';
-  late ApiClient _apiClient;
+  final ApiProvider _apiProvider;
 
   List<Project> _projects = [];
   bool _isLoading = false;
@@ -15,50 +12,11 @@ class ProjectProvider with ChangeNotifier {
   List<Project> get projects => _projects;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  String get baseUrl => _baseUrl;
 
-  ProjectProvider({ApiClient? apiClient}) {
-    if (apiClient != null) {
-      _apiClient = apiClient;
-    } else {
-      _initClient();
-    }
-  }
+  // Helper pour accéder à la baseUrl si besoin (ex: pour construire des URLs d'images)
+  String get baseUrl => _apiProvider.baseUrl;
 
-  void _initClient() {
-    // Ensure we have a valid URL structure.
-    // Assuming baseUrl is just a host, we prepend https://
-    final fullUrl = _baseUrl.startsWith('http')
-        ? _baseUrl
-        : 'https://$_baseUrl';
-    final dio = Dio(BaseOptions(baseUrl: fullUrl));
-    _apiClient = ApiClient(dio);
-  }
-
-  Future<void> setBaseUrl(String url) async {
-    _baseUrl = url;
-    _initClient();
-
-    // Save to preferences
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('api_base_url', url);
-
-    notifyListeners();
-  }
-
-  Future<void> loadSavedUrl() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedUrl = prefs.getString('api_base_url');
-    if (savedUrl != null && savedUrl.isNotEmpty) {
-      _baseUrl = savedUrl;
-      _initClient();
-      notifyListeners();
-    }
-  }
-
-  String getBaseUrl() {
-    return _baseUrl;
-  }
+  ProjectProvider(this._apiProvider);
 
   Future<void> fetchProjects() async {
     _isLoading = true;
@@ -66,9 +24,12 @@ class ProjectProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _projects = await _apiClient.getProjects();
+      // On utilise l'apiClient fourni par ApiProvider
+      _projects = await _apiProvider.apiClient.getProjects();
     } catch (e) {
-      _error = e.toString();
+      _projects = [];
+      // _error = e.toString();
+      print("Error fetching projects: $e");
     } finally {
       _isLoading = false;
       notifyListeners();

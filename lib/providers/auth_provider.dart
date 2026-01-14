@@ -1,28 +1,28 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/api_client.dart';
+import 'package:flutter/foundation.dart';
 import '../services/device_info_service.dart';
+import 'api_provider.dart';
 
 class AuthProvider extends ChangeNotifier {
-  bool _isAuthenticated = false;
+  final ApiProvider _apiProvider;
 
-  bool get isAuthenticated => _isAuthenticated;
+  // We derive authentication state from the ApiProvider's token existence
+  bool get isAuthenticated => _apiProvider.hasToken;
 
-  Future<bool> login(String email, String password, String host) async {
-    final dio = Dio(BaseOptions(baseUrl: 'https://$host'));
-    final client = ApiClient(dio);
+  AuthProvider(this._apiProvider);
 
+  Future<bool> login(String email, String password) async {
     try {
       final deviceName = await DeviceInfoService.getDeviceName();
-      final token = await client.login({
+
+      final response = await _apiProvider.apiClient.login({
         'email': email,
         'password': password,
         'device_name': deviceName,
       });
 
-      await saveToken(token);
-      _isAuthenticated = true;
+      final token = response;
+
+      await _apiProvider.setToken(token);
       notifyListeners();
       return true;
     } catch (e) {
@@ -44,14 +44,11 @@ class AuthProvider extends ChangeNotifier {
     String city,
     String country,
     String complementAddress,
-    String host,
   ) async {
-    final dio = Dio(BaseOptions(baseUrl: 'https://$host'));
-    final client = ApiClient(dio);
-
     try {
       final deviceName = await DeviceInfoService.getDeviceName();
-      final token = await client.register({
+
+      final token = await _apiProvider.apiClient.register({
         'email': email,
         'password': password,
         'first_name': firstName,
@@ -67,8 +64,7 @@ class AuthProvider extends ChangeNotifier {
         'device_name': deviceName,
       });
 
-      await saveToken(token);
-      _isAuthenticated = true;
+      await _apiProvider.setToken(token);
       notifyListeners();
       return true;
     } catch (e) {
@@ -77,8 +73,8 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+  Future<void> logout() async {
+    await _apiProvider.clearToken();
+    notifyListeners();
   }
 }

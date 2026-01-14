@@ -28,7 +28,6 @@ class RegisterFormState extends State<RegisterForm> {
 
   Future<void> submitForm() async {
     final provider = context.read<ProjectProvider>();
-    final url = provider.getBaseUrl();
 
     setState(() {
       errorMessage = '';
@@ -48,7 +47,6 @@ class RegisterFormState extends State<RegisterForm> {
           city,
           country,
           complementAddress,
-          url,
         );
     if (result == false) {
       setState(() {

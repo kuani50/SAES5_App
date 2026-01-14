@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/project_provider.dart';
 import '../providers/auth_provider.dart';
 
 class LoginForm extends StatefulWidget {
@@ -17,9 +16,6 @@ class LoginFormState extends State<LoginForm> {
   String _errorMessage = '';
 
   Future<void> submitForm() async {
-    final provider = context.read<ProjectProvider>();
-    final url = provider.getBaseUrl();
-
     setState(() {
       _errorMessage = '';
     });
@@ -27,7 +23,7 @@ class LoginFormState extends State<LoginForm> {
     bool result = await Provider.of<AuthProvider>(
       context,
       listen: false,
-    ).login(_email, _password, url);
+    ).login(_email, _password);
     if (result == false) {
       setState(() {
         _errorMessage = 'There was a problem with your credentials.';

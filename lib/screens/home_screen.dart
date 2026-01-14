@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/project_provider.dart';
+import '../providers/auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = context.read<ProjectProvider>();
       // Ensure the saved URL is loaded if we skipped the config screen (Release mode)
-      await provider.loadSavedUrl();
       provider.fetchProjects();
     });
   }
@@ -27,7 +27,28 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Portfolio')),
+      appBar: AppBar(
+        title: const Text('My Portfolio'),
+        actions: [
+          Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              if (authProvider.isAuthenticated) {
+                return IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () => authProvider.logout(),
+                  tooltip: 'Se déconnecter',
+                );
+              } else {
+                return IconButton(
+                  icon: const Icon(Icons.login),
+                  onPressed: () => context.push('/login'),
+                  tooltip: 'Se connecter',
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: Consumer<ProjectProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
@@ -57,31 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
           return RefreshIndicator(
             onRefresh: () => provider.fetchProjects(),
             child: ListView.builder(
-              itemCount: provider.projects.length + 1,
+              itemCount: provider.projects.length,
               itemBuilder: (context, index) {
-                if (index == provider.projects.length) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 32.0,
-                      horizontal: 16.0,
-                    ),
-                    child: ElevatedButton.icon(
-                      onPressed: () => context.push('/login'),
-                      icon: const Icon(Icons.login),
-                      label: const Text('Se connecter'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(16.0),
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.primaryContainer,
-                        foregroundColor: Theme.of(
-                          context,
-                        ).colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                  );
-                }
-
                 final project = provider.projects[index];
                 final imageUrl = project.getFullImageUrl(provider.baseUrl);
 
