@@ -12,6 +12,7 @@ import 'screens/club_screen.dart';
 import 'screens/club_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/user_races_screen.dart';
 import 'models/event_model.dart';
 import 'models/club_model.dart';
 import 'data/dummy_data.dart';
@@ -29,9 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProjectProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => ProjectProvider())],
       child: MaterialApp.router(
         title: 'Orient Express',
         theme: ThemeData(
@@ -48,14 +47,8 @@ class MyApp extends StatelessWidget {
 final GoRouter _router = GoRouter(
   initialLocation: kDebugMode ? '/' : '/home',
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const ConfigScreen(),
-    ),
-    GoRoute(
-      path: '/home',
-      builder: (context, state) => const HomeScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const ConfigScreen()),
+    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
     GoRoute(
       path: '/details',
       builder: (context, state) {
@@ -77,13 +70,14 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginScreen(),
-    ),
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/my-races',
+      builder: (context, state) => const UserRacesScreen(),
     ),
   ],
 );

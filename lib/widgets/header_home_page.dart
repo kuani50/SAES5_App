@@ -5,11 +5,7 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
   final bool isLoggedIn;
   final VoidCallback? onLogout;
 
-  const HeaderHomePage({
-    super.key,
-    this.isLoggedIn = false,
-    this.onLogout,
-  });
+  const HeaderHomePage({super.key, this.isLoggedIn = false, this.onLogout});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -18,7 +14,8 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     // --- English Comment: Get current route to highlight the active tab. ---
     final String currentPath = GoRouterState.of(context).uri.path;
-    final bool isRaidsActive = currentPath == '/home' || currentPath.startsWith('/details');
+    final bool isRaidsActive =
+        currentPath == '/home' || currentPath.startsWith('/details');
     final bool isClubsActive = currentPath.startsWith('/clubs');
 
     // Orientation detection
@@ -65,7 +62,9 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       'Raids',
                       style: TextStyle(
                         color: isRaidsActive ? Colors.orange : Colors.white,
-                        fontWeight: isRaidsActive ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isRaidsActive
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         fontSize: 14,
                       ),
                     ),
@@ -85,7 +84,32 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       'Club',
                       style: TextStyle(
                         color: isClubsActive ? Colors.orange : Colors.white,
-                        fontWeight: isClubsActive ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isClubsActive
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 30),
+                  TextButton(
+                    onPressed: () {
+                      context.go('/my-races');
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      minimumSize: const Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      'Mon espace coureur',
+                      style: TextStyle(
+                        color: currentPath == '/my-races'
+                            ? Colors.orange
+                            : Colors.white,
+                        fontWeight: currentPath == '/my-races'
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         fontSize: 14,
                       ),
                     ),
@@ -132,11 +156,15 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: const Text('Connexion'),
                 ),
-              ]
+              ],
             ] else ...[
               // PORTRAIT MODE: Dropdown menu for auth
               PopupMenuButton<String>(
-                icon: const Icon(Icons.account_circle, size: 28, color: Colors.white),
+                icon: const Icon(
+                  Icons.account_circle,
+                  size: 28,
+                  color: Colors.white,
+                ),
                 onSelected: (value) {
                   // Handle menu clicks
                   switch (value) {
@@ -162,8 +190,10 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       const PopupMenuItem(
                         value: 'logout',
-                        child: Text('Se déconnecter',
-                            style: TextStyle(color: Colors.red)),
+                        child: Text(
+                          'Se déconnecter',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ] else ...[
                       const PopupMenuItem(
