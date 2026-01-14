@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'debug/my_http_overrides.dart';
 import 'providers/project_provider.dart';
 import 'screens/debug/config_screen.dart';
-import 'screens/raid_detail_screen.dart'; 
+import 'screens/raid_detail_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/club_screen.dart';
 import 'screens/club_detail_screen.dart';
@@ -14,10 +14,13 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/user_races_screen.dart';
 import 'screens/manage_team_screen.dart';
-import 'models/raid_model.dart'; 
+import 'models/raid_model.dart';
 import 'models/club_model.dart';
+import 'models/course_model.dart'; // Added import
 import 'data/raid_data.dart';
-import 'screens/raid_registration_screen.dart'; 
+import 'screens/raid_registration_screen.dart';
+import 'screens/course_detail_screen.dart'; // Added import
+
 void main() {
   if (kDebugMode) {
     HttpOverrides.global = MyHttpOverrides();
@@ -59,8 +62,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/clubs',
-      builder: (context, state) =>
-          ClubScreen(allEvents: allRaids), 
+      builder: (context, state) => ClubScreen(allEvents: allRaids),
     ),
     GoRoute(
       path: '/club-details',
@@ -83,7 +85,7 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const UserRacesScreen(),
     ),
     GoRoute(
-      path: '/raid-registration', 
+      path: '/raid-registration',
       builder: (context, state) {
         final raidName = state.uri.queryParameters['raidName'];
         final initialStepStr = state.uri.queryParameters['initialStep'];
@@ -98,6 +100,15 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/manage-team',
       builder: (context, state) => const ManageTeamScreen(),
+    ),
+    GoRoute(
+      path: '/course-details',
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+        final course = extras['course'] as CourseModel;
+        final raid = extras['raid'] as RaidModel;
+        return CourseDetailScreen(course: course, raid: raid);
+      },
     ),
   ],
 );

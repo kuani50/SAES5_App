@@ -4,7 +4,7 @@ import '../models/raid_model.dart';
 import '../widgets/course_card.dart';
 
 class RaidDetailScreen extends StatelessWidget {
-  final RaidModel raid; 
+  final RaidModel raid;
 
   const RaidDetailScreen({super.key, required this.raid});
 
@@ -55,7 +55,9 @@ class RaidDetailScreen extends StatelessWidget {
                 child: Text("Aucune course disponible pour le moment."),
               )
             else
-              ...raid.courses.map((course) => CourseCard(course: course)),
+              ...raid.courses.map(
+                (course) => CourseCard(course: course, raid: raid),
+              ),
           ],
         ),
       ),

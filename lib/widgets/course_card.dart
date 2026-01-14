@@ -3,11 +3,17 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/project_provider.dart';
 import '../models/course_model.dart';
+import '../models/raid_model.dart'; // Added import
 
 class CourseCard extends StatelessWidget {
   final CourseModel course;
+  final RaidModel raid; // Added raid
 
-  const CourseCard({super.key, required this.course});
+  const CourseCard({
+    super.key,
+    required this.course,
+    required this.raid,
+  }); // Updated constructor
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +40,14 @@ class CourseCard extends StatelessWidget {
               children: [
                 CourseInfo(course: course),
                 const SizedBox(height: 16),
-                CourseActions(isMobile: true, course: course),
+                CourseActions(isMobile: true, course: course, raid: raid),
               ],
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child: CourseInfo(course: course)),
-                CourseActions(isMobile: false, course: course),
+                CourseActions(isMobile: false, course: course, raid: raid),
               ],
             ),
     );
@@ -109,11 +115,13 @@ class CourseInfo extends StatelessWidget {
 class CourseActions extends StatelessWidget {
   final bool isMobile;
   final CourseModel course;
+  final RaidModel raid; // Added raid
 
   const CourseActions({
     super.key,
     required this.isMobile,
     required this.course,
+    required this.raid, // Added to constructor
   });
 
   @override
@@ -124,7 +132,10 @@ class CourseActions extends StatelessWidget {
           : MainAxisAlignment.end,
       children: [
         OutlinedButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () => context.push(
+            '/course-details',
+            extra: {'course': course, 'raid': raid},
+          ),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             side: BorderSide(color: Colors.grey.shade300),
@@ -133,7 +144,7 @@ class CourseActions extends StatelessWidget {
             ),
           ),
           child: const Text(
-            'Voir les inscrits',
+            'Voir les détails',
             style: TextStyle(color: Colors.black),
           ),
         ),
