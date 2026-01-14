@@ -34,12 +34,10 @@ class EventDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Sous-composant Header
             EventDetailHeader(event: event),
-            
+
             const SizedBox(height: 40),
-            
-            // Section Titre "Les Courses"
+
             const Text(
               "Les Courses",
               style: TextStyle(
@@ -49,8 +47,7 @@ class EventDetailScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
-            // Liste des courses
+
             if (event.courses.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
@@ -65,7 +62,6 @@ class EventDetailScreen extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Header de détail ---
 class EventDetailHeader extends StatelessWidget {
   final EventModel event;
 
@@ -106,7 +102,6 @@ class EventDetailHeader extends StatelessWidget {
   }
 }
 
-// --- Petit helper pour les icones+textes ---
 class _InfoItem extends StatelessWidget {
   final IconData icon;
   final String text;

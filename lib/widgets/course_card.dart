@@ -8,7 +8,6 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Détection si l'écran est petit (Mobile)
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Container(
@@ -46,7 +45,6 @@ class CourseCard extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Informations Course ---
 class CourseInfo extends StatelessWidget {
   final CourseModel course;
 
@@ -78,7 +76,6 @@ class CourseInfo extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Boutons d'action ---
 class CourseActions extends StatelessWidget {
   final bool isMobile;
 
@@ -87,7 +84,9 @@ class CourseActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: isMobile ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisAlignment: isMobile
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
       children: [
         OutlinedButton(
           onPressed: () {},
@@ -98,7 +97,10 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text('Voir les inscrits', style: TextStyle(color: Colors.black)),
+          child: const Text(
+            'Voir les inscrits',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         const SizedBox(width: 12),
         ElevatedButton(
@@ -111,14 +113,16 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text("S'inscrire", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: const Text(
+            "S'inscrire",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
   }
 }
 
-// --- Sous-composant : Tag générique ---
 class _CourseTag extends StatelessWidget {
   final String text;
 

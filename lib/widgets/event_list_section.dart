@@ -6,17 +6,12 @@ import 'event_card.dart';
 class EventListSection extends StatelessWidget {
   final List<EventModel> events;
 
-  const EventListSection({
-    super.key,
-    required this.events,
-  });
+  const EventListSection({super.key, required this.events});
 
   @override
   Widget build(BuildContext context) {
-    // Détection de l'orientation
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    // 2 colonnes en Portrait, 3 en Paysage
     final crossAxisCount = isLandscape ? 3 : 2;
 
     return Column(

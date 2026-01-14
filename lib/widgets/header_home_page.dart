@@ -5,23 +5,17 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
   final bool isLoggedIn;
   final VoidCallback? onLogout;
 
-  const HeaderHomePage({
-    super.key,
-    this.isLoggedIn = false,
-    this.onLogout,
-  });
+  const HeaderHomePage({super.key, this.isLoggedIn = false, this.onLogout});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    // Détection de l'orientation
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return AppBar(
-      // --- MODIFICATION : Couleur de fond "Vert Ficus" ---
       backgroundColor: const Color(0xFF334C33),
       automaticallyImplyLeading: false,
       titleSpacing: 0,
@@ -39,7 +33,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
 
-            // --- Navigation centrale qui s'étend ---
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -53,8 +46,10 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('Prochains Événements',
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                    child: const Text(
+                      'Prochains Événements',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
                   ),
                   const SizedBox(width: 30),
                   TextButton(
@@ -66,16 +61,16 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       minimumSize: const Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text('Club',
-                        style: TextStyle(color: Colors.white, fontSize: 14)),
+                    child: const Text(
+                      'Club',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // --- Logique Responsive pour l'Authentification à droite ---
             if (isLandscape) ...[
-              // MODE PAYSAGE
               if (isLoggedIn) ...[
                 IconButton(
                   icon: const Icon(Icons.person),
@@ -105,9 +100,8 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: const Text('Connexion'),
                 ),
-              ]
+              ],
             ] else ...[
-              // MODE PORTRAIT
               PopupMenuButton<String>(
                 icon: const Icon(Icons.account_circle, size: 28),
                 onSelected: (value) {
@@ -130,8 +124,10 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       const PopupMenuItem(
                         value: 'logout',
-                        child: Text('Se déconnecter',
-                            style: TextStyle(color: Colors.red)),
+                        child: Text(
+                          'Se déconnecter',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ] else ...[
                       const PopupMenuItem(

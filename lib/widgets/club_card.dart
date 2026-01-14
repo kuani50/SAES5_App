@@ -5,11 +5,7 @@ class ClubCard extends StatelessWidget {
   final ClubModel club;
   final VoidCallback? onViewRaids;
 
-  const ClubCard({
-    super.key,
-    required this.club,
-    this.onViewRaids,
-  });
+  const ClubCard({super.key, required this.club, this.onViewRaids});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +25,7 @@ class ClubCard extends StatelessWidget {
       padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // Important pour Wrap
+        mainAxisSize: MainAxisSize.min,
         children: [
           ClubCardHeader(club: club),
           const SizedBox(height: 12),
@@ -42,7 +38,6 @@ class ClubCard extends StatelessWidget {
   }
 }
 
-// ... (Header and Actions remain the same)
 class ClubCardHeader extends StatelessWidget {
   final ClubModel club;
 
@@ -80,10 +75,7 @@ class ClubCardHeader extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 club.location,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -93,7 +85,6 @@ class ClubCardHeader extends StatelessWidget {
   }
 }
 
-// --- Sous-composant : Description (MODIFIÉ) ---
 class ClubCardDescription extends StatelessWidget {
   final String description;
 
@@ -101,14 +92,9 @@ class ClubCardDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // --- MODIFICATION : Suppression de maxLines et overflow ---
     return Text(
       description,
-      style: TextStyle(
-        fontSize: 14,
-        color: Colors.grey[700],
-        height: 1.4,
-      ),
+      style: TextStyle(fontSize: 14, color: Colors.grey[700], height: 1.4),
     );
   }
 }
@@ -127,9 +113,7 @@ class ClubCardActions extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 12),
           side: BorderSide(color: Colors.grey.shade300),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: const Text(
           'Voir les raids',
