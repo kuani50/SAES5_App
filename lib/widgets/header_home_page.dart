@@ -23,7 +23,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
-            // Titre / Logo à gauche
             const Text(
               "Orient'Express",
               style: TextStyle(
