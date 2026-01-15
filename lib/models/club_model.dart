@@ -24,9 +24,11 @@ class ClubModel {
       addressId: json['address_id'] as int?,
       managerId: json['manager_id'] as int?,
       logoUrl: json['logo_url'] as String?,
-      raids: (json['raids'] as List<dynamic>?)
-          ?.map((e) => RaidModel.fromJson(e as Map<String, dynamic>))
-          .toList(), // New parsing
+      raids: json['raids'] is List
+          ? (json['raids'] as List<dynamic>)
+                .map((e) => RaidModel.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : [],
     );
   }
 

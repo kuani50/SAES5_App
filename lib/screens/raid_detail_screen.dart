@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -30,42 +31,37 @@ class _RaidDetailScreenState extends State<RaidDetailScreen> {
     try {
       final apiProvider = context.read<ApiProvider>();
       final response = await apiProvider.dio.get(
-        '/api/raid/${widget.raid.id}/races',
+        '/api/raids/${widget.raid.id}/races',
       );
 
-      debugPrint('=== COURSES API RESPONSE ===');
-      debugPrint('Response type: ${response.data.runtimeType}');
-      debugPrint('Response data: ${response.data}');
+      var responseData = response.data;
+
+      // If response is a String, parse it as JSON
+      if (responseData is String) {
+        responseData = jsonDecode(responseData);
+      }
 
       // Handle wrapped response {"races": [...]} or {"data": [...]} or direct array [...]
-      final dynamic responseData = response.data;
       List<dynamic> coursesList;
 
       if (responseData is Map<String, dynamic>) {
         // Check for 'races' key first (Laravel convention)
         if (responseData.containsKey('races')) {
           coursesList = responseData['races'] as List<dynamic>;
-          debugPrint('Found races key, list length: ${coursesList.length}');
         } else if (responseData.containsKey('data')) {
           coursesList = responseData['data'] as List<dynamic>;
-          debugPrint('Found data key, list length: ${coursesList.length}');
         } else {
           coursesList = [];
-          debugPrint('No races or data key found');
         }
       } else if (responseData is List) {
         coursesList = responseData;
-        debugPrint('Direct list, length: ${coursesList.length}');
       } else {
         coursesList = [];
-        debugPrint('Unknown format, using empty list');
       }
 
       final courses = coursesList
           .map((e) => CourseModel.fromJson(e as Map<String, dynamic>))
           .toList();
-
-      debugPrint('Parsed ${courses.length} courses');
 
       setState(() {
         _courses = courses;

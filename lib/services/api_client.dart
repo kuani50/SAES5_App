@@ -14,16 +14,16 @@ abstract class ApiClient {
   @GET("/api/projects")
   Future<List<Project>> getProjects();
 
-  @GET("/api/raids-with-club-and-address")
+  @GET("/api/raids?with=club,address")
   Future<List<RaidModel>> getRaids();
 
   @GET("/api/club")
   Future<List<ClubModel>> getClubs();
 
-  @GET("/api/clubsWithUpcomingEvents")
+  @GET("/api/clubs?with=upcoming,address")
   Future<List<ClubModel>> getClubsWithUpcomingEvents();
 
-  @GET("/api/raid/{raid}/races")
+  @GET("/api/raids/{raid}/races")
   Future<List<CourseModel>> getRacesByRaid(@Path("raid") int raidId);
 
   @GET("/api/club/{club}/raids")

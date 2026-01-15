@@ -58,7 +58,7 @@ class _ApiClient implements ApiClient {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/raids-with-club-and-address',
+            '/api/raids?with=club,address',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -116,7 +116,7 @@ class _ApiClient implements ApiClient {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/clubsWithUpcomingEvents',
+            '/api/clubs?with=upcoming,address',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -145,7 +145,7 @@ class _ApiClient implements ApiClient {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/raid/${raidId}/races',
+            '/api/raids/${raidId}/races',
             queryParameters: queryParameters,
             data: _data,
           )

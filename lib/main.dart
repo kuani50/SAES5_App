@@ -27,7 +27,9 @@ import 'screens/raid_registration_screen.dart';
 import 'screens/course_detail_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
+  await initializeDateFormatting('fr_FR', null);
   runApp(const MyApp());
 }
 
