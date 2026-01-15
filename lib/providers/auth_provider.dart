@@ -15,10 +15,26 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _apiProvider.hasToken;
   UserModel? get currentUser => _currentUser;
   bool get isRaceManager => _isRaceManager;
-  String get userDisplayName => _currentUser != null
-      ? "${_currentUser!.firstName} ${_currentUser!.lastName}"
-      : "";
+  String get userDisplayName {
+    if (_currentUser == null) {
+      return "";
+    }
 
+    final firstName = (_currentUser!.firstName ?? '').trim();
+    final lastName = (_currentUser!.lastName ?? '').trim();
+
+    if (firstName.isEmpty && lastName.isEmpty) {
+      return "";
+    }
+    if (firstName.isEmpty) {
+      return lastName;
+    }
+    if (lastName.isEmpty) {
+      return firstName;
+    }
+
+    return "$firstName $lastName";
+  }
   AuthProvider(this._apiProvider) {
     _loadUserFromPrefs();
   }
