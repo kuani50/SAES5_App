@@ -20,7 +20,21 @@ class AuthProvider extends ChangeNotifier {
       : "";
 
   AuthProvider(this._apiProvider) {
-    _loadUserFromPrefs();
+    // Start logged out - don't auto-load from prefs
+    _clearSession();
+  }
+
+  Future<void> _clearSession() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('current_user');
+      await _apiProvider.clearToken();
+      _currentUser = null;
+      _isRaceManager = false;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error clearing session: $e');
+    }
   }
 
   Future<void> _loadUserFromPrefs() async {

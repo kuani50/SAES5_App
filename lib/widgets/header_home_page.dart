@@ -157,11 +157,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                     tooltip: 'Mes Courses (Responsable)',
                   ),
                 IconButton(
-                  icon: const Icon(Icons.person, color: Colors.white),
-                  onPressed: () {},
-                  tooltip: 'Mon Profil',
-                ),
-                IconButton(
                   icon: const Icon(Icons.logout, color: Colors.red),
                   onPressed: () {
                     provider.logout();
