@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import '../models/club_model.dart'; //
+import '../models/club_model.dart';
+import '../data/club_data.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/license_section.dart';
@@ -15,10 +16,8 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // Key for form state management and validation.
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for each text field.
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -28,24 +27,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  // Date management.
   DateTime? _selectedDate;
-  //  Selected club state.
   ClubModel? _selectedClub;
+  bool? _isLicensed;
 
-  // Loading state for submission button.
   bool _isLoading = false;
 
-  // The context passed here is the valid one from the screen.
   Future<void> _selectDate(BuildContext screenContext) async {
     final DateTime? picked = await showDatePicker(
       context: screenContext,
       initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      // locale: const Locale("fr"), // Removed to prevent crash if localizations are not setup
       builder: (dialogContext, child) {
-        // Use the screenContext to find the theme, not the dialogContext.
         return Theme(
           data: Theme.of(screenContext).copyWith(
             colorScheme: const ColorScheme.light(
@@ -60,20 +54,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dateController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+        _dateController.text =
+            "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       });
     }
   }
 
-  // Handles form submission.
   void _submit() {
-    // Check if all validators pass.
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
 
-
       Future.delayed(const Duration(seconds: 2), () {
-
         if (!mounted) return;
 
         setState(() => _isLoading = false);
@@ -84,15 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    // Local club list as an alternative to dummy_data.dart.
-    // This makes the widget self-contained and ready for a future provider.
-    final List<ClubModel> clubs = [
-      ClubModel(name: "Orient'Express", location: "Caen, 14", description: "Club..."),
-      ClubModel(name: "ALBE Orientation", location: "Elbeuf, 76", description: "Club..."),
-      ClubModel(name: "Vikings 76", location: "Rouen, 76", description: "Club..."),
-      ClubModel(name: "ASL Condé", location: "Condé-sur-Noireau, 14", description: "Club..."),
-    ];
+    final List<ClubModel> clubs = allClubs;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -102,7 +85,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.all(24.0),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
-            // Form widget to enable validation.
             child: Form(
               key: _formKey,
               child: Column(
@@ -110,7 +92,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   const Text(
                     "Inscription",
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF0F172A),
+                    ),
                   ),
                   const SizedBox(height: 32),
 
@@ -121,7 +107,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           label: "Prénom *",
                           hintText: "Thomas",
                           controller: _firstNameController,
-                          validator: (value) => value == null || value.isEmpty ? 'Le prénom est requis.' : null,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Le prénom est requis.'
+                              : null,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -130,7 +118,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           label: "Nom *",
                           hintText: "Dupont",
                           controller: _lastNameController,
-                          validator: (value) => value == null || value.isEmpty ? 'Le nom est requis.' : null,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Le nom est requis.'
+                              : null,
                         ),
                       ),
                     ],
@@ -144,60 +134,86 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         label: "Date de naissance *",
                         hintText: "jj/mm/aaaa",
                         controller: _dateController,
-                        validator: (value) => value == null || value.isEmpty ? 'La date est requise.' : null,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'La date est requise.'
+                            : null,
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
 
-                  LicenseSection(licenseController: _licenseController),
-                  const SizedBox(height: 24),
-
-                  // Club dropdown field.
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Choisir votre club (facultatif)",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF0F172A),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      DropdownButtonFormField<ClubModel>(
-                        value: _selectedClub,
-                        hint: Text("Sélectionner un club...", style: TextStyle(color: Colors.grey.shade400)),
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: const BorderSide(color: Colors.orange, width: 2),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        items: clubs.map((ClubModel club) {
-                          return DropdownMenuItem<ClubModel>(
-                            value: club,
-                            child: Text(club.name),
-                          );
-                        }).toList(),
-                        onChanged: (ClubModel? newValue) {
-                          setState(() {
-                            _selectedClub = newValue;
-                          });
-                        },
-                      ),
-                    ],
+                  LicenseSection(
+                    licenseController: _licenseController,
+                    isLicensed: _isLicensed,
+                    onLicenseChanged: (value) {
+                      setState(() {
+                        _isLicensed = value;
+                        if (value == false) {
+                          _licenseController.clear();
+                          _selectedClub = null; // Clear club if not licensed
+                        }
+                      });
+                    },
                   ),
                   const SizedBox(height: 24),
+
+                  if (_isLicensed == true) ...[
+                    const SizedBox(height: 24),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Choisir votre club (facultatif)",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<ClubModel>(
+                          initialValue: _selectedClub,
+                          hint: Text(
+                            "Sélectionner un club...",
+                            style: TextStyle(color: Colors.grey.shade400),
+                          ),
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: const BorderSide(
+                                color: Colors.orange,
+                                width: 2,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                          items: clubs.map((ClubModel club) {
+                            return DropdownMenuItem<ClubModel>(
+                              value: club,
+                              child: Text(club.name),
+                            );
+                          }).toList(),
+                          onChanged: (ClubModel? newValue) {
+                            setState(() {
+                              _selectedClub = newValue;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
 
                   CustomTextField(
                     label: "Téléphone *",
@@ -206,8 +222,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.phone,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Le téléphone est requis.';
-                      if (value.length < 10) return 'Numéro invalide (10 chiffres).';
+                      if (value == null || value.isEmpty) {
+                        return 'Le téléphone est requis.';
+                      }
+                      if (value.length < 10) {
+                        return 'Numéro invalide (10 chiffres).';
+                      }
                       return null;
                     },
                   ),
@@ -219,8 +239,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'L\'email est requis.';
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return 'Format d\'email invalide.';
+                      if (value == null || value.isEmpty) {
+                        return 'L\'email est requis.';
+                      }
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
+                        return 'Format d\'email invalide.';
+                      }
                       return null;
                     },
                   ),
@@ -232,14 +258,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _passwordController,
                     isPassword: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Le mot de passe est requis.';
-                      if (value.length < 8) return 'Le mot de passe doit faire au moins 8 caractères.';
-                      final hasUppercase = RegExp(r'[A-Z]').hasMatch(value);
-                      final hasLowercase = RegExp(r'[a-z]').hasMatch(value);
-                      final hasDigit = RegExp(r'\d').hasMatch(value);
-                      final hasSpecialChar = RegExp(r'[^A-Za-z0-9]').hasMatch(value);
-                      if (!hasUppercase || !hasLowercase || !hasDigit || !hasSpecialChar) {
-                        return 'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.';
+                      if (value == null || value.isEmpty) {
+                        return 'Le mot de passe est requis.';
+                      }
+                      if (value.length < 8) {
+                        return 'Le mot de passe doit faire au moins 8 caractères.';
                       }
                       return null;
                     },
@@ -252,8 +275,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _confirmPasswordController,
                     isPassword: true,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Veuillez confirmer le mot de passe.';
-                      if (value != _passwordController.text) return 'Les mots de passe ne correspondent pas.';
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez confirmer le mot de passe.';
+                      }
+                      if (value != _passwordController.text) {
+                        return 'Les mots de passe ne correspondent pas.';
+                      }
                       return null;
                     },
                   ),
@@ -274,7 +301,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onTap: () => context.go('/login'),
                         child: const Text(
                           "Connectez-vous",
-                          style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],

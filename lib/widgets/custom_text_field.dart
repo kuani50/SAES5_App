@@ -7,8 +7,8 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final TextInputType keyboardType;
-  final String? Function(String?)? validator; // For validation
-  final List<TextInputFormatter>? inputFormatters; // To filter input
+  final String? Function(String?)? validator; 
+  final List<TextInputFormatter>? inputFormatters; 
 
   const CustomTextField({
     super.key,
@@ -40,9 +40,9 @@ class CustomTextField extends StatelessWidget {
           controller: controller,
           obscureText: isPassword,
           keyboardType: keyboardType,
-          inputFormatters: inputFormatters, // Apply input formatters
-          validator: validator, // Apply validator
-          autovalidateMode: AutovalidateMode.onUserInteraction, // Validate on user interaction
+          inputFormatters: inputFormatters, 
+          validator: validator, 
+          autovalidateMode: AutovalidateMode.onUserInteraction, 
           style: const TextStyle(fontSize: 16),
           decoration: InputDecoration(
             hintText: hintText,

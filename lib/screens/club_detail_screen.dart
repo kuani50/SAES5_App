@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/club_model.dart';
-import '../models/event_model.dart';
-import '../widgets/event_card.dart';
+import '../models/raid_model.dart';
+import '../widgets/raid_card.dart';
 import '../widgets/header_home_page.dart';
 
 class ClubDetailScreen extends StatelessWidget {
   final ClubModel club;
-  final List<EventModel> allEvents; // Passing all events to filter
+  final List<RaidModel> allEvents;
 
   const ClubDetailScreen({
     super.key,
@@ -18,7 +18,7 @@ class ClubDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Filter raids organized by this club
-    final clubEvents = allEvents.where((e) => e.clubName == club.name).toList();
+    final clubEvents = allEvents.where((e) => e.clubId == club.id).toList();
 
     return Scaffold(
       appBar: const HeaderHomePage(),
@@ -33,17 +33,16 @@ class ClubDetailScreen extends StatelessWidget {
               icon: const Icon(Icons.arrow_back, color: Colors.grey, size: 18),
               label: const Text(
                 "Retour aux clubs",
-                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               style: TextButton.styleFrom(padding: EdgeInsets.zero),
             ),
             const SizedBox(height: 24),
-
-            // Club Infos
             _ClubDetailInfo(club: club),
             const SizedBox(height: 40),
-
-            // Section Title
             const Text(
               "Raids organisés par ce club",
               style: TextStyle(
@@ -67,16 +66,21 @@ class ClubDetailScreen extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).orientation == Orientation.landscape ? 4 : 3,
+                  crossAxisCount:
+                      MediaQuery.of(context).orientation ==
+                          Orientation.landscape
+                      ? 4
+                      : 3,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   childAspectRatio: 0.85,
                 ),
                 itemCount: clubEvents.length,
                 itemBuilder: (context, index) {
-                  return EventCard(
-                    event: clubEvents[index],
-                    onTap: () => context.push('/details', extra: clubEvents[index]),
+                  return RaidCard(
+                    raid: clubEvents[index],
+                    onTap: () =>
+                        context.push('/details', extra: clubEvents[index]),
                   );
                 },
               ),
@@ -123,11 +127,8 @@ class _ClubDetailInfo extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                "Club - ${club.location}",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey[600],
-                ),
+                "Manager ID: ${club.managerId}", // Placeholder
+                style: TextStyle(fontSize: 18, color: Colors.grey[600]),
               ),
             ],
           ),

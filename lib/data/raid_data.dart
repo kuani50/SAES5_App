@@ -1,0 +1,115 @@
+import '../models/raid_model.dart';
+import '../models/course_model.dart';
+
+final List<RaidModel> allRaids = [
+  RaidModel(
+    id: 1,
+    name: "Raid Suisse Normande",
+    clubId: 1,
+    addressId: 201, // Clécy
+    managerId: 1,
+    startDate: DateTime(2025, 10, 12),
+    endDate: DateTime(2025, 10, 12),
+    registrationStartDate: DateTime(2025, 8, 1),
+    registrationEndDate: DateTime(2025, 10, 5),
+    imageUrl: null,
+    courses: [
+      CourseModel(
+        id: 1,
+        name: "Parcours Aventure",
+        raidId: 1,
+        managerId: 1,
+        type: "Raid",
+        difficulty: "Facile",
+        gender: "Mixte",
+        startDate: DateTime(2025, 10, 12),
+        endDate: DateTime(2025, 10, 12),
+        maxParticipants: 300,
+        maxTeams: 100,
+        maxPersonsPerTeam: 3,
+        minParticipants: 1,
+        minTeams: 1,
+        minPrice: 10.0,
+        majPrice: 15.0,
+        reducedPrice: 8.0,
+        mealPrice: 10.0,
+        isChipMandatory: true,
+        minAge: 11,
+        independentAge: 15,
+        supervisorAge: 19,
+        remainingTeams: 20, // Added mock data
+      ),
+    ],
+  ),
+  RaidModel(
+    id: 2,
+    name: "Raid Urbain Caen",
+    clubId: 2,
+    addressId: 202, // Caen
+    managerId: 2,
+    startDate: DateTime(2025, 11, 15),
+    endDate: DateTime(2025, 11, 15),
+    registrationStartDate: DateTime(2025, 9, 1),
+    registrationEndDate: DateTime(2025, 11, 8),
+    courses: [
+      CourseModel(
+        id: 2,
+        name: "Parcours Découverte",
+        raidId: 2,
+        managerId: 2,
+        type: "Urbain",
+        difficulty: "Débutant",
+        gender: "Mixte",
+        startDate: DateTime(2025, 11, 15),
+        endDate: DateTime(2025, 11, 15),
+        maxParticipants: 100,
+        maxTeams: 50,
+        maxPersonsPerTeam: 2,
+        minParticipants: 1,
+        minTeams: 1,
+        minPrice: 5.0,
+        majPrice: 10.0,
+        reducedPrice: 5.0,
+        mealPrice: null,
+        isChipMandatory: false,
+        minAge: 8,
+        independentAge: 12,
+        supervisorAge: 18,
+        remainingTeams: 45, // Added mock data
+      ),
+    ],
+  ),
+  RaidModel(
+    id: 3,
+    name: "Course d'Orientation Nocturne",
+    clubId: 3,
+    addressId: 203, // Rouen
+    managerId: 3,
+    startDate: DateTime(2025, 12, 20),
+    endDate: DateTime(2025, 12, 20),
+    registrationStartDate: DateTime(2025, 11, 20),
+    registrationEndDate: DateTime(2025, 12, 15),
+  ),
+  RaidModel(
+    id: 4,
+    name: "Entraînement Forêt",
+    clubId: 4,
+    addressId: 204, // Condé
+    managerId: 4,
+    startDate: DateTime(2026, 2, 5),
+    endDate: DateTime(2026, 2, 5),
+    registrationStartDate: DateTime(2026, 1, 5),
+    registrationEndDate: DateTime(2026, 2, 1),
+  ),
+  RaidModel(
+    id: 5,
+    name: "Challenge Orientation 14",
+    clubId: 5, // CDCO 14 assumed
+    addressId: 205, // Falaise
+    managerId: 5,
+    startDate: DateTime(2026, 3, 12),
+    endDate: DateTime(2026, 3, 12),
+    registrationStartDate: DateTime(2026, 2, 12),
+    registrationEndDate: DateTime(2026, 3, 5),
+  ),
+];

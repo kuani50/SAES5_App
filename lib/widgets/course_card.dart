@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../providers/project_provider.dart';
 import '../models/course_model.dart';
+import '../models/raid_model.dart';
 
 class CourseCard extends StatelessWidget {
   final CourseModel course;
+  final RaidModel raid;
 
-  const CourseCard({super.key, required this.course});
+  const CourseCard({super.key, required this.course, required this.raid});
 
   @override
   Widget build(BuildContext context) {
-    // Detect if screen is small (Mobile)
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Container(
@@ -21,7 +24,7 @@ class CourseCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -33,14 +36,14 @@ class CourseCard extends StatelessWidget {
               children: [
                 CourseInfo(course: course),
                 const SizedBox(height: 16),
-                const CourseActions(isMobile: true),
+                CourseActions(isMobile: true, course: course, raid: raid),
               ],
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child: CourseInfo(course: course)),
-                const CourseActions(isMobile: false),
+                CourseActions(isMobile: false, course: course, raid: raid),
               ],
             ),
     );
@@ -59,7 +62,7 @@ class CourseInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "${course.name} (${course.distance})",
+          course.name,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -69,9 +72,11 @@ class CourseInfo extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-            _CourseTag(text: course.teamSize),
+            _CourseTag(text: "Par équipe de ${course.maxPersonsPerTeam}"),
             const SizedBox(width: 8),
             _CourseTag(text: course.difficulty),
+            const SizedBox(width: 8),
+            _CourseTag(text: "${course.remainingTeams ?? 0} places restantes"),
           ],
         ),
       ],
@@ -82,16 +87,28 @@ class CourseInfo extends StatelessWidget {
 // --- Sub-component: Action Buttons ---
 class CourseActions extends StatelessWidget {
   final bool isMobile;
+  final CourseModel course;
+  final RaidModel raid;
 
-  const CourseActions({super.key, required this.isMobile});
+  const CourseActions({
+    super.key,
+    required this.isMobile,
+    required this.course,
+    required this.raid,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: isMobile ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisAlignment: isMobile
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
       children: [
         OutlinedButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () => context.push(
+            '/course-details',
+            extra: {'course': course, 'raid': raid},
+          ),
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             side: BorderSide(color: Colors.grey.shade300),
@@ -99,11 +116,22 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text('Voir les inscrits', style: TextStyle(color: Colors.black)),
+          child: const Text(
+            'Voir les détails',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         const SizedBox(width: 12),
         ElevatedButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () {
+            final provider = context.read<ProjectProvider>();
+            if (provider.isLoggedIn) {
+              provider.registerForCourse(course);
+              context.push('/my-races');
+            } else {
+              context.push('/login?redirect=/my-races');
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.orange,
             foregroundColor: Colors.white,
@@ -112,7 +140,10 @@ class CourseActions extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text("S'inscrire", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: const Text(
+            "S'inscrire",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'custom_text_field.dart';
 
-class LicenseSection extends StatefulWidget {
+class LicenseSection extends StatelessWidget {
   final TextEditingController licenseController;
+  final bool? isLicensed;
+  final ValueChanged<bool?> onLicenseChanged;
 
-  const LicenseSection({super.key, required this.licenseController});
-
-  @override
-  State<LicenseSection> createState() => _LicenseSectionState();
-}
-
-class _LicenseSectionState extends State<LicenseSection> {
-  // null = no choice, true = yes, false = no
-  bool? _isLicensed; 
+  const LicenseSection({
+    super.key,
+    required this.licenseController,
+    required this.isLicensed,
+    required this.onLicenseChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,44 +27,32 @@ class _LicenseSectionState extends State<LicenseSection> {
           ),
         ),
         const SizedBox(height: 12),
-        
-        // Using a Row with two custom selectable buttons instead of RadioListTile
         Row(
           children: [
             Expanded(
               child: _buildChoiceButton(
                 label: "Oui",
-                isSelected: _isLicensed == true,
-                onTap: () {
-                  setState(() {
-                    _isLicensed = true;
-                  });
-                },
+                isSelected: isLicensed == true,
+                onTap: () => onLicenseChanged(true),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: _buildChoiceButton(
                 label: "Non",
-                isSelected: _isLicensed == false,
-                onTap: () {
-                  setState(() {
-                    _isLicensed = false;
-                    widget.licenseController.clear();
-                  });
-                },
+                isSelected: isLicensed == false,
+                onTap: () => onLicenseChanged(false),
               ),
             ),
           ],
         ),
-        
-        // Dynamic field display
-        if (_isLicensed == true) ...[
+
+        if (isLicensed == true) ...[
           const SizedBox(height: 24),
           CustomTextField(
             label: "Numéro de licence",
             hintText: "Ex: 12345678",
-            controller: widget.licenseController,
+            controller: licenseController,
           ),
         ],
       ],
@@ -97,7 +84,7 @@ class _LicenseSectionState extends State<LicenseSection> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.white : Colors.grey.shade600,
+              color: isSelected ? Colors.orange : Colors.grey.shade600,
             ),
           ),
         ),

@@ -1,33 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../providers/project_provider.dart';
+import '../data/login_data.dart';
+
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/header_home_page.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  // Controllers to get values
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final emailController = TextEditingController(text: email);
+    final passwordController = TextEditingController(text: password);
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const HeaderHomePage(), // Keeping header for consistency
+      appBar: const HeaderHomePage(),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -37,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Title
                 const Text(
                   "Connexion",
                   style: TextStyle(
@@ -48,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
 
-                // Email Field
                 CustomTextField(
                   label: "Email",
                   hintText: "exemple@email.com",
@@ -57,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Password Field
                 CustomTextField(
                   label: "Mot de passe",
                   hintText: "Votre mot de passe",
@@ -66,18 +54,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
 
-                // Login Button
                 PrimaryButton(
                   text: "Se connecter",
                   onPressed: () {
-                    // TODO: Login logic
-                    // Simulating login and returning to home
-                    context.go('/home'); 
+                    // Login logic
+                    context.read<ProjectProvider>().login();
+
+                    // Check for redirect param
+                    final redirect = GoRouterState.of(
+                      context,
+                    ).uri.queryParameters['redirect'];
+                    if (redirect != null) {
+                      context.go(redirect);
+                    } else {
+                      context.go('/home');
+                    }
                   },
                 ),
                 const SizedBox(height: 16),
 
-                // Register Link
                 Row(
                   children: [
                     const Text(
@@ -86,7 +81,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // Navigate to Register
                         context.go('/register');
                       },
                       child: const Text(

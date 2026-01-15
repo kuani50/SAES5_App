@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../data/dummy_data.dart';
-import '../widgets/event_list_section.dart';
+import '../data/raid_data.dart';
+import '../widgets/raid_list_section.dart';
 import '../widgets/header_home_page.dart';
 import '../widgets/hero_banner.dart';
 
@@ -19,11 +19,11 @@ class HomeScreen extends StatelessWidget {
             HeroBanner(
               title: 'Prochain défi : Raid Suisse Normande',
               onTap: () {
-                context.push('/details', extra: dummyEvents[0]);
+                context.push('/details', extra: allRaids[0]);
               },
             ),
             const SizedBox(height: 16),
-            EventListSection(events: dummyEvents),
+            RaidListSection(raids: allRaids),
             const SizedBox(height: 40),
           ],
         ),

@@ -8,6 +8,7 @@ class ProjectProvider with ChangeNotifier {
   List<Project> _projects = [];
   bool _isLoading = false;
   String? _error;
+  bool _isLoggedIn = false;
 
   List<Project> get projects => _projects;
   bool get isLoading => _isLoading;
@@ -32,5 +33,20 @@ class ProjectProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Mock registration method
+  Future<void> registerForCourse(CourseModel course) async {
+    _isLoading = true;
+    notifyListeners();
+
+    // Simulate API delay
+    await Future.delayed(const Duration(seconds: 1));
+
+    // For now, we simulate success.
+    // In a real app, calls ApiService.register(...)
+
+    _isLoading = false;
+    notifyListeners();
   }
 }

@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../providers/project_provider.dart';
 
 class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
-  final bool isLoggedIn;
+  final bool? isLoggedIn;
   final VoidCallback? onLogout;
 
-  const HeaderHomePage({
-    super.key,
-    this.isLoggedIn = false,
-    this.onLogout,
-  });
+  const HeaderHomePage({super.key, this.isLoggedIn, this.onLogout});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    // Get current route to highlight the active tab. ---
+    final provider = context.watch<ProjectProvider>();
+    final bool loggedIn = isLoggedIn ?? provider.isLoggedIn;
     final String currentPath = GoRouterState.of(context).uri.path;
-    final bool isRaidsActive = currentPath == '/home' || currentPath.startsWith('/details');
+    final bool isRaidsActive =
+        currentPath == '/home' || currentPath.startsWith('/details');
     final bool isClubsActive = currentPath.startsWith('/clubs');
-
-    // Orientation detection
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -33,16 +31,28 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: [
-            // --- Made the logo tappable to navigate home. ---
             GestureDetector(
               onTap: () => context.go('/home'),
-              child: const Text(
-                "Orient'Express",
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      height: 40,
+                      width: 40,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    "Cari'Boussole",
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -65,7 +75,9 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       'Raids',
                       style: TextStyle(
                         color: isRaidsActive ? Colors.orange : Colors.white,
-                        fontWeight: isRaidsActive ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isRaidsActive
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         fontSize: 14,
                       ),
                     ),
@@ -85,7 +97,32 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       'Club',
                       style: TextStyle(
                         color: isClubsActive ? Colors.orange : Colors.white,
-                        fontWeight: isClubsActive ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isClubsActive
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 30),
+                  TextButton(
+                    onPressed: () {
+                      context.go('/my-races');
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      minimumSize: const Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      'Mon espace coureur',
+                      style: TextStyle(
+                        color: currentPath == '/my-races'
+                            ? Colors.orange
+                            : Colors.white,
+                        fontWeight: currentPath == '/my-races'
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         fontSize: 14,
                       ),
                     ),
@@ -94,11 +131,8 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
 
-            // --- Responsive Logic for Authentication on the right ---
             if (isLandscape) ...[
-              // LANDSCAPE MODE: Everything visible
-              if (isLoggedIn) ...[
-                // Logged in (Landscape)
+              if (loggedIn) ...[
                 IconButton(
                   icon: const Icon(Icons.person, color: Colors.white),
                   onPressed: () {},
@@ -110,7 +144,6 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
-                // Guest (Landscape)
                 ElevatedButton(
                   onPressed: () {
                     context.go('/register');
@@ -132,13 +165,16 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: const Text('Connexion'),
                 ),
-              ]
+              ],
             ] else ...[
               // PORTRAIT MODE: Dropdown menu for auth
               PopupMenuButton<String>(
-                icon: const Icon(Icons.account_circle, size: 28, color: Colors.white),
+                icon: const Icon(
+                  Icons.account_circle,
+                  size: 28,
+                  color: Colors.white,
+                ),
                 onSelected: (value) {
-                  // Handle menu clicks
                   switch (value) {
                     case 'login':
                       context.go('/login');
@@ -155,15 +191,17 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 },
                 itemBuilder: (BuildContext context) {
                   return [
-                    if (isLoggedIn) ...[
+                    if (loggedIn) ...[
                       const PopupMenuItem(
                         value: 'profile',
                         child: Text('Mon Profil'),
                       ),
                       const PopupMenuItem(
                         value: 'logout',
-                        child: Text('Se déconnecter',
-                            style: TextStyle(color: Colors.red)),
+                        child: Text(
+                          'Se déconnecter',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ] else ...[
                       const PopupMenuItem(

@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import '../models/event_model.dart';
+import '../models/raid_model.dart';
 
-class EventCard extends StatelessWidget {
-  final EventModel event;
+class RaidCard extends StatelessWidget {
+  final RaidModel raid;
   final VoidCallback? onTap;
 
-  const EventCard({
-    super.key,
-    required this.event,
-    this.onTap,
-  });
+  const RaidCard({super.key, required this.raid, this.onTap});
+
+  String _getStatus(RaidModel raid) {
+    final now = DateTime.now();
+    if (now.isBefore(raid.registrationStartDate)) {
+      return "Bientôt";
+    } else if (now.isAfter(raid.registrationEndDate)) {
+      return "Terminé"; // Or "Inscriptions closes"
+    } else {
+      return "Inscription ouverte";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +39,9 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Sub-component
-            EventCardImage(imageUrl: event.imageUrl),
-            
-            // Content Sub-component
+            RaidCardImage(imageUrl: raid.imageUrl),
             Expanded(
-              child: EventCardContent(event: event),
+              child: RaidCardContent(raid: raid, status: _getStatus(raid)),
             ),
           ],
         ),
@@ -47,15 +51,15 @@ class EventCard extends StatelessWidget {
 }
 
 // --- Sub-component: Image ---
-class EventCardImage extends StatelessWidget {
+class RaidCardImage extends StatelessWidget {
   final String? imageUrl;
 
-  const EventCardImage({super.key, this.imageUrl});
+  const RaidCardImage({super.key, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 120, // Fixed height for image part
+      height: 120,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -69,8 +73,12 @@ class EventCardImage extends StatelessWidget {
           topLeft: Radius.circular(12.0),
           topRight: Radius.circular(12.0),
         ),
-        child: imageUrl != null
-            ? Image.network(imageUrl!, fit: BoxFit.cover)
+        child: imageUrl != null && imageUrl!.isNotEmpty
+            ? Image.network(
+                imageUrl!,
+                fit: BoxFit.cover,
+                errorBuilder: (ctx, _, __) => const Icon(Icons.broken_image),
+              )
             : Icon(Icons.image, size: 50, color: Colors.grey[400]),
       ),
     );
@@ -78,13 +86,18 @@ class EventCardImage extends StatelessWidget {
 }
 
 // --- Sub-component: Text Content ---
-class EventCardContent extends StatelessWidget {
-  final EventModel event;
+class RaidCardContent extends StatelessWidget {
+  final RaidModel raid;
+  final String status;
 
-  const EventCardContent({super.key, required this.event});
+  const RaidCardContent({super.key, required this.raid, required this.status});
 
   @override
   Widget build(BuildContext context) {
+    // Basic date formatting
+    final dateStr =
+        "${raid.startDate.day}/${raid.startDate.month}/${raid.startDate.year}";
+
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
@@ -94,9 +107,9 @@ class EventCardContent extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _StatusBadge(status: event.status),
+              _StatusBadge(status: status),
               Text(
-                event.raidState,
+                "Raid à venir", // Generic placeholder or derive from dates
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.grey[500],
@@ -107,33 +120,29 @@ class EventCardContent extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            event.title,
+            raid.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Row(
             children: [
               Expanded(
                 child: Text(
-                  event.clubName,
+                  "Club #${raid.clubId}",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
                 ),
               ),
-              if (event.date.isNotEmpty)
-                Text(
-                  event.date,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                dateStr,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
                 ),
+              ),
             ],
           ),
           const Spacer(),
@@ -143,7 +152,7 @@ class EventCardContent extends StatelessWidget {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
-                  event.location,
+                  "Adresse #${raid.addressId}",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
@@ -168,10 +177,10 @@ class _StatusBadge extends StatelessWidget {
     Color bgColor = Colors.green[50]!;
     Color textColor = Colors.green[700]!;
 
-    if (status.contains("Complet")) {
+    if (status == "Terminé" || status == "Complet") {
       bgColor = Colors.red[50]!;
       textColor = Colors.red[700]!;
-    } else if (status.contains("À partir du")) {
+    } else if (status == "Bientôt") {
       bgColor = Colors.orange[50]!;
       textColor = Colors.orange[700]!;
     }
