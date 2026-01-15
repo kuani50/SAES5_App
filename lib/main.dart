@@ -25,8 +25,9 @@ import 'models/club_model.dart';
 import 'models/course_model.dart';
 import 'screens/raid_registration_screen.dart';
 import 'screens/course_detail_screen.dart';
-import 'screens/mes_courses_screen.dart';
-import 'screens/manage_course_screen.dart';
+import 'screens/racing_manager/mes_courses_screen.dart';
+import 'screens/racing_manager/manage_course_screen.dart';
+import 'screens/racing_manager/team_detail_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -160,6 +161,15 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         final course = state.extra as CourseModel;
         return ManageCourseScreen(course: course);
+      },
+    ),
+    GoRoute(
+      path: '/team-detail',
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+        final team = extras['team'] as Map<String, dynamic>;
+        final courseName = extras['courseName'] as String;
+        return TeamDetailScreen(team: team, courseName: courseName);
       },
     ),
   ],

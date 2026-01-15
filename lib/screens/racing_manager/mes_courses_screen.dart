@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../providers/api_provider.dart';
-import '../providers/auth_provider.dart';
-import '../models/course_model.dart';
-import '../widgets/header_home_page.dart';
+import '../../providers/api_provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../models/course_model.dart';
+import '../../widgets/header_home_page.dart';
 
 class MesCoursesScreen extends StatefulWidget {
   const MesCoursesScreen({super.key});
@@ -49,12 +49,18 @@ class _MesCoursesScreenState extends State<MesCoursesScreen> {
         debugPrint('Unknown format for managed races: $response');
       }
 
-      final courses = coursesList
+      final allCourses = coursesList
           .map((json) => CourseModel.fromJson(json as Map<String, dynamic>))
           .toList();
 
+      // Filter courses to only show those managed by the current user
+      final currentUserId = authProvider.currentUser?.id;
+      final managedCourses = allCourses
+          .where((course) => course.managerId == currentUserId)
+          .toList();
+
       setState(() {
-        _courses = courses;
+        _courses = managedCourses;
         _isLoading = false;
       });
     } catch (e) {
@@ -263,7 +269,6 @@ class _MesCoursesScreenState extends State<MesCoursesScreen> {
             (course) => _CourseRow(
               course: course,
               onManage: () => _onManageCourse(course),
-              onDelete: () => _onDeleteCourse(course),
             ),
           ),
         ],
@@ -274,71 +279,13 @@ class _MesCoursesScreenState extends State<MesCoursesScreen> {
   void _onManageCourse(CourseModel course) {
     context.push('/manage-course', extra: course);
   }
-
-  Future<void> _onDeleteCourse(CourseModel course) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Supprimer la course"),
-        content: Text(
-          "Voulez-vous vraiment supprimer la course '${course.name}' ?\nCette action est irréversible.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("Annuler"),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text(
-              "Supprimer",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && mounted) {
-      try {
-        final apiProvider = context.read<ApiProvider>();
-        // API call to delete the course using ApiClient
-        await apiProvider.apiClient.deleteRace(course.id);
-
-        if (mounted) {
-          setState(() {
-            _courses.removeWhere((c) => c.id == course.id);
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Course '${course.name}' supprimée")),
-          );
-        }
-      } catch (e) {
-        debugPrint("Error deleting course: $e");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Erreur lors de la suppression : $e"),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    }
-  }
 }
 
 class _CourseRow extends StatelessWidget {
   final CourseModel course;
   final VoidCallback onManage;
-  final VoidCallback onDelete;
 
-  const _CourseRow({
-    required this.course,
-    required this.onManage,
-    required this.onDelete,
-  });
+  const _CourseRow({required this.course, required this.onManage});
 
   @override
   Widget build(BuildContext context) {
@@ -415,47 +362,25 @@ class _CourseRow extends StatelessWidget {
             ),
           ),
 
-          // Action Buttons
+          // Action Button
           Expanded(
             flex: 2,
-            child: Row(
-              children: [
-                ElevatedButton.icon(
-                  onPressed: onManage,
-                  icon: const Icon(Icons.settings, size: 16),
-                  label: const Text("Gérer"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3B82F6),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+            child: ElevatedButton.icon(
+              onPressed: onManage,
+              icon: const Icon(Icons.settings, size: 16),
+              label: const Text("Gérer"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3B82F6),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
                 ),
-                const SizedBox(width: 8),
-                ElevatedButton.icon(
-                  onPressed: onDelete,
-                  icon: const Icon(Icons.delete, size: 16),
-                  label: const Text("Supprimer"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                textStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                 ),
-              ],
+              ),
             ),
           ),
         ],

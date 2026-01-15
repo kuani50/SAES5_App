@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../models/project.dart';
@@ -47,4 +48,12 @@ abstract class ApiClient {
 
   @GET("/api/races/{id}/teams")
   Future<dynamic> getRaceTeams(@Path("id") int id);
+
+  // File upload for race results
+  @POST("/api/races/file/upload")
+  @MultiPart()
+  Future<dynamic> uploadRaceResults(
+    @Part(name: "file") File file,
+    @Part(name: "race_id") int raceId,
+  );
 }
