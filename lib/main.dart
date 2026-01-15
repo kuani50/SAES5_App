@@ -135,7 +135,7 @@ final GoRouter _router = GoRouter(
           raidName: raid?.name,
           course: course,
           raid: raid,
-          initialStep: 2,
+          initialStep: 1,
         );
       },
     ),

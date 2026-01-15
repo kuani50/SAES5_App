@@ -11,21 +11,22 @@ part 'api_client.g.dart';
 @RestApi()
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
+  // Trigger rebuild
 
   @GET("/api/projects")
   Future<List<Project>> getProjects();
 
   @GET("/api/raids?with=club,address")
-  Future<List<RaidModel>> getRaids();
+  Future<dynamic> getRaids();
 
   @GET("/api/clubs")
   Future<dynamic> getClubs();
 
   @GET("/api/clubs?with=upcoming,address")
-  Future<List<ClubModel>> getClubsWithUpcomingEvents();
+  Future<dynamic> getClubsWithUpcomingEvents();
 
   @GET("/api/raids/{raid}/races")
-  Future<List<CourseModel>> getRacesByRaid(@Path("raid") int raidId);
+  Future<dynamic> getRacesByRaid(@Path("raid") int raidId);
 
   @GET("/api/club/{club}/raids")
   Future<List<RaidModel>> getRaidsByClub(@Path("club") int clubId);
@@ -38,6 +39,29 @@ abstract class ApiClient {
 
   @GET("/api/user")
   Future<dynamic> getCurrentUser();
+
+  @GET("/api/users/search")
+  Future<dynamic> searchUsers(@Query("q") String query);
+
+  @GET("/api/user/teams")
+  Future<dynamic> getUserTeams();
+
+  @POST("/api/teams/register")
+  Future<dynamic> createTeamWithMembers(@Body() Map<String, dynamic> body);
+
+  // PPS / Documents
+  @POST("/api/pps/upload")
+  @MultiPart()
+  Future<dynamic> uploadDocument(
+    @Part(name: "file") File file,
+    @Part(name: "user_id")
+    int? userId, // Optional if uploading for another user
+  );
+
+  @GET("/api/pps/user/{userId}")
+  Future<dynamic> getPpsByUser(@Path("userId") int userId);
+
+  // Race Management
 
   // Race Management
   @GET("/api/races")

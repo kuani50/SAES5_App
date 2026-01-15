@@ -12,6 +12,7 @@ class UserModel {
   final DateTime? twoFactorConfirmedAt;
   final String? twoFactorRecoveryCodes;
   final String? twoFactorSecret;
+  final String? licenseNumber;
 
   UserModel({
     required this.id,
@@ -27,6 +28,7 @@ class UserModel {
     this.twoFactorConfirmedAt,
     this.twoFactorRecoveryCodes,
     this.twoFactorSecret,
+    this.licenseNumber,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -68,6 +70,7 @@ class UserModel {
           : parseDate(json['two_factor_confirmed_at']),
       twoFactorRecoveryCodes: json['two_factor_recovery_codes']?.toString(),
       twoFactorSecret: json['two_factor_secret']?.toString(),
+      licenseNumber: json['license_number']?.toString(),
     );
   }
 
@@ -86,6 +89,7 @@ class UserModel {
       'two_factor_confirmed_at': twoFactorConfirmedAt?.toIso8601String(),
       'two_factor_recovery_codes': twoFactorRecoveryCodes,
       'two_factor_secret': twoFactorSecret,
+      'license_number': licenseNumber,
     };
   }
 }

@@ -1,17 +1,38 @@
 import 'package:flutter/material.dart';
+import '../../models/user_model.dart';
+import '../../models/course_model.dart';
 
 class ValidationStep extends StatelessWidget {
+  final List<UserModel> teammates;
+  final bool isCaptainParticipating;
+  final CourseModel? course;
   final VoidCallback onConfirm;
   final VoidCallback onPrev;
 
   const ValidationStep({
     super.key,
+    required this.teammates,
+    required this.isCaptainParticipating,
+    required this.course,
     required this.onConfirm,
     required this.onPrev,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Basic pricing logic.
+    // real price usually in CourseModel. Assume mock if null.
+
+    double pricePerPers = 15.0;
+    // if (course?.minPrice != null) { pricePerPers = course!.minPrice; }
+
+    int count = teammates.length;
+    if (!isCaptainParticipating) {
+      count = count > 0 ? count - 1 : 0;
+    }
+
+    final double total = pricePerPers * count;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -33,13 +54,16 @@ class ValidationStep extends StatelessWidget {
           ),
           child: Column(
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Course", style: TextStyle(fontSize: 16)),
+                  const Text("Course", style: TextStyle(fontSize: 16)),
                   Text(
-                    "Parcours Découverte (15km)",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    "${course?.name ?? 'Parcourse'} (${count} pers.)",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -47,9 +71,26 @@ class ValidationStep extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  const Text(
+                    "Prix par personne",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    "${pricePerPers.toStringAsFixed(2)} €",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Divider(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   const Text("Total à régler", style: TextStyle(fontSize: 18)),
                   Text(
-                    "30,00 €",
+                    "${total.toStringAsFixed(2)} €",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -105,7 +146,7 @@ class ValidationStep extends StatelessWidget {
             ElevatedButton(
               onPressed: onConfirm,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange, 
+                backgroundColor: Colors.orange,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -113,7 +154,7 @@ class ValidationStep extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                "Confirmer",
+                "Confirmer l'inscription",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),

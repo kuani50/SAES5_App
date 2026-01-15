@@ -22,11 +22,10 @@ class RaidProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // Use Dio directly to handle various response formats
-      final response = await _apiProvider.dio.get(
-        '/api/raids?with=club,address',
-      );
-      var responseData = response.data;
+      // Use ApiClient to fetch raids
+      final dynamic responseDataReceived = await _apiProvider.apiClient
+          .getRaids();
+      var responseData = responseDataReceived;
 
       // If response is a String, parse it as JSON
       if (responseData is String) {

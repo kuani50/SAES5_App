@@ -1,48 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import '../../providers/api_provider.dart';
 
-class _UserRegistrationMock {
-  final String eventName;
-  final String courseName;
-  final String dateAndTeam;
-  final List<String> roles; 
-  final bool isComplete; 
-  final bool isMissingDocs;
-
-  _UserRegistrationMock({
-    required this.eventName,
-    required this.courseName,
-    required this.dateAndTeam,
-    required this.roles,
-    required this.isComplete,
-    required this.isMissingDocs,
-  });
-}
-
-class UserRacesTab extends StatelessWidget {
+class UserRacesTab extends StatefulWidget {
   const UserRacesTab({super.key});
 
   @override
+  State<UserRacesTab> createState() => _UserRacesTabState();
+}
+
+class _UserRacesTabState extends State<UserRacesTab> {
+  bool _isLoading = true;
+  String? _error;
+  List<dynamic> _registrations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRegistrations();
+  }
+
+  Future<void> _fetchRegistrations() async {
+    try {
+      final apiProvider = context.read<ApiProvider>();
+      final teams = await apiProvider.apiClient.getUserTeams();
+      if (mounted) {
+        setState(() {
+          _registrations = teams;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching user teams: $e');
+      if (mounted) {
+        setState(() {
+          _error = "Impossible de charger les inscriptions";
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Mock Data List
-    final registrations = [
-      _UserRegistrationMock(
-        eventName: "Raid Suisse Normande",
-        courseName: "Parcours Aventure",
-        dateAndTeam: "12 Octobre • Équipe \"Les Gazelles\"",
-        roles: ["Participant", "Responsable d'équipe"],
-        isComplete: false,
-        isMissingDocs: true,
-      ),
-      _UserRegistrationMock(
-        eventName: "Raid Urbain Caen",
-        courseName: "Parcours Découverte",
-        dateAndTeam: "24 Novembre • Équipe \"Les Vikings\"",
-        roles: ["Participant"],
-        isComplete: true,
-        isMissingDocs: false,
-      ),
-    ];
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_error!, style: const TextStyle(color: Colors.red)),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _isLoading = true;
+                  _error = null;
+                });
+                _fetchRegistrations();
+              },
+              child: const Text("Réessayer"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_registrations.isEmpty) {
+      return const Center(
+        child: Text(
+          "Aucune inscription trouvée",
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,10 +97,10 @@ class UserRacesTab extends StatelessWidget {
         const SizedBox(height: 32),
 
         // Render List of Registrations
-        ...registrations.map(
-          (reg) => Padding(
+        ..._registrations.map(
+          (team) => Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
-            child: _RegistrationCard(registration: reg),
+            child: _RegistrationCard(team: team),
           ),
         ),
       ],
@@ -74,12 +109,42 @@ class UserRacesTab extends StatelessWidget {
 }
 
 class _RegistrationCard extends StatelessWidget {
-  final _UserRegistrationMock registration;
+  final dynamic team;
 
-  const _RegistrationCard({required this.registration});
+  const _RegistrationCard({required this.team});
 
   @override
   Widget build(BuildContext context) {
+    // Extract real data with safe fallbacks
+    final race = team['race'] ?? {};
+    final raid = race['raid'] ?? {};
+
+    final eventName = raid['name']?.toString() ?? "Raid Inconnu";
+    final courseName = race['name']?.toString() ?? "Course Inconnue";
+    final teamName = team['name']?.toString() ?? "Sans nom";
+
+    // Format date
+    String dateStr = "";
+    if (race['start_date'] != null) {
+      try {
+        final date = DateTime.parse(race['start_date'].toString());
+        dateStr = DateFormat('d MMMM', 'fr_FR').format(date);
+      } catch (_) {}
+    }
+
+    final dateAndTeam = dateStr.isNotEmpty
+        ? "$dateStr • Équipe \"$teamName\""
+        : "Équipe \"$teamName\"";
+
+    // Determine roles (logic might need adjustment based on real API data)
+    final List<String> roles = ["Participant"];
+    // checking if current user is captain (assumed field)
+    // if (team['is_captain'] == true) roles.add("Responsable d'équipe");
+
+    // Status logic (assumed fields from team status)
+    // Adjust based on your actual Team model fields from backend
+    final bool isMissingDocs = false;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -87,7 +152,7 @@ class _RegistrationCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: const [
           BoxShadow(
-            color: Colors.black12, // slightly lighter shadow
+            color: Colors.black12,
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
@@ -98,7 +163,6 @@ class _RegistrationCard extends StatelessWidget {
           final isNarrow = constraints.maxWidth < 650;
 
           if (isNarrow) {
-            // Mobile/Narrow Layout: Stacked
             return Column(
               children: [
                 IntrinsicHeight(
@@ -106,23 +170,48 @@ class _RegistrationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildIconSection(context, isNarrow: true),
-                      Expanded(child: _buildContentSection()),
+                      Expanded(
+                        child: _buildContentSection(
+                          eventName,
+                          courseName,
+                          dateAndTeam,
+                          roles,
+                          isMissingDocs,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 const Divider(height: 1),
-                _buildActionsSection(context, isNarrow: true),
+                _buildActionsSection(
+                  context,
+                  isNarrow: true,
+                  eventName: eventName,
+                  isMissingDocs: isMissingDocs,
+                ),
               ],
             );
           } else {
-            // Desktop/Wide Layout: Horizontal
             return IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildIconSection(context),
-                  Expanded(child: _buildContentSection()),
-                  _buildActionsSection(context, isNarrow: false),
+                  Expanded(
+                    child: _buildContentSection(
+                      eventName,
+                      courseName,
+                      dateAndTeam,
+                      roles,
+                      isMissingDocs,
+                    ),
+                  ),
+                  _buildActionsSection(
+                    context,
+                    isNarrow: false,
+                    eventName: eventName,
+                    isMissingDocs: isMissingDocs,
+                  ),
                 ],
               ),
             );
@@ -136,7 +225,7 @@ class _RegistrationCard extends StatelessWidget {
     return Container(
       width: 100,
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9), // Slate 50
+        color: const Color(0xFFF1F5F9),
         borderRadius: isNarrow
             ? const BorderRadius.only(topLeft: Radius.circular(12))
             : const BorderRadius.only(
@@ -154,14 +243,20 @@ class _RegistrationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContentSection() {
+  Widget _buildContentSection(
+    String eventName,
+    String courseName,
+    String dateAndTeam,
+    List<String> roles,
+    bool isMissingDocs,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            registration.eventName,
+            eventName,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -170,7 +265,7 @@ class _RegistrationCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            registration.courseName,
+            courseName,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -179,14 +274,14 @@ class _RegistrationCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            registration.dateAndTeam,
+            dateAndTeam,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: registration.roles.map((role) {
+            children: roles.map((role) {
               final isResponsable = role.contains("Responsable");
               return Container(
                 padding: const EdgeInsets.symmetric(
@@ -224,7 +319,7 @@ class _RegistrationCard extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              if (registration.isMissingDocs)
+              if (isMissingDocs)
                 Text(
                   "Certificat manquant",
                   style: TextStyle(
@@ -240,10 +335,15 @@ class _RegistrationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionsSection(BuildContext context, {required bool isNarrow}) {
+  Widget _buildActionsSection(
+    BuildContext context, {
+    required bool isNarrow,
+    required String eventName,
+    required bool isMissingDocs,
+  }) {
     Widget? warningBadge;
 
-    if (registration.isMissingDocs) {
+    if (isMissingDocs) {
       warningBadge = Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -267,7 +367,6 @@ class _RegistrationCard extends StatelessWidget {
         ),
       );
     } else {
-      // Placeholder or Success badge if needed, for now empty or check
       warningBadge = Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -294,14 +393,10 @@ class _RegistrationCard extends StatelessWidget {
 
     final gererDocsBtn = ElevatedButton(
       onPressed: () {
-        // Navigate to Raid Registration Step 4 (Docs)
         context.go(
           Uri(
             path: '/raid-registration',
-            queryParameters: {
-              'raidName': registration.eventName,
-              'initialStep': '4',
-            },
+            queryParameters: {'raidName': eventName, 'initialStep': '4'},
           ).toString(),
         );
       },

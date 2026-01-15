@@ -15,36 +15,42 @@ class RegistrationStepper extends StatelessWidget {
         _StepItem(
           number: 2,
           label: "Équipe",
+          state: currentStep > 1
+              ? _StepState.completed
+              : (currentStep == 1 ? _StepState.active : _StepState.inactive),
+        ),
+        _StepConnector(isActive: currentStep >= 1),
+        _StepItem(
+          number: 3,
+          label: "Coéquipiers",
           state: currentStep > 2
               ? _StepState.completed
               : (currentStep == 2 ? _StepState.active : _StepState.inactive),
         ),
         _StepConnector(isActive: currentStep >= 2),
         _StepItem(
-          number: 3,
-          label: "Coéquipiers",
+          number: 4,
+          label: "Docs",
           state: currentStep > 3
               ? _StepState.completed
               : (currentStep == 3 ? _StepState.active : _StepState.inactive),
         ),
         _StepConnector(isActive: currentStep >= 3),
         _StepItem(
-          number: 4,
-          label: "Docs",
-          state: currentStep > 4
-              ? _StepState.completed
-              : (currentStep == 4 ? _StepState.active : _StepState.inactive),
-        ),
-        _StepConnector(isActive: currentStep >= 4),
-        _StepItem(
           number: 5,
           label: "Validation",
-          state: currentStep == 5 ? _StepState.active : _StepState.inactive,
+          state: currentStep == 4 ? _StepState.active : _StepState.inactive,
         ),
       ],
     );
   }
 }
+
+// Helper to map logic step (1-4) to visual stepper (1-5)
+// Logic Step 1 (Team) -> Visual Step 2
+// Logic Step 2 (Teammates) -> Visual Step 3
+// Logic Step 3 (Docs) -> Visual Step 4
+// Logic Step 4 (Validation) -> Visual Step 5
 
 enum _StepState { completed, active, inactive }
 
@@ -67,7 +73,7 @@ class _StepItem extends StatelessWidget {
 
     switch (state) {
       case _StepState.completed:
-        circleColor = const Color(0xFF10B981); 
+        circleColor = const Color(0xFF10B981);
         textColor = Colors.black;
         content = const Icon(Icons.check, size: 16, color: Colors.white);
         break;

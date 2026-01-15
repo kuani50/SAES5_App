@@ -30,11 +30,10 @@ class _RaidDetailScreenState extends State<RaidDetailScreen> {
   Future<void> _fetchCourses() async {
     try {
       final apiProvider = context.read<ApiProvider>();
-      final response = await apiProvider.dio.get(
-        '/api/raids/${widget.raid.id}/races',
-      );
+      final dynamic responseDataReceived = await apiProvider.apiClient
+          .getRacesByRaid(widget.raid.id);
 
-      var responseData = response.data;
+      var responseData = responseDataReceived;
 
       // If response is a String, parse it as JSON
       if (responseData is String) {
