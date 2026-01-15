@@ -14,12 +14,12 @@ import 'package:dio/src/options.dart' as _i2;
 import 'package:dio/src/response.dart' as _i6;
 import 'package:dio/src/transformer.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i15;
+import 'package:mockito/src/dummies.dart' as _i16;
 import 'package:saps5app/models/club_model.dart' as _i13;
 import 'package:saps5app/models/course_model.dart' as _i14;
 import 'package:saps5app/models/project.dart' as _i11;
 import 'package:saps5app/models/raid_model.dart' as _i12;
-import 'package:saps5app/providers/api_provider.dart' as _i16;
+import 'package:saps5app/providers/api_provider.dart' as _i15;
 import 'package:saps5app/services/api_client.dart' as _i8;
 
 // ignore_for_file: type=lint
@@ -845,14 +845,12 @@ class MockApiClient extends _i1.Mock implements _i8.ApiClient {
           as _i9.Future<List<_i12.RaidModel>>);
 
   @override
-  _i9.Future<List<_i13.ClubModel>> getClubs() =>
+  _i9.Future<dynamic> getClubs() =>
       (super.noSuchMethod(
             Invocation.method(#getClubs, []),
-            returnValue: _i9.Future<List<_i13.ClubModel>>.value(
-              <_i13.ClubModel>[],
-            ),
+            returnValue: _i9.Future<dynamic>.value(),
           )
-          as _i9.Future<List<_i13.ClubModel>>);
+          as _i9.Future<dynamic>);
 
   @override
   _i9.Future<List<_i13.ClubModel>> getClubsWithUpcomingEvents() =>
@@ -885,33 +883,59 @@ class MockApiClient extends _i1.Mock implements _i8.ApiClient {
           as _i9.Future<List<_i12.RaidModel>>);
 
   @override
-  _i9.Future<String> login(Map<String, dynamic>? body) =>
+  _i9.Future<dynamic> login(Map<String, dynamic>? body) =>
       (super.noSuchMethod(
             Invocation.method(#login, [body]),
-            returnValue: _i9.Future<String>.value(
-              _i15.dummyValue<String>(this, Invocation.method(#login, [body])),
-            ),
+            returnValue: _i9.Future<dynamic>.value(),
           )
-          as _i9.Future<String>);
+          as _i9.Future<dynamic>);
 
   @override
-  _i9.Future<String> register(Map<String, dynamic>? body) =>
+  _i9.Future<dynamic> register(Map<String, dynamic>? body) =>
       (super.noSuchMethod(
             Invocation.method(#register, [body]),
-            returnValue: _i9.Future<String>.value(
-              _i15.dummyValue<String>(
-                this,
-                Invocation.method(#register, [body]),
-              ),
-            ),
+            returnValue: _i9.Future<dynamic>.value(),
           )
-          as _i9.Future<String>);
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> getCurrentUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCurrentUser, []),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> getManagedRaces() =>
+      (super.noSuchMethod(
+            Invocation.method(#getManagedRaces, []),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<void> deleteRace(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteRace, [id]),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
+          )
+          as _i9.Future<void>);
+
+  @override
+  _i9.Future<dynamic> getRaceTeams(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRaceTeams, [id]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
 }
 
 /// A class which mocks [ApiProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiProvider extends _i1.Mock implements _i16.ApiProvider {
+class MockApiProvider extends _i1.Mock implements _i15.ApiProvider {
   MockApiProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -920,7 +944,7 @@ class MockApiProvider extends _i1.Mock implements _i16.ApiProvider {
   String get baseUrl =>
       (super.noSuchMethod(
             Invocation.getter(#baseUrl),
-            returnValue: _i15.dummyValue<String>(
+            returnValue: _i16.dummyValue<String>(
               this,
               Invocation.getter(#baseUrl),
             ),

@@ -17,8 +17,8 @@ abstract class ApiClient {
   @GET("/api/raids?with=club,address")
   Future<List<RaidModel>> getRaids();
 
-  @GET("/api/club")
-  Future<List<ClubModel>> getClubs();
+  @GET("/api/clubs")
+  Future<dynamic> getClubs();
 
   @GET("/api/clubs?with=upcoming,address")
   Future<List<ClubModel>> getClubsWithUpcomingEvents();
@@ -30,8 +30,21 @@ abstract class ApiClient {
   Future<List<RaidModel>> getRaidsByClub(@Path("club") int clubId);
 
   @POST("/api/mobile/login")
-  Future<String> login(@Body() Map<String, dynamic> body);
+  Future<dynamic> login(@Body() Map<String, dynamic> body);
 
   @POST("/api/mobile/register")
-  Future<String> register(@Body() Map<String, dynamic> body);
+  Future<dynamic> register(@Body() Map<String, dynamic> body);
+
+  @GET("/api/user")
+  Future<dynamic> getCurrentUser();
+
+  // Race Management
+  @GET("/api/races")
+  Future<dynamic> getManagedRaces();
+
+  @DELETE("/api/races/{id}")
+  Future<void> deleteRace(@Path("id") int id);
+
+  @GET("/api/races/{id}/teams")
+  Future<dynamic> getRaceTeams(@Path("id") int id);
 }

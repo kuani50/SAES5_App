@@ -25,6 +25,8 @@ import 'models/club_model.dart';
 import 'models/course_model.dart';
 import 'screens/raid_registration_screen.dart';
 import 'screens/course_detail_screen.dart';
+import 'screens/mes_courses_screen.dart';
+import 'screens/manage_course_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -124,13 +126,15 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/raid-registration',
       builder: (context, state) {
-        final raidName = state.uri.queryParameters['raidName'];
-        final initialStepStr = state.uri.queryParameters['initialStep'];
-        final initialStep = int.tryParse(initialStepStr ?? '') ?? 2;
+        final extras = state.extra as Map<String, dynamic>?;
+        final course = extras?['course'] as CourseModel?;
+        final raid = extras?['raid'] as RaidModel?;
 
         return RaidRegistrationScreen(
-          raidName: raidName,
-          initialStep: initialStep,
+          raidName: raid?.name,
+          course: course,
+          raid: raid,
+          initialStep: 2,
         );
       },
     ),
@@ -145,6 +149,17 @@ final GoRouter _router = GoRouter(
         final course = extras['course'] as CourseModel;
         final raid = extras['raid'] as RaidModel;
         return CourseDetailScreen(course: course, raid: raid);
+      },
+    ),
+    GoRoute(
+      path: '/mes-courses',
+      builder: (context, state) => const MesCoursesScreen(),
+    ),
+    GoRoute(
+      path: '/manage-course',
+      builder: (context, state) {
+        final course = state.extra as CourseModel;
+        return ManageCourseScreen(course: course);
       },
     ),
   ],

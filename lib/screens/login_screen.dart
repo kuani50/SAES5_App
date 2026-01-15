@@ -59,13 +59,12 @@ class LoginScreen extends StatelessWidget {
                   text: "Se connecter",
                   onPressed: () async {
                     // Login logic
-                    final success = await context.read<AuthProvider>().login(
-                      emailController.text,
-                      passwordController.text,
-                    );
+                    final errorMessage = await context
+                        .read<AuthProvider>()
+                        .login(emailController.text, passwordController.text);
 
-                    if (success && context.mounted) {
-                      // Check for redirect param
+                    if (errorMessage == null && context.mounted) {
+                      // Success - Check for redirect param
                       final redirect = GoRouterState.of(
                         context,
                       ).uri.queryParameters['redirect'];
@@ -76,8 +75,10 @@ class LoginScreen extends StatelessWidget {
                       }
                     } else if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Échec de la connexion"),
+                        SnackBar(
+                          content: Text(
+                            errorMessage ?? "Échec de la connexion",
+                          ),
                           backgroundColor: Colors.red,
                         ),
                       );

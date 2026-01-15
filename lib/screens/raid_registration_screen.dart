@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../models/course_model.dart';
+import '../models/raid_model.dart';
 import '../widgets/raid_registration/registration_stepper.dart';
 import '../widgets/raid_registration/team_creation_step.dart';
 import '../widgets/raid_registration/teammates_step.dart';
@@ -7,12 +9,16 @@ import '../widgets/raid_registration/docs_step.dart';
 import '../widgets/raid_registration/validation_step.dart';
 
 class RaidRegistrationScreen extends StatefulWidget {
-  final String? raidName; 
+  final String? raidName;
+  final CourseModel? course;
+  final RaidModel? raid;
   final int initialStep;
 
   const RaidRegistrationScreen({
     super.key,
     this.raidName,
+    this.course,
+    this.raid,
     this.initialStep = 2,
   });
 
