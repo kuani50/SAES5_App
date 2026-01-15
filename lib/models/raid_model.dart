@@ -62,8 +62,11 @@ class RaidModel {
       club: json['club'] != null
           ? ClubModel.fromJson(json['club'] as Map<String, dynamic>)
           : null,
-      address: json['raid_address'] != null
-          ? AddressModel.fromJson(json['raid_address'] as Map<String, dynamic>)
+      address: (json['raid_address'] ?? json['address']) != null
+          ? AddressModel.fromJson(
+              (json['raid_address'] ?? json['address'])
+                  as Map<String, dynamic>,
+            )
           : null,
     );
   }
