@@ -30,22 +30,44 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    bool parseBool(dynamic value) {
+      if (value == null) return false;
+      if (value is bool) return value;
+      if (value is int) return value == 1;
+      if (value is String) return value == '1' || value.toLowerCase() == 'true';
+      return false;
+    }
+
+    int parseInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
+    DateTime parseDate(dynamic value) {
+      if (value == null) return DateTime.now();
+      if (value is DateTime) return value;
+      if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
+      return DateTime.now();
+    }
+
     return UserModel(
-      id: json['id'] as int,
-      firstName: json['first_name'] as String,
-      lastName: json['last_name'] as String,
-      email: json['email'] as String,
-      password: json['password'] as String,
-      phone: json['phone'] as String,
-      birthDate: DateTime.parse(json['birth_date'] as String),
-      gender: json['gender'] as String,
-      addressId: json['address_id'] as int,
-      isAdmin: (json['is_admin'] as int) == 1,
+      id: parseInt(json['id']),
+      firstName: json['first_name']?.toString() ?? '',
+      lastName: json['last_name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      password: json['password']?.toString() ?? '',
+      phone: json['phone']?.toString() ?? '',
+      birthDate: parseDate(json['birth_date']),
+      gender: json['gender']?.toString() ?? 'M',
+      addressId: parseInt(json['address_id']),
+      isAdmin: parseBool(json['is_admin']),
       twoFactorConfirmedAt: json['two_factor_confirmed_at'] == null
           ? null
-          : DateTime.parse(json['two_factor_confirmed_at'] as String),
-      twoFactorRecoveryCodes: json['two_factor_recovery_codes'] as String?,
-      twoFactorSecret: json['two_factor_secret'] as String?,
+          : parseDate(json['two_factor_confirmed_at']),
+      twoFactorRecoveryCodes: json['two_factor_recovery_codes']?.toString(),
+      twoFactorSecret: json['two_factor_secret']?.toString(),
     );
   }
 

@@ -44,6 +44,8 @@ class AuthProvider extends ChangeNotifier {
       if (userJson != null) {
         _currentUser = UserModel.fromJson(jsonDecode(userJson));
         notifyListeners();
+        // Restore race manager status
+        checkRaceManagerStatus();
       }
     } catch (e) {
       debugPrint('Error loading user from prefs: $e');
