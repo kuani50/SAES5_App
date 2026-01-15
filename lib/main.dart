@@ -28,8 +28,6 @@ import 'screens/course_detail_screen.dart';
 
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
-
-  await initializeDateFormatting('fr_FR', null);
   runApp(const MyApp());
 }
 
@@ -63,8 +61,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'Orient Express',
+        title: "Cari'Boussole",
         routerConfig: _router,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -87,12 +84,23 @@ final GoRouter _router = GoRouter(
         return RaidDetailScreen(raid: raid);
       },
     ),
-    GoRoute(path: '/login', builder: (context, state) => const AuthScreen()),
+    GoRoute(
+      path: '/login', // User wanted this route.
+      builder: (context, state) => const AuthScreen(),
+    ),
+    // Added explicit alias for LoginScreen if needed, or kept as separate if user intends two different login screens.
+    // However, duplicate paths are not allowed in GoRouter.
+    // The user provided two '/login' routes. One for AuthScreen, one for LoginScreen.
+    // I will map '/login-form' to LoginScreen to avoid crash, but keeping AuthScreen as primary '/login' as it is the main entry point now.
     GoRoute(
       path: '/login-form',
       builder: (context, state) => const LoginScreen(),
     ),
-    GoRoute(path: '/clubs', builder: (context, state) => const ClubScreen()),
+    GoRoute(
+      path: '/clubs',
+      builder: (context, state) =>
+          const ClubScreen(), // Removed allEvents arg as ClubScreen is refactored.
+    ),
     GoRoute(
       path: '/club-details',
       builder: (context, state) {
