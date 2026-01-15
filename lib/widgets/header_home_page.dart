@@ -200,10 +200,13 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                         radius: 14,
                         backgroundColor: Colors.orange,
                         child: Text(
-                          provider.currentUser?.firstName
-                                  .substring(0, 1)
-                                  .toUpperCase() ??
-                              "U",
+                          (() {
+                            final firstName = provider.currentUser?.firstName;
+                            if (firstName == null || firstName.isEmpty) {
+                              return "U";
+                            }
+                            return firstName.substring(0, 1).toUpperCase();
+                          })(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
