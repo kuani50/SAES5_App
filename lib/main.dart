@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ProjectProvider())],
+      providers: [ChangeNotifierProvider(create: (_) => ProjectProvider(ApiProvider()))],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'Orient Express',
