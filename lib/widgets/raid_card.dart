@@ -77,7 +77,8 @@ class RaidCardImage extends StatelessWidget {
             ? Image.network(
                 imageUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (ctx, _, __) => const Icon(Icons.broken_image),
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.broken_image),
               )
             : Icon(Icons.image, size: 50, color: Colors.grey[400]),
       ),
@@ -130,7 +131,7 @@ class RaidCardContent extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Club #${raid.clubId}",
+                  raid.club?.name ?? "Club #${raid.clubId ?? '?'}",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
@@ -152,7 +153,9 @@ class RaidCardContent extends StatelessWidget {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
-                  "Adresse #${raid.addressId}",
+                  raid.address != null
+                      ? "${raid.address!.city ?? ''} ${raid.address!.postalCode ?? ''}"
+                      : "Adresse #${raid.addressId ?? '?'}",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600], fontSize: 13),
@@ -160,6 +163,39 @@ class RaidCardContent extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 8),
+          // Courses Section
+          if (raid.courses.isNotEmpty)
+            SizedBox(
+              height: 24,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: raid.courses.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final course = raid.courses[index];
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue[100]!),
+                    ),
+                    child: Text(
+                      course.name,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue[700],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
         ],
       ),
     );

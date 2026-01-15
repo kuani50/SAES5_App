@@ -21,7 +21,7 @@ class CourseModel {
   final int minAge;
   final int independentAge;
   final int supervisorAge;
-  final int? remainingTeams; // Added
+  final int? remainingTeams;
 
   CourseModel({
     required this.id,
@@ -50,32 +50,51 @@ class CourseModel {
   });
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
+    // Helper to safely parse numbers that may come as String or num
+    double parseDouble(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is num) return value.toDouble();
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      return 0.0;
+    }
+
+    int parseInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is num) return value.toInt();
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
     return CourseModel(
-      id: json['id'] as int,
+      id: parseInt(json['id']),
       name: json['name'] as String,
-      raidId: json['raid_id'] as int,
-      managerId: json['manager_id'] as int,
+      raidId: parseInt(json['raid_id']),
+      managerId: parseInt(json['manager_id']),
       type: json['type'] as String,
       difficulty: json['difficulty'] as String,
       gender: json['gender'] as String,
       startDate: DateTime.parse(json['start_date'] as String),
       endDate: DateTime.parse(json['end_date'] as String),
-      maxParticipants: json['max_participants'] as int,
-      maxTeams: json['max_teams'] as int,
-      maxPersonsPerTeam: json['max_persons_per_team'] as int,
-      minParticipants: json['min_participants'] as int,
-      minTeams: json['min_teams'] as int,
-      minPrice: (json['min_price'] as num).toDouble(),
-      majPrice: (json['maj_price'] as num).toDouble(),
-      reducedPrice: (json['reduced_price'] as num).toDouble(),
+      maxParticipants: parseInt(json['max_participants']),
+      maxTeams: parseInt(json['max_teams']),
+      maxPersonsPerTeam: parseInt(json['max_persons_per_team']),
+      minParticipants: parseInt(json['min_participants']),
+      minTeams: parseInt(json['min_teams']),
+      minPrice: parseDouble(json['min_price']),
+      majPrice: parseDouble(json['maj_price']),
+      reducedPrice: parseDouble(json['reduced_price']),
       mealPrice: json['meal_price'] != null
-          ? (json['meal_price'] as num).toDouble()
+          ? parseDouble(json['meal_price'])
           : null,
-      isChipMandatory: (json['is_chip_mandatory'] as int) == 1,
-      minAge: json['min_age'] as int,
-      independentAge: json['independent_age'] as int,
-      supervisorAge: json['supervisor_age'] as int,
-      remainingTeams: json['remaining_teams'] as int?,
+      isChipMandatory:
+          json['is_chip_mandatory'] == true || json['is_chip_mandatory'] == 1,
+      minAge: parseInt(json['min_age']),
+      independentAge: parseInt(json['independent_age']),
+      supervisorAge: parseInt(json['supervisor_age']),
+      remainingTeams: json['remaining_teams'] != null
+          ? parseInt(json['remaining_teams'])
+          : null,
     );
   }
 

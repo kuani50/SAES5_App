@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 
 class HeroBanner extends StatelessWidget {
   final String title;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
-  const HeroBanner({
-    super.key,
-    required this.title,
-    required this.onTap,
-  });
+  const HeroBanner({super.key, required this.title, this.onTap});
 
   @override
   Widget build(BuildContext context) {

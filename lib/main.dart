@@ -7,26 +7,28 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'debug/my_http_overrides.dart';
 import 'providers/api_provider.dart';
 import 'package:saps5app/providers/project_provider.dart';
+import 'package:saps5app/providers/auth_provider.dart';
+import 'package:saps5app/providers/raid_provider.dart';
+import 'package:saps5app/providers/club_provider.dart';
 import 'screens/debug/config_screen.dart';
 import 'screens/raid_detail_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/club_screen.dart';
 import 'screens/club_detail_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/auth_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/user_races_screen.dart';
 import 'screens/manage_team_screen.dart';
 import 'models/raid_model.dart';
 import 'models/club_model.dart';
 import 'models/course_model.dart';
-import 'data/raid_data.dart';
 import 'screens/raid_registration_screen.dart';
 import 'screens/course_detail_screen.dart';
 
 void main() async {
-  if (kDebugMode) {
-    HttpOverrides.global = MyHttpOverrides();
-  }
+  HttpOverrides.global = MyHttpOverrides();
+
   await initializeDateFormatting('fr_FR', null);
   runApp(const MyApp());
 }
@@ -37,10 +39,33 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ProjectProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => ApiProvider()),
+        ChangeNotifierProxyProvider<ApiProvider, ProjectProvider>(
+          create: (context) => ProjectProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? ProjectProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, AuthProvider>(
+          create: (context) => AuthProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? AuthProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, RaidProvider>(
+          create: (context) => RaidProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? RaidProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, ClubProvider>(
+          create: (context) => ClubProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? ClubProvider(apiProvider),
+        ),
+      ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'Orient Express',
+        routerConfig: _router,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
@@ -62,16 +87,12 @@ final GoRouter _router = GoRouter(
         return RaidDetailScreen(raid: raid);
       },
     ),
+    GoRoute(path: '/login', builder: (context, state) => const AuthScreen()),
     GoRoute(
-      path: '/login',
-      builder: (context, state) {
-        return const AuthScreen();
-      },
+      path: '/login-form',
+      builder: (context, state) => const LoginScreen(),
     ),
-    GoRoute(
-      path: '/clubs',
-      builder: (context, state) => ClubScreen(allEvents: allRaids),
-    ),
+    GoRoute(path: '/clubs', builder: (context, state) => const ClubScreen()),
     GoRoute(
       path: '/club-details',
       builder: (context, state) {
@@ -82,8 +103,6 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
-    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),

@@ -127,7 +127,7 @@ class _ClubDetailInfo extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                "Manager ID: ${club.managerId}", // Placeholder
+                "Manager ID: ${club.managerId}",
                 style: TextStyle(fontSize: 18, color: Colors.grey[600]),
               ),
             ],

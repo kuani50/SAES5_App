@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../providers/project_provider.dart';
+
+import '../providers/auth_provider.dart';
 
 class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
   final bool? isLoggedIn;
@@ -14,8 +15,8 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ProjectProvider>();
-    final bool loggedIn = isLoggedIn ?? provider.isLoggedIn;
+    final provider = context.watch<AuthProvider>();
+    final bool loggedIn = isLoggedIn ?? provider.isAuthenticated;
     final String currentPath = GoRouterState.of(context).uri.path;
     final bool isRaidsActive =
         currentPath == '/home' || currentPath.startsWith('/details');

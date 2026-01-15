@@ -11,6 +11,7 @@ class ApiProvider with ChangeNotifier {
 
   String get baseUrl => _baseUrl;
   ApiClient get apiClient => _apiClient;
+  Dio get dio => _dio;
   bool get hasToken => _token != null;
 
   ApiProvider() {

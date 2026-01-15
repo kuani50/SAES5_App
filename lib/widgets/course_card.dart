@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/project_provider.dart';
+import '../providers/auth_provider.dart';
 import '../models/course_model.dart';
 import '../models/raid_model.dart';
 
@@ -124,9 +125,11 @@ class CourseActions extends StatelessWidget {
         const SizedBox(width: 12),
         ElevatedButton(
           onPressed: () {
-            final provider = context.read<ProjectProvider>();
-            if (provider.isLoggedIn) {
-              provider.registerForCourse(course);
+            final authProvider = context.read<AuthProvider>();
+            final projectProvider = context.read<ProjectProvider>();
+
+            if (authProvider.isAuthenticated) {
+              projectProvider.registerForCourse(course);
               context.push('/my-races');
             } else {
               context.push('/login?redirect=/my-races');

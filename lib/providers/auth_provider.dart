@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../services/device_info_service.dart';
 import 'api_provider.dart';
 
@@ -26,7 +27,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print('Login error: $e');
+      debugPrint('Login error: $e');
       return false;
     }
   }
@@ -68,7 +69,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print('Register error: $e');
+      debugPrint('Register error: $e');
       return false;
     }
   }

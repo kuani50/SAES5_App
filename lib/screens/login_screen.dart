@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/project_provider.dart';
+import '../providers/auth_provider.dart';
 import '../data/login_data.dart';
 
 import '../widgets/custom_text_field.dart';
@@ -56,18 +57,30 @@ class LoginScreen extends StatelessWidget {
 
                 PrimaryButton(
                   text: "Se connecter",
-                  onPressed: () {
+                  onPressed: () async {
                     // Login logic
-                    context.read<ProjectProvider>().login();
+                    final success = await context.read<AuthProvider>().login(
+                      emailController.text,
+                      passwordController.text,
+                    );
 
-                    // Check for redirect param
-                    final redirect = GoRouterState.of(
-                      context,
-                    ).uri.queryParameters['redirect'];
-                    if (redirect != null) {
-                      context.go(redirect);
-                    } else {
-                      context.go('/home');
+                    if (success && context.mounted) {
+                      // Check for redirect param
+                      final redirect = GoRouterState.of(
+                        context,
+                      ).uri.queryParameters['redirect'];
+                      if (redirect != null) {
+                        context.go(redirect);
+                      } else {
+                        context.go('/home');
+                      }
+                    } else if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Échec de la connexion"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
                   },
                 ),

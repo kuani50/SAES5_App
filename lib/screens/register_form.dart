@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/project_provider.dart';
 import '../providers/auth_provider.dart';
 
 class RegisterForm extends StatefulWidget {
@@ -27,8 +26,6 @@ class RegisterFormState extends State<RegisterForm> {
   String birthDate = "";
 
   Future<void> submitForm() async {
-    final provider = context.read<ProjectProvider>();
-
     setState(() {
       errorMessage = '';
     });

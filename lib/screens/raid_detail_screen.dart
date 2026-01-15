@@ -1,12 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/raid_model.dart';
+import '../models/course_model.dart';
 import '../widgets/course_card.dart';
+import '../providers/api_provider.dart';
 
-class RaidDetailScreen extends StatelessWidget {
+class RaidDetailScreen extends StatefulWidget {
   final RaidModel raid;
 
   const RaidDetailScreen({super.key, required this.raid});
+
+  @override
+  State<RaidDetailScreen> createState() => _RaidDetailScreenState();
+}
+
+class _RaidDetailScreenState extends State<RaidDetailScreen> {
+  List<CourseModel> _courses = [];
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCourses();
+  }
+
+  Future<void> _fetchCourses() async {
+    try {
+      final apiProvider = context.read<ApiProvider>();
+      final response = await apiProvider.dio.get(
+        '/api/raid/${widget.raid.id}/races',
+      );
+
+      debugPrint('=== COURSES API RESPONSE ===');
+      debugPrint('Response type: ${response.data.runtimeType}');
+      debugPrint('Response data: ${response.data}');
+
+      // Handle wrapped response {"races": [...]} or {"data": [...]} or direct array [...]
+      final dynamic responseData = response.data;
+      List<dynamic> coursesList;
+
+      if (responseData is Map<String, dynamic>) {
+        // Check for 'races' key first (Laravel convention)
+        if (responseData.containsKey('races')) {
+          coursesList = responseData['races'] as List<dynamic>;
+          debugPrint('Found races key, list length: ${coursesList.length}');
+        } else if (responseData.containsKey('data')) {
+          coursesList = responseData['data'] as List<dynamic>;
+          debugPrint('Found data key, list length: ${coursesList.length}');
+        } else {
+          coursesList = [];
+          debugPrint('No races or data key found');
+        }
+      } else if (responseData is List) {
+        coursesList = responseData;
+        debugPrint('Direct list, length: ${coursesList.length}');
+      } else {
+        coursesList = [];
+        debugPrint('Unknown format, using empty list');
+      }
+
+      final courses = coursesList
+          .map((e) => CourseModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      debugPrint('Parsed ${courses.length} courses');
+
+      setState(() {
+        _courses = courses;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+      debugPrint('Error fetching courses: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +107,7 @@ class RaidDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header sub-component
-            RaidDetailHeader(raid: raid),
+            RaidDetailHeader(raid: widget.raid),
 
             const SizedBox(height: 40),
             const Text(
@@ -49,14 +121,18 @@ class RaidDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Course List
-            if (raid.courses.isEmpty)
+            if (_isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (_error != null)
+              Text("Erreur: $_error", style: const TextStyle(color: Colors.red))
+            else if (_courses.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Text("Aucune course disponible pour le moment."),
               )
             else
-              ...raid.courses.map(
-                (course) => CourseCard(course: course, raid: raid),
+              ..._courses.map(
+                (course) => CourseCard(course: course, raid: widget.raid),
               ),
           ],
         ),
@@ -99,16 +175,19 @@ class RaidDetailHeader extends StatelessWidget {
             _InfoItem(icon: Icons.calendar_today, text: dateDisplay),
             _InfoItem(
               icon: Icons.location_on,
-              text: "Adresse #${raid.addressId}",
-            ), // Placeholder
-            Text(
-              "(Club #${raid.clubId})", // Placeholder
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-              ),
+              text: raid.address != null
+                  ? "${raid.address!.city ?? ''} ${raid.address!.postalCode ?? ''}"
+                  : "Adresse #${raid.addressId}",
             ),
+            if (raid.club != null)
+              Text(
+                "(${raid.club!.name})",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
           ],
         ),
       ],
