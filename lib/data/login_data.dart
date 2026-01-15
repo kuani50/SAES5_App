@@ -1,2 +1,2 @@
-const String email = "thomas.dupont@email.com";
-const String password = "password123";
+const String email = String.fromEnvironment('LOGIN_EMAIL', defaultValue: '');
+const String password = String.fromEnvironment('LOGIN_PASSWORD', defaultValue: '');
