@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -41,37 +43,55 @@ class _ManageCourseScreenState extends State<ManageCourseScreen>
         widget.course.id,
       );
 
-      setState(() {
-        _enrolledTeams = List<Map<String, dynamic>>.from(response);
-        _isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error fetching teams: $e');
-      // Mock data for fallback
+      debugPrint(
+        'getRaceTeams response for course ${widget.course.id}: $response',
+      );
+
+      var responseData = response;
+      if (responseData is String) {
+        responseData = jsonDecode(responseData);
+      }
+
+      List<Map<String, dynamic>> teams = [];
+
+      if (responseData is List) {
+        teams = List<Map<String, dynamic>>.from(responseData);
+      } else if (responseData is Map) {
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          teams = List<Map<String, dynamic>>.from(responseData['data']);
+        } else if (responseData.containsKey('teams') &&
+            responseData['teams'] is List) {
+          teams = List<Map<String, dynamic>>.from(responseData['teams']);
+        }
+      }
+
       if (mounted) {
         setState(() {
-          _enrolledTeams = [
-            {
-              'name': 'Les Rapides',
-              'category': 'Mixte',
-              'status': 'Validé',
-              'id': 1,
-            },
-            {
-              'name': 'Team Endurance',
-              'category': 'Homme',
-              'status': 'En attente',
-              'id': 2,
-            },
-            {
-              'name': 'Sprint Club',
-              'category': 'Femme',
-              'status': 'Incomplet',
-              'id': 3,
-            },
-          ];
+          _enrolledTeams = teams;
           _isLoading = false;
         });
+      }
+    } catch (e) {
+      debugPrint('Error fetching teams: $e');
+      String errorMessage = 'Erreur lors du chargement des équipes';
+
+      if (e is DioException) {
+        if (e.response?.statusCode == 403) {
+          errorMessage =
+              "Accès refusé : Vous n'êtes pas autorisé à gérer cette course.";
+        } else {
+          errorMessage = "Erreur serveur (${e.response?.statusCode})";
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _enrolledTeams = []; // No mock data fallback
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        );
       }
     }
   }
@@ -498,6 +518,32 @@ class _TeamRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine fields with fallbacks
+    final name =
+        team['name']?.toString() ?? team['tea_name']?.toString() ?? 'Sans nom';
+    final category = team['category']?.toString() ?? 'Mixte';
+
+    // Determine status logic
+    String status = team['status']?.toString() ?? 'En attente';
+    if (team.containsKey('tea_has_validated')) {
+      final bool validated =
+          team['tea_has_validated'] == true || team['tea_has_validated'] == 1;
+      final bool paid =
+          team['tea_has_paid'] == true || team['tea_has_paid'] == 1;
+
+      if (validated) {
+        status = 'Validé';
+      } else if (paid) {
+        status = 'Payé (Docs manquants)';
+      } else {
+        status = 'Incomplet';
+      }
+    }
+
+    // Data extraction
+    final List members = team['members'] is List ? team['members'] : [];
+    final int memberCount = members.length;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -519,12 +565,25 @@ class _TeamRow extends StatelessWidget {
                   child: const Icon(Icons.groups, color: Colors.blue, size: 20),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  team['name'] ?? 'Sans nom',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF0F172A),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF0F172A),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      "$memberCount membre${memberCount > 1 ? 's' : ''}",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -534,7 +593,7 @@ class _TeamRow extends StatelessWidget {
             flex: 2,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: _CategoryBadge(category: team['category'] ?? 'Mixte'),
+              child: _CategoryBadge(category: category),
             ),
           ),
           // Status Badge
@@ -542,7 +601,7 @@ class _TeamRow extends StatelessWidget {
             flex: 2,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: _StatusBadge(status: team['status'] ?? 'En attente'),
+              child: _StatusBadge(status: status),
             ),
           ),
           // Action Button
@@ -596,11 +655,15 @@ class _CategoryBadge extends StatelessWidget {
 
     switch (category.toLowerCase()) {
       case 'homme':
+      case 'men':
+      case 'male':
         bgColor = const Color(0xFFDBEAFE);
         textColor = const Color(0xFF1E40AF);
         icon = Icons.male;
         break;
       case 'femme':
+      case 'women':
+      case 'female':
         bgColor = const Color(0xFFFCE7F3);
         textColor = const Color(0xFF9D174D);
         icon = Icons.female;
@@ -647,22 +710,22 @@ class _StatusBadge extends StatelessWidget {
     Color textColor;
     IconData icon;
 
-    switch (status.toLowerCase()) {
-      case 'validé':
-      case 'valide':
-        bgColor = const Color(0xFFDCFCE7);
-        textColor = const Color(0xFF166534);
-        icon = Icons.check_circle;
-        break;
-      case 'incomplet':
-        bgColor = const Color(0xFFFEE2E2);
-        textColor = const Color(0xFFDC2626);
-        icon = Icons.error;
-        break;
-      default: // En attente
-        bgColor = const Color(0xFFFEF3C7);
-        textColor = const Color(0xFF92400E);
-        icon = Icons.schedule;
+    final lowerStatus = status.toLowerCase();
+
+    if (lowerStatus.contains('valid') || lowerStatus == 'complete') {
+      bgColor = const Color(0xFFDCFCE7);
+      textColor = const Color(0xFF166534);
+      icon = Icons.check_circle;
+    } else if (lowerStatus.contains('incomplet') ||
+        lowerStatus.contains('manquant')) {
+      bgColor = const Color(0xFFFEE2E2);
+      textColor = const Color(0xFFDC2626);
+      icon = Icons.error;
+    } else {
+      // En attente or others
+      bgColor = const Color(0xFFFEF3C7);
+      textColor = const Color(0xFF92400E);
+      icon = Icons.schedule;
     }
 
     return Container(
@@ -676,12 +739,15 @@ class _StatusBadge extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: textColor),
           const SizedBox(width: 4),
-          Text(
-            status,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: textColor,
+          Flexible(
+            child: Text(
+              status,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: textColor,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

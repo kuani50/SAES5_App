@@ -193,8 +193,6 @@ class _RegistrationCard extends StatelessWidget {
     // Status from API
     final bool isRegistrationComplete =
         registration['registration_complete'] == true;
-    final bool hasValidated = registration['tea_has_validated'] == true;
-    final bool hasPaid = registration['tea_has_paid'] == true;
 
     return Container(
       decoration: BoxDecoration(

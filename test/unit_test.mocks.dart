@@ -991,6 +991,30 @@ class MockApiClient extends _i1.Mock implements _i8.ApiClient {
           as _i9.Future<dynamic>);
 
   @override
+  _i9.Future<dynamic> getPpsStatus(Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#getPpsStatus, [body]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> validatePps(int? ppsId) =>
+      (super.noSuchMethod(
+            Invocation.method(#validatePps, [ppsId]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> invalidatePps(int? ppsId) =>
+      (super.noSuchMethod(
+            Invocation.method(#invalidatePps, [ppsId]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
   _i9.Future<dynamic> getManagedRaces() =>
       (super.noSuchMethod(
             Invocation.method(#getManagedRaces, []),

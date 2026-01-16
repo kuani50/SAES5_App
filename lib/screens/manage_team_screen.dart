@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +32,7 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
   String _teamName = "";
   String _eventName = "";
   List<Map<String, dynamic>> _members = [];
+  Map<int, Map<String, dynamic>> _memberStatuses = {};
   int? _managerId;
 
   // Search functionality
@@ -113,12 +114,42 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
         }
       }
 
+      // Fetch statuses
+      Map<int, Map<String, dynamic>> statuses = {};
+      try {
+        final userIds = members.map((m) => m['id'] as int).toList();
+        if (userIds.isNotEmpty) {
+          final statusResponse = await apiProvider.apiClient.getPpsStatus({
+            'user_ids': userIds,
+          });
+          // Expecting { "userId": { "has_license": true, "pps_status": "validated" }, ... }
+          // Or list of objects. Adapting to map.
+          if (statusResponse is Map) {
+            statusResponse.forEach((key, value) {
+              final uid = int.tryParse(key.toString());
+              if (uid != null && value is Map) {
+                statuses[uid] = Map<String, dynamic>.from(value);
+              }
+            });
+          } else if (statusResponse is List) {
+            for (var item in statusResponse) {
+              if (item is Map && item['user_id'] != null) {
+                statuses[item['user_id']] = Map<String, dynamic>.from(item);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint("Error checking member statuses: $e");
+      }
+
       if (mounted) {
         setState(() {
           _teamName =
               teamData['name']?.toString() ?? widget.teamName ?? "Équipe";
           _managerId = teamData['manager_id'];
           _members = members;
+          _memberStatuses = statuses;
           _isLoading = false;
         });
       }
@@ -485,7 +516,10 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                                         ),
                                       ),
                                     ),
-                                    title: Row(
+                                    title: Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      spacing: 8,
                                       children: [
                                         Text(
                                           member['name'] ?? 'Utilisateur',
@@ -494,8 +528,7 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                                             color: Color(0xFF0F172A),
                                           ),
                                         ),
-                                        if (isNew) ...[
-                                          const SizedBox(width: 8),
+                                        if (isNew)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 8,
@@ -514,6 +547,29 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                                               ),
                                             ),
                                           ),
+                                        // Status Badge
+                                        if (_memberStatuses.containsKey(
+                                          member['id'],
+                                        )) ...[
+                                          _buildStatusBadge(
+                                            _memberStatuses[member['id']]!,
+                                          ),
+                                          if (_memberStatuses[member['id']]!['document_url'] !=
+                                              null)
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.visibility,
+                                                color: Colors.blue,
+                                                size: 20,
+                                              ),
+                                              onPressed: () => _viewPps(
+                                                _memberStatuses[member['id']]!['document_url'],
+                                              ),
+                                              tooltip: "Voir le certificat",
+                                              padding: EdgeInsets.zero,
+                                              constraints:
+                                                  const BoxConstraints(),
+                                            ),
                                         ],
                                       ],
                                     ),
@@ -570,6 +626,177 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                   ),
                 ),
         ),
+      ),
+    );
+  }
+
+  Future<void> _viewPps(String? documentPath) async {
+    if (documentPath == null || documentPath.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Aucun document associé")));
+      return;
+    }
+
+    try {
+      // Construct full URL.
+      // Assuming baseUrl is like http://host/api or http://host/
+      final dio = context.read<ApiProvider>().dio;
+      String baseUrl = dio.options.baseUrl;
+
+      // Remove '/api' suffix if present to point to storage
+      if (baseUrl.endsWith('/api') || baseUrl.endsWith('/api/')) {
+        baseUrl = baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+      }
+
+      // Ensure path doesn't start with / if base ends with /
+      if (baseUrl.endsWith('/') && documentPath.startsWith('/')) {
+        documentPath = documentPath.substring(1);
+      } else if (!baseUrl.endsWith('/') && !documentPath.startsWith('/')) {
+        baseUrl = '$baseUrl/';
+      }
+
+      final fullUrl = "$baseUrl/storage/$documentPath";
+      debugPrint("Opening PPS URL: $fullUrl");
+
+      showDialog(
+        context: context,
+        builder: (c) => AlertDialog(
+          title: const Text("Document PPS"),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Simple Image attempt. For PDF, we would need a PDF viewer or download.
+                  // Since we don't know file type, we try Image.
+                  // If it fails, we show a link/message.
+                  Image.network(
+                    fullUrl,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Column(
+                        children: [
+                          const Icon(
+                            Icons.insert_drive_file,
+                            size: 50,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(height: 10),
+                          Text("Document: $documentPath"),
+                          const SizedBox(height: 5),
+                          const Text(
+                            "Format non supporté en prévisualisation (PDF?)",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(c),
+              child: const Text("Fermer"),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error showing PPS: $e");
+    }
+  }
+
+  Widget _buildStatusBadge(Map<String, dynamic> status) {
+    bool isLicensed =
+        status['has_license'] == true || status['license_number'] != null;
+
+    // PHP backend fields
+    bool isValid = status['is_valid'] == true || status['is_valid'] == 1;
+    bool hasDocument =
+        status['has_document'] == true ||
+        status['has_document'] == 1 ||
+        status['document_url'] != null;
+
+    if (isLicensed) {
+      return _StatusChip(
+        label: 'Licencié',
+        color: Colors.green.shade100,
+        textColor: Colors.green.shade800,
+        icon: Icons.verified,
+      );
+    }
+
+    if (isValid) {
+      return _StatusChip(
+        label: 'PPS Validé',
+        color: Colors.green.shade100,
+        textColor: Colors.green.shade800,
+        icon: Icons.check_circle,
+      );
+    }
+
+    if (hasDocument) {
+      return _StatusChip(
+        label: 'PPS En attente',
+        color: Colors.orange.shade100,
+        textColor: Colors.orange.shade800,
+        icon: Icons.hourglass_top,
+      );
+    }
+
+    // Default
+    return _StatusChip(
+      label: 'PPS Manquant',
+      color: Colors.grey.shade200,
+      textColor: Colors.grey.shade600,
+      icon: Icons.description,
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+  final Color textColor;
+  final IconData icon;
+
+  const _StatusChip({
+    required this.label,
+    required this.color,
+    required this.textColor,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: textColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

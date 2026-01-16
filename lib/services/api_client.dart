@@ -80,6 +80,15 @@ abstract class ApiClient {
   @GET("/api/pps/user/{userId}")
   Future<dynamic> getPpsByUser(@Path("userId") int userId);
 
+  @POST("/api/pps/status")
+  Future<dynamic> getPpsStatus(@Body() Map<String, dynamic> body);
+
+  @POST("/api/pps/{pps}/validate")
+  Future<dynamic> validatePps(@Path("pps") int ppsId);
+
+  @POST("/api/pps/{pps}/invalidate")
+  Future<dynamic> invalidatePps(@Path("pps") int ppsId);
+
   // Race Management
 
   // Race Management
