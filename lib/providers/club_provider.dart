@@ -22,11 +22,10 @@ class ClubProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // Use Dio directly to handle various response formats
-      final response = await _apiProvider.dio.get(
-        '/api/clubs?with=upcoming,address',
-      );
-      var responseData = response.data;
+      // Use ApiClient to fetch clubs with upcoming events
+      final dynamic responseDataReceived = await _apiProvider.apiClient
+          .getClubsWithUpcomingEvents();
+      var responseData = responseDataReceived;
 
       // If response is a String, parse it as JSON
       if (responseData is String) {

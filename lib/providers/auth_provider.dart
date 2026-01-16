@@ -15,40 +15,25 @@ class AuthProvider extends ChangeNotifier {
   bool get isAuthenticated => _apiProvider.hasToken;
   UserModel? get currentUser => _currentUser;
   bool get isRaceManager => _isRaceManager;
-  String get userDisplayName {
-    if (_currentUser == null) {
-      return "";
-    }
+  String get userDisplayName => _currentUser != null
+      ? "${_currentUser!.firstName} ${_currentUser!.lastName}"
+      : "";
 
-    final firstName = (_currentUser!.firstName ?? '').trim();
-    final lastName = (_currentUser!.lastName ?? '').trim();
-
-    if (firstName.isEmpty && lastName.isEmpty) {
-      return "";
-    }
-    if (firstName.isEmpty) {
-      return lastName;
-    }
-    if (lastName.isEmpty) {
-      return firstName;
-    }
-
-    return "$firstName $lastName";
-  }
   AuthProvider(this._apiProvider) {
-    _loadUserFromPrefs();
+    // Start logged out - don't auto-load from prefs
+    _clearSession();
   }
 
-  Future<void> _loadUserFromPrefs() async {
+  Future<void> _clearSession() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final userJson = prefs.getString('current_user');
-      if (userJson != null) {
-        _currentUser = UserModel.fromJson(jsonDecode(userJson));
-        notifyListeners();
-      }
+      await prefs.remove('current_user');
+      await _apiProvider.clearToken();
+      _currentUser = null;
+      _isRaceManager = false;
+      notifyListeners();
     } catch (e) {
-      debugPrint('Error loading user from prefs: $e');
+      debugPrint('Error clearing session: $e');
     }
   }
 
@@ -160,6 +145,11 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error fetching current user: $e');
     }
+  }
+
+  /// Refresh current user data from the API (used after profile updates)
+  Future<void> refreshCurrentUser() async {
+    await fetchCurrentUser();
   }
 
   /// Check if the authenticated user manages any races

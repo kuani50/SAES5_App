@@ -9,7 +9,6 @@ class ProjectProvider with ChangeNotifier {
   List<Project> _projects = [];
   bool _isLoading = false;
   String? _error;
-  bool _isLoggedIn = false;
 
   List<Project> get projects => _projects;
   bool get isLoading => _isLoading;

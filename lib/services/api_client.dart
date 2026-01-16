@@ -3,29 +3,28 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../models/project.dart';
 import '../models/raid_model.dart';
-import '../models/club_model.dart';
-import '../models/course_model.dart';
 
 part 'api_client.g.dart';
 
 @RestApi()
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
+  // Trigger rebuild
 
   @GET("/api/projects")
   Future<List<Project>> getProjects();
 
   @GET("/api/raids?with=club,address")
-  Future<List<RaidModel>> getRaids();
+  Future<dynamic> getRaids();
 
   @GET("/api/clubs")
   Future<dynamic> getClubs();
 
   @GET("/api/clubs?with=upcoming,address")
-  Future<List<ClubModel>> getClubsWithUpcomingEvents();
+  Future<dynamic> getClubsWithUpcomingEvents();
 
   @GET("/api/raids/{raid}/races")
-  Future<List<CourseModel>> getRacesByRaid(@Path("raid") int raidId);
+  Future<dynamic> getRacesByRaid(@Path("raid") int raidId);
 
   @GET("/api/club/{club}/raids")
   Future<List<RaidModel>> getRaidsByClub(@Path("club") int clubId);
@@ -38,6 +37,59 @@ abstract class ApiClient {
 
   @GET("/api/user")
   Future<dynamic> getCurrentUser();
+
+  @GET("/api/profile")
+  Future<dynamic> getProfile();
+
+  @PUT("/api/profile")
+  Future<dynamic> updateProfile(@Body() Map<String, dynamic> body);
+
+  @GET("/api/users/search")
+  Future<dynamic> searchUsers(@Query("q") String query);
+
+  @GET("/api/users")
+  Future<dynamic> getUsers();
+
+  @GET("/api/user/teams")
+  Future<dynamic> getUserTeams();
+
+  @GET("/api/user/{userId}/registrations")
+  Future<dynamic> getUserRegistrations(@Path("userId") int userId);
+
+  @POST("/api/teams/register")
+  Future<dynamic> createTeamWithMembers(@Body() Map<String, dynamic> body);
+
+  @GET("/api/teams/{teamId}")
+  Future<dynamic> getTeam(@Path("teamId") int teamId);
+
+  @PUT("/api/teams/{teamId}/members")
+  Future<dynamic> updateTeamMembers(
+    @Path("teamId") int teamId,
+    @Body() Map<String, dynamic> body,
+  );
+
+  // PPS / Documents
+  @POST("/api/pps/upload")
+  @MultiPart()
+  Future<dynamic> uploadDocument(
+    @Part(name: "file") File file,
+    @Part(name: "user_id")
+    int? userId, // Optional if uploading for another user
+  );
+
+  @GET("/api/pps/user/{userId}")
+  Future<dynamic> getPpsByUser(@Path("userId") int userId);
+
+  @POST("/api/pps/status")
+  Future<dynamic> getPpsStatus(@Body() Map<String, dynamic> body);
+
+  @POST("/api/pps/{pps}/validate")
+  Future<dynamic> validatePps(@Path("pps") int ppsId);
+
+  @POST("/api/pps/{pps}/invalidate")
+  Future<dynamic> invalidatePps(@Path("pps") int ppsId);
+
+  // Race Management
 
   // Race Management
   @GET("/api/races")

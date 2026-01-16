@@ -134,46 +134,43 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
 
-            if (isLandscape) ...[
-              if (loggedIn) ...[
-                // Display user name
-                if (provider.userDisplayName.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                      provider.userDisplayName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                      ),
+            if (loggedIn) ...[
+              // Gear Icon (Manager)
+              if (provider.isRaceManager)
+                IconButton(
+                  icon: const Icon(Icons.settings, color: Colors.white),
+                  onPressed: () => context.go('/mes-courses'),
+                  tooltip: 'Administration',
+                ),
+
+              // User Name
+              if (provider.userDisplayName.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    provider.userDisplayName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
                   ),
-                // Course Manager Icon (gear) - only show if user is a race manager
-                if (provider.isRaceManager)
-                  IconButton(
-                    icon: const Icon(Icons.settings, color: Colors.white),
-                    onPressed: () => context.go('/mes-courses'),
-                    tooltip: 'Mes Courses (Responsable)',
-                  ),
-                IconButton(
-                  icon: const Icon(Icons.person, color: Colors.white),
-                  onPressed: () {},
-                  tooltip: 'Mon Profil',
                 ),
-                IconButton(
-                  icon: const Icon(Icons.logout, color: Colors.red),
-                  onPressed: () {
-                    provider.logout();
-                    context.go('/home');
-                  },
-                  tooltip: 'Se déconnecter',
-                ),
-              ] else ...[
+
+              // Logout Icon
+              IconButton(
+                icon: const Icon(Icons.logout, color: Colors.red),
+                onPressed: () {
+                  provider.logout();
+                  context.go('/home');
+                },
+                tooltip: 'Se déconnecter',
+              ),
+            ] else ...[
+              // Public: Register / Login
+              if (isLandscape) ...[
                 ElevatedButton(
-                  onPressed: () {
-                    context.go('/register');
-                  },
+                  onPressed: () => context.go('/register'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -182,97 +179,26 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () {
-                    context.go('/login');
-                  },
+                  onPressed: () => context.go('/login'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.black,
                   ),
                   child: const Text('Connexion'),
                 ),
+              ] else ...[
+                // Mobile Portrait: Compact buttons or Icons
+                IconButton(
+                  icon: const Icon(Icons.person_add, color: Colors.white),
+                  onPressed: () => context.go('/register'),
+                  tooltip: 'Créer un compte',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.login, color: Colors.orange),
+                  onPressed: () => context.go('/login'),
+                  tooltip: 'Connexion',
+                ),
               ],
-            ] else ...[
-              // PORTRAIT MODE: Dropdown menu for auth
-              PopupMenuButton<String>(
-                icon: loggedIn && provider.userDisplayName.isNotEmpty
-                    ? CircleAvatar(
-                        radius: 14,
-                        backgroundColor: Colors.orange,
-                        child: Text(
-                          (() {
-                            final firstName = provider.currentUser?.firstName;
-                            if (firstName == null || firstName.isEmpty) {
-                              return "U";
-                            }
-                            return firstName.substring(0, 1).toUpperCase();
-                          })(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      )
-                    : const Icon(
-                        Icons.account_circle,
-                        size: 28,
-                        color: Colors.white,
-                      ),
-                onSelected: (value) {
-                  switch (value) {
-                    case 'login':
-                      context.go('/login');
-                      break;
-                    case 'register':
-                      context.go('/register');
-                      break;
-                    case 'profile':
-                      break;
-                    case 'logout':
-                      provider.logout();
-                      context.go('/home');
-                      break;
-                  }
-                },
-                itemBuilder: (BuildContext context) {
-                  return [
-                    if (loggedIn) ...[
-                      if (provider.userDisplayName.isNotEmpty)
-                        PopupMenuItem(
-                          enabled: false,
-                          child: Text(
-                            provider.userDisplayName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ),
-                      const PopupMenuItem(
-                        value: 'profile',
-                        child: Text('Mon Profil'),
-                      ),
-                      const PopupMenuItem(
-                        value: 'logout',
-                        child: Text(
-                          'Se déconnecter',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    ] else ...[
-                      const PopupMenuItem(
-                        value: 'login',
-                        child: Text('Connexion'),
-                      ),
-                      const PopupMenuItem(
-                        value: 'register',
-                        child: Text('Créer un compte'),
-                      ),
-                    ],
-                  ];
-                },
-              ),
             ],
           ],
         ),
