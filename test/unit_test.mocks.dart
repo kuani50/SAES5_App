@@ -4,8 +4,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
-import 'dart:io' as _i13;
-import 'dart:ui' as _i16;
+import 'dart:io' as _i15;
+import 'dart:ui' as _i18;
 
 import 'package:dio/dio.dart' as _i7;
 import 'package:dio/src/adapter.dart' as _i4;
@@ -15,10 +15,12 @@ import 'package:dio/src/options.dart' as _i2;
 import 'package:dio/src/response.dart' as _i6;
 import 'package:dio/src/transformer.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i15;
+import 'package:mockito/src/dummies.dart' as _i17;
+import 'package:saps5app/models/club_model.dart' as _i12;
+import 'package:saps5app/models/course_model.dart' as _i13;
 import 'package:saps5app/models/project.dart' as _i11;
-import 'package:saps5app/models/raid_model.dart' as _i12;
-import 'package:saps5app/providers/api_provider.dart' as _i14;
+import 'package:saps5app/models/raid_model.dart' as _i14;
+import 'package:saps5app/providers/api_provider.dart' as _i16;
 import 'package:saps5app/services/api_client.dart' as _i8;
 
 // ignore_for_file: type=lint
