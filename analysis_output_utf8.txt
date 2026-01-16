@@ -1,0 +1,26 @@
+﻿Analyzing SAES5_App...                                          
+
+warning - The declaration '_$ProjectToJson' isn't referenced - lib\models\project.g.dart:19:22 - unused_element
+   info - Don't invoke 'print' in production code - lib\providers\api_provider.dart:46:28 - avoid_print
+warning - The declaration '_loadUserFromPrefs' isn't referenced - lib\providers\auth_provider.dart:40:16 - unused_element
+   info - The private field _isLoggedIn could be 'final' - lib\providers\project_provider.dart:12:8 - prefer_final_fields
+warning - The value of the field '_isLoggedIn' isn't used - lib\providers\project_provider.dart:12:8 - unused_field
+warning - Unused import: '../providers/project_provider.dart' - lib\screens\login_screen.dart:4:8 - unused_import
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\screens\register_screen.dart:197:21 - deprecated_member_use
+   info - Don't use 'BuildContext's across async gaps - lib\screens\tabs\user_profile_tab.dart:100:30 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\tabs\user_profile_tab.dart:158:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\tabs\user_results_tab.dart:27:37 - deprecated_member_use
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:14:51 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:15:37 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:15:52 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:21:29 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:21:53 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:21:67 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:24:37 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:24:57 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:27:30 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:27:43 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:30:35 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\services\device_info_service.dart:30:48 - dead_null_aware_expression
+   info - Unnecessary braces in a string interpolation - lib\widgets\raid_registration\validation_step.dart:62:54 - unnecessary_brace_in_string_interps
+
