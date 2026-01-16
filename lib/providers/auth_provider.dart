@@ -37,21 +37,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> _loadUserFromPrefs() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final userJson = prefs.getString('current_user');
-      if (userJson != null) {
-        _currentUser = UserModel.fromJson(jsonDecode(userJson));
-        notifyListeners();
-        // Restore race manager status
-        checkRaceManagerStatus();
-      }
-    } catch (e) {
-      debugPrint('Error loading user from prefs: $e');
-    }
-  }
-
   Future<void> _saveUserToPrefs(UserModel user) async {
     try {
       final prefs = await SharedPreferences.getInstance();

@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../models/project.dart';
 import '../models/raid_model.dart';
+import '../models/club_model.dart';
+import '../models/course_model.dart';
 
 part 'api_client.g.dart';
 
@@ -21,10 +23,10 @@ abstract class ApiClient {
   Future<dynamic> getClubs();
 
   @GET("/api/clubs?with=upcoming,address")
-  Future<dynamic> getClubsWithUpcomingEvents();
+  Future<List<ClubModel>> getClubsWithUpcomingEvents();
 
   @GET("/api/raids/{raid}/races")
-  Future<dynamic> getRacesByRaid(@Path("raid") int raidId);
+  Future<List<CourseModel>> getRacesByRaid(@Path("raid") int raidId);
 
   @GET("/api/club/{club}/raids")
   Future<List<RaidModel>> getRaidsByClub(@Path("club") int clubId);
@@ -91,7 +93,6 @@ abstract class ApiClient {
 
   // Race Management
 
-  // Race Management
   @GET("/api/races")
   Future<dynamic> getManagedRaces();
 
