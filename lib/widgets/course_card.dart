@@ -8,8 +8,14 @@ import '../models/raid_model.dart';
 class CourseCard extends StatelessWidget {
   final CourseModel course;
   final RaidModel raid;
+  final bool isRegistered;
 
-  const CourseCard({super.key, required this.course, required this.raid});
+  const CourseCard({
+    super.key,
+    required this.course,
+    required this.raid,
+    this.isRegistered = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +42,24 @@ class CourseCard extends StatelessWidget {
               children: [
                 CourseInfo(course: course),
                 const SizedBox(height: 16),
-                CourseActions(isMobile: true, course: course, raid: raid),
+                CourseActions(
+                  isMobile: true,
+                  course: course,
+                  raid: raid,
+                  isRegistered: isRegistered,
+                ),
               ],
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child: CourseInfo(course: course)),
-                CourseActions(isMobile: false, course: course, raid: raid),
+                CourseActions(
+                  isMobile: false,
+                  course: course,
+                  raid: raid,
+                  isRegistered: isRegistered,
+                ),
               ],
             ),
     );
@@ -92,12 +108,14 @@ class CourseActions extends StatelessWidget {
   final bool isMobile;
   final CourseModel course;
   final RaidModel raid;
+  final bool isRegistered;
 
   const CourseActions({
     super.key,
     required this.isMobile,
     required this.course,
     required this.raid,
+    this.isRegistered = false,
   });
 
   @override
@@ -126,31 +144,44 @@ class CourseActions extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         ElevatedButton(
-          onPressed: () {
-            final authProvider = context.read<AuthProvider>();
+          onPressed: isRegistered
+              ? null
+              : () {
+                  final authProvider = context.read<AuthProvider>();
 
-            if (authProvider.isAuthenticated) {
-              // Navigate to registration screen with course and raid data
-              context.push(
-                '/raid-registration',
-                extra: {'course': course, 'raid': raid},
-              );
-            } else {
-              // Redirect to login with redirect back to this course registration
-              context.push('/login?redirect=/details');
-            }
-          },
+                  if (authProvider.isAuthenticated) {
+                    // Navigate to registration screen with course and raid data
+                    context.push(
+                      '/raid-registration',
+                      extra: {'course': course, 'raid': raid},
+                    );
+                  } else {
+                    // Redirect to login with redirect back to this course registration
+                    context.push('/login?redirect=/details');
+                  }
+                },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange,
+            backgroundColor: isRegistered
+                ? Colors.grey.shade400
+                : Colors.orange,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text(
-            "S'inscrire",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isRegistered) ...[
+                const Icon(Icons.check_circle, size: 16),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                isRegistered ? "Déjà inscrit" : "S'inscrire",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ),
       ],

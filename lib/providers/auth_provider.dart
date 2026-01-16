@@ -162,6 +162,11 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Refresh current user data from the API (used after profile updates)
+  Future<void> refreshCurrentUser() async {
+    await fetchCurrentUser();
+  }
+
   /// Check if the authenticated user manages any races
   Future<void> checkRaceManagerStatus() async {
     try {

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import '../../providers/api_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class UserRacesTab extends StatefulWidget {
   const UserRacesTab({super.key});
@@ -24,16 +26,58 @@ class _UserRacesTabState extends State<UserRacesTab> {
 
   Future<void> _fetchRegistrations() async {
     try {
+      final authProvider = context.read<AuthProvider>();
       final apiProvider = context.read<ApiProvider>();
-      final teams = await apiProvider.apiClient.getUserTeams();
+
+      // Get current user ID
+      final currentUser = authProvider.currentUser;
+      if (currentUser == null) {
+        if (mounted) {
+          setState(() {
+            _error = "Veuillez vous connecter pour voir vos inscriptions";
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      final dynamic response = await apiProvider.apiClient.getUserRegistrations(
+        currentUser.id,
+      );
+
+      debugPrint('getUserRegistrations response: $response');
+
+      var responseData = response;
+      if (responseData is String) {
+        responseData = jsonDecode(responseData);
+      }
+
+      List<dynamic> registrationsList = [];
+      if (responseData is List) {
+        registrationsList = responseData;
+      } else if (responseData is Map) {
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          registrationsList = responseData['data'] as List<dynamic>;
+        } else {
+          for (var key in responseData.keys) {
+            if (responseData[key] is List) {
+              registrationsList = responseData[key] as List<dynamic>;
+              break;
+            }
+          }
+        }
+      }
+
+      debugPrint('Registrations found: ${registrationsList.length}');
+
       if (mounted) {
         setState(() {
-          _registrations = teams;
+          _registrations = registrationsList;
           _isLoading = false;
         });
       }
     } catch (e) {
-      debugPrint('Error fetching user teams: $e');
+      debugPrint('Error fetching user registrations: $e');
       if (mounted) {
         setState(() {
           _error = "Impossible de charger les inscriptions";
@@ -98,9 +142,9 @@ class _UserRacesTabState extends State<UserRacesTab> {
 
         // Render List of Registrations
         ..._registrations.map(
-          (team) => Padding(
+          (registration) => Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
-            child: _RegistrationCard(team: team),
+            child: _RegistrationCard(registration: registration),
           ),
         ),
       ],
@@ -109,26 +153,24 @@ class _UserRacesTabState extends State<UserRacesTab> {
 }
 
 class _RegistrationCard extends StatelessWidget {
-  final dynamic team;
+  final dynamic registration;
 
-  const _RegistrationCard({required this.team});
+  const _RegistrationCard({required this.registration});
 
   @override
   Widget build(BuildContext context) {
-    // Extract real data with safe fallbacks
-    final race = team['race'] ?? {};
-    final raid = race['raid'] ?? {};
-
-    final eventName = raid['name']?.toString() ?? "Raid Inconnu";
-    final courseName = race['name']?.toString() ?? "Course Inconnue";
-    final teamName = team['name']?.toString() ?? "Sans nom";
+    // Extract data from the new API response structure
+    final eventName = registration['raid_name']?.toString() ?? "Raid Inconnu";
+    final courseName =
+        registration['race_name']?.toString() ?? "Course Inconnue";
+    final teamName = registration['tea_name']?.toString() ?? "Sans nom";
 
     // Format date
     String dateStr = "";
-    if (race['start_date'] != null) {
+    if (registration['rac_start_date'] != null) {
       try {
-        final date = DateTime.parse(race['start_date'].toString());
-        dateStr = DateFormat('d MMMM', 'fr_FR').format(date);
+        final date = DateTime.parse(registration['rac_start_date'].toString());
+        dateStr = DateFormat('d MMMM yyyy', 'fr_FR').format(date);
       } catch (_) {}
     }
 
@@ -136,14 +178,23 @@ class _RegistrationCard extends StatelessWidget {
         ? "$dateStr • Équipe \"$teamName\""
         : "Équipe \"$teamName\"";
 
-    // Determine roles (logic might need adjustment based on real API data)
-    final List<String> roles = ["Participant"];
-    // checking if current user is captain (assumed field)
-    // if (team['is_captain'] == true) roles.add("Responsable d'équipe");
+    // Determine roles from API response
+    final List<String> roles = [];
+    if (registration['participate'] == true) {
+      roles.add("Participant");
+    }
+    if (registration['is_manager'] == true) {
+      roles.add("Responsable d'équipe");
+    }
+    if (roles.isEmpty) {
+      roles.add("Membre");
+    }
 
-    // Status logic (assumed fields from team status)
-    // Adjust based on your actual Team model fields from backend
-    final bool isMissingDocs = false;
+    // Status from API
+    final bool isRegistrationComplete =
+        registration['registration_complete'] == true;
+    final bool hasValidated = registration['tea_has_validated'] == true;
+    final bool hasPaid = registration['tea_has_paid'] == true;
 
     return Container(
       decoration: BoxDecoration(
@@ -176,7 +227,7 @@ class _RegistrationCard extends StatelessWidget {
                           courseName,
                           dateAndTeam,
                           roles,
-                          isMissingDocs,
+                          !isRegistrationComplete,
                         ),
                       ),
                     ],
@@ -187,7 +238,11 @@ class _RegistrationCard extends StatelessWidget {
                   context,
                   isNarrow: true,
                   eventName: eventName,
-                  isMissingDocs: isMissingDocs,
+                  isMissingDocs: !isRegistrationComplete,
+                  teamId: registration['tea_id'],
+                  teamName: teamName,
+                  raceName: courseName,
+                  raidName: eventName,
                 ),
               ],
             );
@@ -203,14 +258,18 @@ class _RegistrationCard extends StatelessWidget {
                       courseName,
                       dateAndTeam,
                       roles,
-                      isMissingDocs,
+                      !isRegistrationComplete,
                     ),
                   ),
                   _buildActionsSection(
                     context,
                     isNarrow: false,
                     eventName: eventName,
-                    isMissingDocs: isMissingDocs,
+                    isMissingDocs: !isRegistrationComplete,
+                    teamId: registration['tea_id'],
+                    teamName: teamName,
+                    raceName: courseName,
+                    raidName: eventName,
                   ),
                 ],
               ),
@@ -340,6 +399,10 @@ class _RegistrationCard extends StatelessWidget {
     required bool isNarrow,
     required String eventName,
     required bool isMissingDocs,
+    int? teamId,
+    String? teamName,
+    String? raceName,
+    String? raidName,
   }) {
     Widget? warningBadge;
 
@@ -416,7 +479,15 @@ class _RegistrationCard extends StatelessWidget {
 
     final modifierEquipeBtn = OutlinedButton(
       onPressed: () {
-        context.push('/manage-team');
+        context.push(
+          '/manage-team',
+          extra: {
+            'teamId': teamId,
+            'teamName': teamName,
+            'raceName': raceName,
+            'raidName': raidName,
+          },
+        );
       },
       style: OutlinedButton.styleFrom(
         fixedSize: const Size(140, 45),

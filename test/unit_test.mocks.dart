@@ -900,9 +900,33 @@ class MockApiClient extends _i1.Mock implements _i8.ApiClient {
           as _i9.Future<dynamic>);
 
   @override
+  _i9.Future<dynamic> getProfile() =>
+      (super.noSuchMethod(
+            Invocation.method(#getProfile, []),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> updateProfile(Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateProfile, [body]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
   _i9.Future<dynamic> searchUsers(String? query) =>
       (super.noSuchMethod(
             Invocation.method(#searchUsers, [query]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> getUsers() =>
+      (super.noSuchMethod(
+            Invocation.method(#getUsers, []),
             returnValue: _i9.Future<dynamic>.value(),
           )
           as _i9.Future<dynamic>);
@@ -916,9 +940,36 @@ class MockApiClient extends _i1.Mock implements _i8.ApiClient {
           as _i9.Future<dynamic>);
 
   @override
+  _i9.Future<dynamic> getUserRegistrations(int? userId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getUserRegistrations, [userId]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
   _i9.Future<dynamic> createTeamWithMembers(Map<String, dynamic>? body) =>
       (super.noSuchMethod(
             Invocation.method(#createTeamWithMembers, [body]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> getTeam(int? teamId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getTeam, [teamId]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> updateTeamMembers(
+    int? teamId,
+    Map<String, dynamic>? body,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateTeamMembers, [teamId, body]),
             returnValue: _i9.Future<dynamic>.value(),
           )
           as _i9.Future<dynamic>);

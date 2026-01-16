@@ -85,7 +85,11 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/details',
       builder: (context, state) {
-        final raid = state.extra as RaidModel;
+        final raid = state.extra as RaidModel?;
+        if (raid == null) {
+          // Redirect to home if no raid data is provided
+          return const HomeScreen();
+        }
         return RaidDetailScreen(raid: raid);
       },
     ),
@@ -141,7 +145,15 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/manage-team',
-      builder: (context, state) => const ManageTeamScreen(),
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>?;
+        return ManageTeamScreen(
+          teamId: extras?['teamId'] as int?,
+          teamName: extras?['teamName'] as String?,
+          raceName: extras?['raceName'] as String?,
+          raidName: extras?['raidName'] as String?,
+        );
+      },
     ),
     GoRoute(
       path: '/course-details',

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../models/raid_model.dart';
 import '../models/course_model.dart';
-import '../providers/project_provider.dart';
 import '../providers/auth_provider.dart';
 
 class CourseDetailScreen extends StatelessWidget {
@@ -126,6 +125,26 @@ class CourseHeader extends StatelessWidget {
 
   const CourseHeader({super.key, required this.course, required this.raid});
 
+  String _getAddressText() {
+    if (raid.address != null) {
+      final addr = raid.address!;
+      final parts = <String>[];
+      if (addr.address != null && addr.address!.isNotEmpty) {
+        parts.add(addr.address!);
+      }
+      if (addr.postalCode != null && addr.postalCode!.isNotEmpty) {
+        parts.add(addr.postalCode!);
+      }
+      if (addr.city != null && addr.city!.isNotEmpty) {
+        parts.add(addr.city!);
+      }
+      if (parts.isNotEmpty) {
+        return parts.join(', ');
+      }
+    }
+    return "Adresse non disponible";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -176,7 +195,6 @@ class CourseHeader extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    // Removed distance
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -186,11 +204,18 @@ class CourseHeader extends StatelessWidget {
                           size: 20,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          "Adresse ${raid.addressId}",
-                          style: TextStyle(color: Colors.grey.shade600),
+                        Flexible(
+                          child: Text(
+                            _getAddressText(),
+                            style: TextStyle(color: Colors.grey.shade600),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        const SizedBox(width: 16),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
                         const Icon(
                           Icons.people_outline,
                           color: Colors.orange,
@@ -198,7 +223,7 @@ class CourseHeader extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          "Responsable ${course.managerId}",
+                          "Organisé par ${raid.club?.name ?? 'Club #${raid.clubId}'}",
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ],
@@ -210,17 +235,17 @@ class CourseHeader extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Subscribe action
                       final authProvider = context.read<AuthProvider>();
-                      final projectProvider = context.read<ProjectProvider>();
 
                       if (authProvider.isAuthenticated) {
-                        // Register and redirect to My Races
-                        projectProvider.registerForCourse(course);
-                        context.push('/my-races');
+                        // Navigate to team registration
+                        context.push(
+                          '/raid-registration',
+                          extra: {'course': course, 'raid': raid},
+                        );
                       } else {
-                        // Redirect to Login, then to My Races (implying registration continues or is just the target)
-                        context.push('/login?redirect=/my-races');
+                        // Redirect to login
+                        context.push('/login?redirect=/details');
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -242,7 +267,6 @@ class CourseHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // Removed remaining teams because not in model
                 ],
               ),
             ],

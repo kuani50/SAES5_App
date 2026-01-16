@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
 import 'dart:io';
 import '../models/course_model.dart';
 import '../models/raid_model.dart';
@@ -114,23 +115,23 @@ class _RaidRegistrationScreenState extends State<RaidRegistrationScreen> {
 
     try {
       final api = context.read<ApiProvider>().apiClient;
+      final currentUser = context.read<AuthProvider>().currentUser;
+      if (currentUser == null) throw Exception("Utilisateur non connecté");
 
-      // 1. Upload Documents
+      // 1. Upload Documents (optional - don't block registration if upload fails)
       for (var entry in _uploadedDocs.entries) {
         final userId = entry.key;
         final file = entry.value;
         try {
           await api.uploadDocument(file, userId);
+          debugPrint("Document uploaded successfully for user $userId");
         } catch (e) {
           debugPrint("Error uploading doc for user $userId: $e");
-          // Fallback: Simulate success if backend fails
-          debugPrint("Simulating upload success for user $userId");
+          // Continue with registration even if document upload fails
         }
       }
 
       // 2. Prepare Team Data
-      final currentUser = context.read<AuthProvider>().currentUser;
-      if (currentUser == null) throw Exception("Utilisateur non connecté");
 
       final members = _teammates
           .map(
@@ -140,35 +141,61 @@ class _RaidRegistrationScreenState extends State<RaidRegistrationScreen> {
 
       final body = {
         'name': _teamNameController.text,
-        'course_id': widget.course?.id,
-        'race_id': widget.raid?.id,
+        'race_id': widget.course?.id, // course.id is the race_id in the backend
         'manager_id': currentUser.id,
         'members': members,
       };
 
-      try {
-        await api.createTeamWithMembers(body);
-      } catch (e) {
-        debugPrint("Error registering team: $e");
-        // Fallback: Simulate success
-        debugPrint("Simulating registration success");
-        // We throw e only if it is NOT an API error we expect to fail in this "mock mode"
-        // But here we want to let it pass
-      }
+      // 3. Create Team - this is the real API call
+      await api.createTeamWithMembers(body);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Inscription confirmée avec succès ! (Simulation)"),
+            content: Text("Inscription confirmée avec succès !"),
+            backgroundColor: Colors.green,
           ),
         );
         // Navigate to User Races Tab
-        context.go('/user-races');
+        context.go('/home');
       }
     } catch (e) {
       if (mounted) {
+        String errorMessage = "Erreur lors de l'inscription";
+
+        // Try to extract a user-friendly message from the error
+        if (e is DioException && e.response != null) {
+          final responseData = e.response!.data;
+          if (responseData is Map) {
+            // Extract the main message
+            if (responseData.containsKey('message')) {
+              errorMessage = responseData['message'].toString();
+            }
+            // Add conflict details if available
+            if (responseData.containsKey('conflicts') &&
+                responseData['conflicts'] is List) {
+              final conflicts = responseData['conflicts'] as List;
+              if (conflicts.isNotEmpty) {
+                final conflict = conflicts.first;
+                if (conflict is Map && conflict.containsKey('user')) {
+                  errorMessage +=
+                      "\n${conflict['user']} - ${conflict['conflicting_race'] ?? ''} (${conflict['dates'] ?? ''})";
+                }
+              }
+            }
+          } else if (responseData is String) {
+            errorMessage = responseData;
+          }
+        } else {
+          errorMessage = e.toString();
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur lors de l'inscription: $e")),
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
         );
       }
     } finally {

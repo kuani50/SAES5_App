@@ -3,8 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../models/project.dart';
 import '../models/raid_model.dart';
-import '../models/club_model.dart';
-import '../models/course_model.dart';
 
 part 'api_client.g.dart';
 
@@ -40,14 +38,35 @@ abstract class ApiClient {
   @GET("/api/user")
   Future<dynamic> getCurrentUser();
 
+  @GET("/api/profile")
+  Future<dynamic> getProfile();
+
+  @PUT("/api/profile")
+  Future<dynamic> updateProfile(@Body() Map<String, dynamic> body);
+
   @GET("/api/users/search")
   Future<dynamic> searchUsers(@Query("q") String query);
+
+  @GET("/api/users")
+  Future<dynamic> getUsers();
 
   @GET("/api/user/teams")
   Future<dynamic> getUserTeams();
 
+  @GET("/api/user/{userId}/registrations")
+  Future<dynamic> getUserRegistrations(@Path("userId") int userId);
+
   @POST("/api/teams/register")
   Future<dynamic> createTeamWithMembers(@Body() Map<String, dynamic> body);
+
+  @GET("/api/teams/{teamId}")
+  Future<dynamic> getTeam(@Path("teamId") int teamId);
+
+  @PUT("/api/teams/{teamId}/members")
+  Future<dynamic> updateTeamMembers(
+    @Path("teamId") int teamId,
+    @Body() Map<String, dynamic> body,
+  );
 
   // PPS / Documents
   @POST("/api/pps/upload")

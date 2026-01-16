@@ -46,7 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Center(child: Text("Erreur Raids: ${provider.error}"));
                 }
 
-                final raids = provider.raids;
+                final today = DateTime.now();
+                final todayDateOnly = DateTime(
+                  today.year,
+                  today.month,
+                  today.day,
+                );
+                final raids = provider.raids
+                    .where((raid) => !raid.startDate.isBefore(todayDateOnly))
+                    .toList();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

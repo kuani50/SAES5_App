@@ -47,7 +47,30 @@ class DocsStep extends StatelessWidget {
             color: Color(0xFF0F172A),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
+
+        // Info box explaining optional upload
+        Container(
+          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.blue.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, color: Colors.blue.shade700, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  "Le téléversement des documents est optionnel. Vous pourrez les ajouter ultérieurement depuis votre espace personnel.",
+                  style: TextStyle(color: Colors.blue.shade700, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+        ),
 
         ...teammates.map((user) {
           final isCaptain = teammates.indexOf(user) == 0;
@@ -157,11 +180,11 @@ class DocsStep extends StatelessWidget {
                         Text(
                           hasUploaded
                               ? "Document ajouté"
-                              : "Certificat/PPS manquant",
+                              : "Aucun document (optionnel)",
                           style: TextStyle(
                             color: hasUploaded
                                 ? Colors.blue.shade700
-                                : Colors.red,
+                                : Colors.grey.shade600,
                             fontSize: 12,
                           ),
                         ),

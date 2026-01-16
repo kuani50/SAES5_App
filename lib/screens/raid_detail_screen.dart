@@ -6,6 +6,7 @@ import '../models/raid_model.dart';
 import '../models/course_model.dart';
 import '../widgets/course_card.dart';
 import '../providers/api_provider.dart';
+import '../providers/auth_provider.dart';
 
 class RaidDetailScreen extends StatefulWidget {
   final RaidModel raid;
@@ -18,13 +19,18 @@ class RaidDetailScreen extends StatefulWidget {
 
 class _RaidDetailScreenState extends State<RaidDetailScreen> {
   List<CourseModel> _courses = [];
+  Set<int> _registeredRaceIds = {};
   bool _isLoading = true;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _fetchCourses();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    await Future.wait([_fetchCourses(), _fetchUserTeams()]);
   }
 
   Future<void> _fetchCourses() async {
@@ -62,16 +68,98 @@ class _RaidDetailScreenState extends State<RaidDetailScreen> {
           .map((e) => CourseModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      setState(() {
-        _courses = courses;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _courses = courses;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
       debugPrint('Error fetching courses: $e');
+    }
+  }
+
+  Future<void> _fetchUserTeams() async {
+    try {
+      final authProvider = context.read<AuthProvider>();
+      if (!authProvider.isAuthenticated) {
+        debugPrint('User not authenticated, skipping team fetch');
+        return;
+      }
+
+      final apiProvider = context.read<ApiProvider>();
+      final dynamic response = await apiProvider.apiClient.getUserTeams();
+
+      debugPrint('getUserTeams raw response: $response');
+      debugPrint('getUserTeams response type: ${response.runtimeType}');
+
+      var responseData = response;
+      if (responseData is String) {
+        responseData = jsonDecode(responseData);
+      }
+
+      List<dynamic> teamsList = [];
+      if (responseData is List) {
+        teamsList = responseData;
+      } else if (responseData is Map) {
+        debugPrint('Response is Map with keys: ${responseData.keys}');
+        if (responseData.containsKey('data')) {
+          teamsList = responseData['data'] as List<dynamic>;
+        } else if (responseData.containsKey('teams')) {
+          teamsList = responseData['teams'] as List<dynamic>;
+        } else {
+          // Try to find any list in the map
+          for (var key in responseData.keys) {
+            if (responseData[key] is List) {
+              debugPrint('Found list under key: $key');
+              teamsList = responseData[key] as List<dynamic>;
+              break;
+            }
+          }
+        }
+      }
+
+      debugPrint('Teams list length: ${teamsList.length}');
+
+      // Extract race_ids from user's teams
+      final raceIds = <int>{};
+      for (var team in teamsList) {
+        debugPrint('Team data: $team');
+        if (team is Map) {
+          // Try different possible key names for race_id
+          final possibleKeys = ['race_id', 'raceId', 'course_id', 'courseId'];
+          for (var key in possibleKeys) {
+            if (team.containsKey(key)) {
+              final raceId = team[key];
+              debugPrint('Found $key: $raceId');
+              if (raceId is int) {
+                raceIds.add(raceId);
+              } else if (raceId is String) {
+                final parsed = int.tryParse(raceId);
+                if (parsed != null) raceIds.add(parsed);
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      debugPrint('Registered race IDs: $raceIds');
+
+      if (mounted) {
+        setState(() {
+          _registeredRaceIds = raceIds;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching user teams: $e');
+      // Non-blocking error, continue showing courses
     }
   }
 
@@ -127,7 +215,11 @@ class _RaidDetailScreenState extends State<RaidDetailScreen> {
               )
             else
               ..._courses.map(
-                (course) => CourseCard(course: course, raid: widget.raid),
+                (course) => CourseCard(
+                  course: course,
+                  raid: widget.raid,
+                  isRegistered: _registeredRaceIds.contains(course.id),
+                ),
               ),
           ],
         ),
