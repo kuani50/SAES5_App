@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: kDebugMode ? '/debug/apiconfig' : '/home',
+  initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const ConfigScreen()),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),

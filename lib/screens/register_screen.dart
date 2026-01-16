@@ -194,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    initialValue: _selectedGender,
+                    value: _selectedGender,
                     hint: const Text("Sélectionner"),
                     items: const [
                       DropdownMenuItem(value: "M", child: Text("Monsieur")),

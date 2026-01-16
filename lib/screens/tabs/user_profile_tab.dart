@@ -97,8 +97,6 @@ class _UserProfileTabState extends State<UserProfileTab> {
       // Refresh the user data in AuthProvider
       if (mounted) {
         await context.read<AuthProvider>().refreshCurrentUser();
-      }
-      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Profil mis à jour avec succès'),
