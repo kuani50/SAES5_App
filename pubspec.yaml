@@ -43,6 +43,7 @@ dependencies:
   device_info_plus: ^12.3.0
   retrofit: ^4.9.2
   json_annotation: ^4.9.0
+  file_picker: ^10.3.8
 
 dev_dependencies:
   flutter_test:

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../models/raid_model.dart';
 import '../models/course_model.dart';
 import '../providers/project_provider.dart';
+import '../providers/auth_provider.dart';
 
 class CourseDetailScreen extends StatelessWidget {
   final CourseModel course;
@@ -210,10 +211,12 @@ class CourseHeader extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       // Subscribe action
-                      final provider = context.read<ProjectProvider>();
-                      if (provider.isLoggedIn) {
+                      final authProvider = context.read<AuthProvider>();
+                      final projectProvider = context.read<ProjectProvider>();
+
+                      if (authProvider.isAuthenticated) {
                         // Register and redirect to My Races
-                        provider.registerForCourse(course);
+                        projectProvider.registerForCourse(course);
                         context.push('/my-races');
                       } else {
                         // Redirect to Login, then to My Races (implying registration continues or is just the target)

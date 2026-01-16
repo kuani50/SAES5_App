@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../providers/project_provider.dart';
+import '../providers/auth_provider.dart';
 import '../models/course_model.dart';
 import '../models/raid_model.dart';
 
@@ -76,7 +76,10 @@ class CourseInfo extends StatelessWidget {
             const SizedBox(width: 8),
             _CourseTag(text: course.difficulty),
             const SizedBox(width: 8),
-            _CourseTag(text: "${course.remainingTeams ?? 0} places restantes"),
+            _CourseTag(
+              text:
+                  "${course.maxTeams - (course.remainingTeams ?? course.maxTeams)}/${course.maxTeams} équipes inscrites",
+            ),
           ],
         ),
       ],
@@ -124,12 +127,17 @@ class CourseActions extends StatelessWidget {
         const SizedBox(width: 12),
         ElevatedButton(
           onPressed: () {
-            final provider = context.read<ProjectProvider>();
-            if (provider.isLoggedIn) {
-              provider.registerForCourse(course);
-              context.push('/my-races');
+            final authProvider = context.read<AuthProvider>();
+
+            if (authProvider.isAuthenticated) {
+              // Navigate to registration screen with course and raid data
+              context.push(
+                '/raid-registration',
+                extra: {'course': course, 'raid': raid},
+              );
             } else {
-              context.push('/login?redirect=/my-races');
+              // Redirect to login with redirect back to this course registration
+              context.push('/login?redirect=/details');
             }
           },
           style: ElevatedButton.styleFrom(

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../providers/project_provider.dart';
+
+import '../providers/auth_provider.dart';
 
 class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
   final bool? isLoggedIn;
@@ -14,8 +15,8 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ProjectProvider>();
-    final bool loggedIn = isLoggedIn ?? provider.isLoggedIn;
+    final provider = context.watch<AuthProvider>();
+    final bool loggedIn = isLoggedIn ?? provider.isAuthenticated;
     final String currentPath = GoRouterState.of(context).uri.path;
     final bool isRaidsActive =
         currentPath == '/home' || currentPath.startsWith('/details');
@@ -104,35 +105,57 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 30),
-                  TextButton(
-                    onPressed: () {
-                      context.go('/my-races');
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      minimumSize: const Size(0, 0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      'Mon espace coureur',
-                      style: TextStyle(
-                        color: currentPath == '/my-races'
-                            ? Colors.orange
-                            : Colors.white,
-                        fontWeight: currentPath == '/my-races'
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        fontSize: 14,
+                  if (loggedIn) ...[
+                    const SizedBox(width: 30),
+                    TextButton(
+                      onPressed: () {
+                        context.go('/my-races');
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        'Mon espace coureur',
+                        style: TextStyle(
+                          color: currentPath == '/my-races'
+                              ? Colors.orange
+                              : Colors.white,
+                          fontWeight: currentPath == '/my-races'
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
 
             if (isLandscape) ...[
               if (loggedIn) ...[
+                // Display user name
+                if (provider.userDisplayName.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      provider.userDisplayName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                // Course Manager Icon (gear) - only show if user is a race manager
+                if (provider.isRaceManager)
+                  IconButton(
+                    icon: const Icon(Icons.settings, color: Colors.white),
+                    onPressed: () => context.go('/mes-courses'),
+                    tooltip: 'Mes Courses (Responsable)',
+                  ),
                 IconButton(
                   icon: const Icon(Icons.person, color: Colors.white),
                   onPressed: () {},
@@ -140,7 +163,10 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.logout, color: Colors.red),
-                  onPressed: onLogout,
+                  onPressed: () {
+                    provider.logout();
+                    context.go('/home');
+                  },
                   tooltip: 'Se déconnecter',
                 ),
               ] else ...[
@@ -169,11 +195,30 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
             ] else ...[
               // PORTRAIT MODE: Dropdown menu for auth
               PopupMenuButton<String>(
-                icon: const Icon(
-                  Icons.account_circle,
-                  size: 28,
-                  color: Colors.white,
-                ),
+                icon: loggedIn && provider.userDisplayName.isNotEmpty
+                    ? CircleAvatar(
+                        radius: 14,
+                        backgroundColor: Colors.orange,
+                        child: Text(
+                          (() {
+                            final firstName = provider.currentUser?.firstName;
+                            if (firstName == null || firstName.isEmpty) {
+                              return "U";
+                            }
+                            return firstName.substring(0, 1).toUpperCase();
+                          })(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      )
+                    : const Icon(
+                        Icons.account_circle,
+                        size: 28,
+                        color: Colors.white,
+                      ),
                 onSelected: (value) {
                   switch (value) {
                     case 'login':
@@ -185,13 +230,25 @@ class HeaderHomePage extends StatelessWidget implements PreferredSizeWidget {
                     case 'profile':
                       break;
                     case 'logout':
-                      if (onLogout != null) onLogout!();
+                      provider.logout();
+                      context.go('/home');
                       break;
                   }
                 },
                 itemBuilder: (BuildContext context) {
                   return [
                     if (loggedIn) ...[
+                      if (provider.userDisplayName.isNotEmpty)
+                        PopupMenuItem(
+                          enabled: false,
+                          child: Text(
+                            provider.userDisplayName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
                       const PopupMenuItem(
                         value: 'profile',
                         child: Text('Mon Profil'),

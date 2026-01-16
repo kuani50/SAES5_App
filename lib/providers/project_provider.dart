@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/project.dart';
+import '../models/course_model.dart';
 import 'api_provider.dart';
 
 class ProjectProvider with ChangeNotifier {
@@ -28,7 +29,7 @@ class ProjectProvider with ChangeNotifier {
     } catch (e) {
       _projects = [];
       // _error = e.toString();
-      print("Error fetching projects: $e");
+      debugPrint("Error fetching projects: $e");
     } finally {
       _isLoading = false;
       notifyListeners();

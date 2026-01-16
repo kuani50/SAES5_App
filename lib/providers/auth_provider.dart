@@ -1,33 +1,184 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/user_model.dart';
 import '../services/device_info_service.dart';
 import 'api_provider.dart';
 
 class AuthProvider extends ChangeNotifier {
   final ApiProvider _apiProvider;
+  UserModel? _currentUser;
+  bool _isRaceManager = false;
 
-  // We derive authentication state from the ApiProvider's token existence
   bool get isAuthenticated => _apiProvider.hasToken;
+  UserModel? get currentUser => _currentUser;
+  bool get isRaceManager => _isRaceManager;
+  String get userDisplayName {
+    if (_currentUser == null) {
+      return "";
+    }
 
-  AuthProvider(this._apiProvider);
+    final firstName = (_currentUser!.firstName ?? '').trim();
+    final lastName = (_currentUser!.lastName ?? '').trim();
 
-  Future<bool> login(String email, String password) async {
+    if (firstName.isEmpty && lastName.isEmpty) {
+      return "";
+    }
+    if (firstName.isEmpty) {
+      return lastName;
+    }
+    if (lastName.isEmpty) {
+      return firstName;
+    }
+
+    return "$firstName $lastName";
+  }
+  AuthProvider(this._apiProvider) {
+    _loadUserFromPrefs();
+  }
+
+  Future<void> _loadUserFromPrefs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userJson = prefs.getString('current_user');
+      if (userJson != null) {
+        _currentUser = UserModel.fromJson(jsonDecode(userJson));
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error loading user from prefs: $e');
+    }
+  }
+
+  Future<void> _saveUserToPrefs(UserModel user) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('current_user', jsonEncode(user.toJson()));
+    } catch (e) {
+      debugPrint('Error saving user to prefs: $e');
+    }
+  }
+
+  /// Returns null on success, or an error message string on failure
+  Future<String?> login(String email, String password) async {
     try {
       final deviceName = await DeviceInfoService.getDeviceName();
 
-      final response = await _apiProvider.apiClient.login({
+      var responseData = await _apiProvider.apiClient.login({
         'email': email,
         'password': password,
         'device_name': deviceName,
       });
 
-      final token = response;
+      if (responseData is String) {
+        try {
+          responseData = jsonDecode(responseData);
+        } catch (_) {}
+      }
+
+      String token;
+      if (responseData is Map) {
+        // Check for error in response
+        if (responseData.containsKey('message') &&
+            !responseData.containsKey('token')) {
+          return responseData['message']?.toString() ?? 'Erreur inconnue';
+        }
+
+        token = responseData['token']?.toString() ?? responseData.toString();
+
+        // If user data is included in response
+        if (responseData.containsKey('user')) {
+          _currentUser = UserModel.fromJson(responseData['user']);
+          await _saveUserToPrefs(_currentUser!);
+        }
+      } else {
+        token = responseData.toString();
+      }
 
       await _apiProvider.setToken(token);
+
+      // Fetch user data if not included in login response
+      if (_currentUser == null) {
+        await fetchCurrentUser();
+      }
+
       notifyListeners();
-      return true;
+      return null; // Success
+    } on DioException catch (e) {
+      debugPrint('Login DioException: ${e.response?.data}');
+      // Extract error message from API response
+      final responseData = e.response?.data;
+      if (responseData is Map && responseData.containsKey('message')) {
+        return responseData['message']?.toString() ?? 'Erreur de connexion';
+      }
+      if (responseData is String) {
+        try {
+          final decoded = jsonDecode(responseData);
+          if (decoded is Map && decoded.containsKey('message')) {
+            return decoded['message']?.toString() ?? 'Erreur de connexion';
+          }
+        } catch (_) {}
+      }
+      return 'Erreur de connexion: ${e.message}';
     } catch (e) {
-      print('Login error: $e');
-      return false;
+      debugPrint('Login error: $e');
+      return 'Erreur: $e';
+    }
+  }
+
+  Future<void> fetchCurrentUser() async {
+    try {
+      debugPrint('Fetching current user from /api/user...');
+      var responseData = await _apiProvider.apiClient.getCurrentUser();
+
+      debugPrint('User API response type: ${responseData.runtimeType}');
+      debugPrint('User API response: $responseData');
+
+      // Handle the response - it could be a Map or need decoding
+      Map<String, dynamic>? userData;
+      if (responseData is Map<String, dynamic>) {
+        userData = responseData;
+      } else if (responseData is String && responseData.isNotEmpty) {
+        try {
+          userData = jsonDecode(responseData) as Map<String, dynamic>;
+        } catch (_) {}
+      }
+
+      if (userData != null && userData.isNotEmpty) {
+        _currentUser = UserModel.fromJson(userData);
+        debugPrint(
+          'User loaded: ${_currentUser?.firstName} ${_currentUser?.lastName}',
+        );
+        await _saveUserToPrefs(_currentUser!);
+        notifyListeners();
+      }
+
+      // Check if user manages any races
+      await checkRaceManagerStatus();
+    } catch (e) {
+      debugPrint('Error fetching current user: $e');
+    }
+  }
+
+  /// Check if the authenticated user manages any races
+  Future<void> checkRaceManagerStatus() async {
+    try {
+      final response = await _apiProvider.apiClient.getManagedRaces();
+
+      var racesList = <dynamic>[];
+      if (response is List) {
+        racesList = response;
+      } else if (response is Map && response.containsKey('data')) {
+        racesList = response['data'] as List<dynamic>;
+      }
+
+      _isRaceManager = racesList.isNotEmpty;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error checking race manager status: $e');
+      _isRaceManager = false;
     }
   }
 
@@ -48,7 +199,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final deviceName = await DeviceInfoService.getDeviceName();
 
-      final token = await _apiProvider.apiClient.register({
+      var responseData = await _apiProvider.apiClient.register({
         'email': email,
         'password': password,
         'first_name': firstName,
@@ -64,17 +215,45 @@ class AuthProvider extends ChangeNotifier {
         'device_name': deviceName,
       });
 
+      if (responseData is String) {
+        try {
+          responseData = jsonDecode(responseData);
+        } catch (_) {}
+      }
+
+      String token;
+      if (responseData is Map) {
+        token = responseData['token']?.toString() ?? responseData.toString();
+
+        if (responseData.containsKey('user')) {
+          _currentUser = UserModel.fromJson(responseData['user']);
+          await _saveUserToPrefs(_currentUser!);
+        }
+      } else {
+        token = responseData.toString();
+      }
+
       await _apiProvider.setToken(token);
+
+      if (_currentUser == null) {
+        await fetchCurrentUser();
+      }
+
       notifyListeners();
       return true;
     } catch (e) {
-      print('Register error: $e');
+      debugPrint('Register error: $e');
       return false;
     }
   }
 
   Future<void> logout() async {
     await _apiProvider.clearToken();
+    _currentUser = null;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('current_user');
+
     notifyListeners();
   }
 }

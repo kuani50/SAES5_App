@@ -7,23 +7,30 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'debug/my_http_overrides.dart';
 import 'providers/api_provider.dart';
 import 'package:saps5app/providers/project_provider.dart';
+import 'package:saps5app/providers/auth_provider.dart';
+import 'package:saps5app/providers/raid_provider.dart';
+import 'package:saps5app/providers/club_provider.dart';
 import 'screens/debug/config_screen.dart';
 import 'screens/raid_detail_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/club_screen.dart';
 import 'screens/club_detail_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/auth_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/user_races_screen.dart';
 import 'screens/manage_team_screen.dart';
 import 'models/raid_model.dart';
 import 'models/club_model.dart';
 import 'models/course_model.dart';
-import 'data/raid_data.dart';
 import 'screens/raid_registration_screen.dart';
 import 'screens/course_detail_screen.dart';
+import 'screens/racing_manager/mes_courses_screen.dart';
+import 'screens/racing_manager/manage_course_screen.dart';
+import 'screens/racing_manager/team_detail_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   await initializeDateFormatting('fr_FR', null);
   runApp(const MyApp());
@@ -35,9 +42,32 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ProjectProvider(ApiProvider()))],
+      providers: [
+        ChangeNotifierProvider(create: (_) => ApiProvider()),
+        ChangeNotifierProxyProvider<ApiProvider, ProjectProvider>(
+          create: (context) => ProjectProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? ProjectProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, AuthProvider>(
+          create: (context) => AuthProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? AuthProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, RaidProvider>(
+          create: (context) => RaidProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? RaidProvider(apiProvider),
+        ),
+        ChangeNotifierProxyProvider<ApiProvider, ClubProvider>(
+          create: (context) => ClubProvider(context.read<ApiProvider>()),
+          update: (context, apiProvider, previous) =>
+              previous ?? ClubProvider(apiProvider),
+        ),
+      ],
       child: MaterialApp.router(
-        title: 'Orient Express',
+        title: "Cari'Boussole",
+        routerConfig: _router,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
@@ -60,14 +90,21 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/login',
-      builder: (context, state) {
-        return const AuthScreen();
-      },
+      path: '/login', // User wanted this route.
+      builder: (context, state) => const AuthScreen(),
+    ),
+    // Added explicit alias for LoginScreen if needed, or kept as separate if user intends two different login screens.
+    // However, duplicate paths are not allowed in GoRouter.
+    // The user provided two '/login' routes. One for AuthScreen, one for LoginScreen.
+    // I will map '/login-form' to LoginScreen to avoid crash, but keeping AuthScreen as primary '/login' as it is the main entry point now.
+    GoRoute(
+      path: '/login-form',
+      builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
       path: '/clubs',
-      builder: (context, state) => ClubScreen(allEvents: allRaids),
+      builder: (context, state) =>
+          const ClubScreen(), // Removed allEvents arg as ClubScreen is refactored.
     ),
     GoRoute(
       path: '/club-details',
@@ -79,8 +116,6 @@ final GoRouter _router = GoRouter(
         );
       },
     ),
-    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
@@ -92,13 +127,15 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/raid-registration',
       builder: (context, state) {
-        final raidName = state.uri.queryParameters['raidName'];
-        final initialStepStr = state.uri.queryParameters['initialStep'];
-        final initialStep = int.tryParse(initialStepStr ?? '') ?? 2;
+        final extras = state.extra as Map<String, dynamic>?;
+        final course = extras?['course'] as CourseModel?;
+        final raid = extras?['raid'] as RaidModel?;
 
         return RaidRegistrationScreen(
-          raidName: raidName,
-          initialStep: initialStep,
+          raidName: raid?.name,
+          course: course,
+          raid: raid,
+          initialStep: 2,
         );
       },
     ),
@@ -113,6 +150,26 @@ final GoRouter _router = GoRouter(
         final course = extras['course'] as CourseModel;
         final raid = extras['raid'] as RaidModel;
         return CourseDetailScreen(course: course, raid: raid);
+      },
+    ),
+    GoRoute(
+      path: '/mes-courses',
+      builder: (context, state) => const MesCoursesScreen(),
+    ),
+    GoRoute(
+      path: '/manage-course',
+      builder: (context, state) {
+        final course = state.extra as CourseModel;
+        return ManageCourseScreen(course: course);
+      },
+    ),
+    GoRoute(
+      path: '/team-detail',
+      builder: (context, state) {
+        final extras = state.extra as Map<String, dynamic>;
+        final team = extras['team'] as Map<String, dynamic>;
+        final courseName = extras['courseName'] as String;
+        return TeamDetailScreen(team: team, courseName: courseName);
       },
     ),
   ],

@@ -11,7 +11,10 @@ class LicenseSection extends StatelessWidget {
     required this.licenseController,
     required this.isLicensed,
     required this.onLicenseChanged,
+    this.validator,
   });
+
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +54,9 @@ class LicenseSection extends StatelessWidget {
           const SizedBox(height: 24),
           CustomTextField(
             label: "Numéro de licence",
-            hintText: "Ex: 12345678",
+            hintText: "Ex: 123456",
             controller: licenseController,
+            validator: validator,
           ),
         ],
       ],

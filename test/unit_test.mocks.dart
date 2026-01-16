@@ -4,7 +4,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
-import 'dart:ui' as _i14;
+import 'dart:io' as _i15;
+import 'dart:ui' as _i18;
 
 import 'package:dio/dio.dart' as _i7;
 import 'package:dio/src/adapter.dart' as _i4;
@@ -14,9 +15,12 @@ import 'package:dio/src/options.dart' as _i2;
 import 'package:dio/src/response.dart' as _i6;
 import 'package:dio/src/transformer.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i12;
+import 'package:mockito/src/dummies.dart' as _i17;
+import 'package:saps5app/models/club_model.dart' as _i13;
+import 'package:saps5app/models/course_model.dart' as _i14;
 import 'package:saps5app/models/project.dart' as _i11;
-import 'package:saps5app/providers/api_provider.dart' as _i13;
+import 'package:saps5app/models/raid_model.dart' as _i12;
+import 'package:saps5app/providers/api_provider.dart' as _i16;
 import 'package:saps5app/services/api_client.dart' as _i8;
 
 // ignore_for_file: type=lint
@@ -832,33 +836,115 @@ class MockApiClient extends _i1.Mock implements _i8.ApiClient {
           as _i9.Future<List<_i11.Project>>);
 
   @override
-  _i9.Future<String> login(Map<String, dynamic>? body) =>
+  _i9.Future<List<_i12.RaidModel>> getRaids() =>
       (super.noSuchMethod(
-            Invocation.method(#login, [body]),
-            returnValue: _i9.Future<String>.value(
-              _i12.dummyValue<String>(this, Invocation.method(#login, [body])),
+            Invocation.method(#getRaids, []),
+            returnValue: _i9.Future<List<_i12.RaidModel>>.value(
+              <_i12.RaidModel>[],
             ),
           )
-          as _i9.Future<String>);
+          as _i9.Future<List<_i12.RaidModel>>);
 
   @override
-  _i9.Future<String> register(Map<String, dynamic>? body) =>
+  _i9.Future<dynamic> getClubs() =>
       (super.noSuchMethod(
-            Invocation.method(#register, [body]),
-            returnValue: _i9.Future<String>.value(
-              _i12.dummyValue<String>(
-                this,
-                Invocation.method(#register, [body]),
-              ),
+            Invocation.method(#getClubs, []),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<List<_i13.ClubModel>> getClubsWithUpcomingEvents() =>
+      (super.noSuchMethod(
+            Invocation.method(#getClubsWithUpcomingEvents, []),
+            returnValue: _i9.Future<List<_i13.ClubModel>>.value(
+              <_i13.ClubModel>[],
             ),
           )
-          as _i9.Future<String>);
+          as _i9.Future<List<_i13.ClubModel>>);
+
+  @override
+  _i9.Future<List<_i14.CourseModel>> getRacesByRaid(int? raidId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRacesByRaid, [raidId]),
+            returnValue: _i9.Future<List<_i14.CourseModel>>.value(
+              <_i14.CourseModel>[],
+            ),
+          )
+          as _i9.Future<List<_i14.CourseModel>>);
+
+  @override
+  _i9.Future<List<_i12.RaidModel>> getRaidsByClub(int? clubId) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRaidsByClub, [clubId]),
+            returnValue: _i9.Future<List<_i12.RaidModel>>.value(
+              <_i12.RaidModel>[],
+            ),
+          )
+          as _i9.Future<List<_i12.RaidModel>>);
+
+  @override
+  _i9.Future<dynamic> login(Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#login, [body]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> register(Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#register, [body]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> getCurrentUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#getCurrentUser, []),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> getManagedRaces() =>
+      (super.noSuchMethod(
+            Invocation.method(#getManagedRaces, []),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<void> deleteRace(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteRace, [id]),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
+          )
+          as _i9.Future<void>);
+
+  @override
+  _i9.Future<dynamic> getRaceTeams(int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRaceTeams, [id]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> uploadRaceResults(_i15.File? file, int? raceId) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadRaceResults, [file, raceId]),
+            returnValue: _i9.Future<dynamic>.value(),
+          )
+          as _i9.Future<dynamic>);
 }
 
 /// A class which mocks [ApiProvider].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiProvider extends _i1.Mock implements _i13.ApiProvider {
+class MockApiProvider extends _i1.Mock implements _i16.ApiProvider {
   MockApiProvider() {
     _i1.throwOnMissingStub(this);
   }
@@ -867,7 +953,7 @@ class MockApiProvider extends _i1.Mock implements _i13.ApiProvider {
   String get baseUrl =>
       (super.noSuchMethod(
             Invocation.getter(#baseUrl),
-            returnValue: _i12.dummyValue<String>(
+            returnValue: _i17.dummyValue<String>(
               this,
               Invocation.getter(#baseUrl),
             ),
@@ -881,6 +967,14 @@ class MockApiProvider extends _i1.Mock implements _i13.ApiProvider {
             returnValue: _FakeApiClient_6(this, Invocation.getter(#apiClient)),
           )
           as _i8.ApiClient);
+
+  @override
+  _i7.Dio get dio =>
+      (super.noSuchMethod(
+            Invocation.getter(#dio),
+            returnValue: _FakeDio_5(this, Invocation.getter(#dio)),
+          )
+          as _i7.Dio);
 
   @override
   bool get hasToken =>
@@ -920,13 +1014,13 @@ class MockApiProvider extends _i1.Mock implements _i13.ApiProvider {
           as _i9.Future<void>);
 
   @override
-  void addListener(_i14.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i18.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i14.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i18.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );

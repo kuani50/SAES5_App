@@ -1,11 +1,13 @@
 import 'course_model.dart';
+import 'club_model.dart';
+import 'address_model.dart'; // NEW
 
 class RaidModel {
   final int id;
   final String name;
-  final int clubId;
-  final int addressId;
-  final int managerId;
+  final int? clubId;
+  final int? addressId;
+  final int? managerId;
   final DateTime startDate;
   final DateTime endDate;
   final DateTime registrationStartDate;
@@ -13,13 +15,15 @@ class RaidModel {
   final String? imageUrl;
   final String? website;
   final List<CourseModel> courses;
+  final ClubModel? club;
+  final AddressModel? address; // NEW
 
   RaidModel({
     required this.id,
     required this.name,
-    required this.clubId,
-    required this.addressId,
-    required this.managerId,
+    this.clubId,
+    this.addressId,
+    this.managerId,
     required this.startDate,
     required this.endDate,
     required this.registrationStartDate,
@@ -27,15 +31,17 @@ class RaidModel {
     this.imageUrl,
     this.website,
     this.courses = const [],
+    this.club,
+    this.address, // NEW
   });
 
   factory RaidModel.fromJson(Map<String, dynamic> json) {
     return RaidModel(
       id: json['id'] as int,
       name: json['name'] as String,
-      clubId: json['club_id'] as int,
-      addressId: json['address_id'] as int,
-      managerId: json['manager_id'] as int,
+      clubId: json['club_id'] as int?,
+      addressId: json['address_id'] as int?,
+      managerId: json['manager_id'] as int?,
       startDate: DateTime.parse(json['start_date'] as String),
       endDate: DateTime.parse(json['end_date'] as String),
       registrationStartDate: DateTime.parse(
@@ -46,11 +52,22 @@ class RaidModel {
       ),
       imageUrl: json['image_url'] as String?,
       website: json['website'] as String?,
-      courses:
-          (json['courses'] as List<dynamic>?)
-              ?.map((e) => CourseModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+      courses: (json['courses'] ?? json['races']) is List
+          ? (json['courses'] ?? json['races'])
+                .map<CourseModel>(
+                  (e) => CourseModel.fromJson(e as Map<String, dynamic>),
+                )
+                .toList()
+          : [],
+      club: json['club'] != null
+          ? ClubModel.fromJson(json['club'] as Map<String, dynamic>)
+          : null,
+      address: (json['raid_address'] ?? json['address']) != null
+          ? AddressModel.fromJson(
+              (json['raid_address'] ?? json['address'])
+                  as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 

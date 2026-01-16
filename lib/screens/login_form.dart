@@ -20,13 +20,13 @@ class LoginFormState extends State<LoginForm> {
       _errorMessage = '';
     });
 
-    bool result = await Provider.of<AuthProvider>(
+    String? result = await Provider.of<AuthProvider>(
       context,
       listen: false,
     ).login(_email, _password);
-    if (result == false) {
+    if (result != null) {
       setState(() {
-        _errorMessage = 'There was a problem with your credentials.';
+        _errorMessage = result;
       });
     }
   }

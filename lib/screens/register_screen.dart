@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/club_model.dart';
-import '../data/club_data.dart';
+import '../providers/auth_provider.dart';
+import '../providers/api_provider.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/license_section.dart';
@@ -26,10 +28,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _dateController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _postalCodeController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _countryController = TextEditingController(text: "France");
+  final _complementAddressController = TextEditingController();
 
   DateTime? _selectedDate;
   ClubModel? _selectedClub;
   bool? _isLicensed;
+  String? _selectedGender;
 
   bool _isLoading = false;
 
@@ -60,23 +68,97 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
 
-      Future.delayed(const Duration(seconds: 2), () {
-        if (!mounted) return;
+      final authProvider = context.read<AuthProvider>();
 
+      final success = await authProvider.register(
+        _emailController.text.trim(),
+        _passwordController.text,
+        _firstNameController.text.trim(),
+        _lastNameController.text.trim(),
+        _selectedGender ?? 'M', // Default to Male if not selected
+        _phoneController.text.trim(),
+        _selectedDate?.toIso8601String() ?? '',
+        _addressController.text.trim(),
+        _postalCodeController.text.trim(),
+        _cityController.text.trim(),
+        _countryController.text.trim(),
+        _complementAddressController.text.trim(),
+      );
+
+      if (mounted) {
         setState(() => _isLoading = false);
-        context.go('/home');
+        if (success) {
+          context.go('/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Erreur lors de l'inscription."),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  List<ClubModel> _clubs = [];
+  bool _isLoadingClubs = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchClubs();
+  }
+
+  Future<void> _fetchClubs() async {
+    try {
+      final apiProvider = context.read<ApiProvider>();
+      debugPrint('Fetching clubs...');
+      final dynamic response = await apiProvider.apiClient.getClubs();
+      debugPrint('Clubs response type: ${response.runtimeType}');
+      debugPrint('Clubs response data: $response');
+
+      var clubsList = <dynamic>[];
+      if (response is List) {
+        clubsList = response;
+      } else if (response is Map && response.containsKey('data')) {
+        clubsList = response['data'] as List<dynamic>;
+      } else {
+        debugPrint('Unknown format for clubs: $response');
+      }
+
+      final clubs = clubsList
+          .map((json) {
+            try {
+              return ClubModel.fromJson(json as Map<String, dynamic>);
+            } catch (e) {
+              debugPrint('Error parsing club: $e, data: $json');
+              return null;
+            }
+          })
+          .whereType<ClubModel>()
+          .toList();
+
+      debugPrint('Parsed ${clubs.length} clubs');
+
+      setState(() {
+        _clubs = clubs;
+        _isLoadingClubs = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching clubs: $e');
+      setState(() {
+        _isLoadingClubs = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<ClubModel> clubs = allClubs;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const HeaderHomePage(),
@@ -98,7 +180,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Color(0xFF0F172A),
                     ),
                   ),
+                  // ... (rest of the inputs)
                   const SizedBox(height: 32),
+
+                  // Gender Dropdown
+                  const Text(
+                    "Civilité *",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: _selectedGender,
+                    hint: const Text("Sélectionner"),
+                    items: const [
+                      DropdownMenuItem(value: "M", child: Text("Monsieur")),
+                      DropdownMenuItem(value: "F", child: Text("Madame")),
+                    ],
+                    onChanged: (value) =>
+                        setState(() => _selectedGender = value),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                          color: Colors.orange,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    validator: (value) => value == null
+                        ? "Veuillez sélectionner une civilité"
+                        : null,
+                  ),
+                  const SizedBox(height: 24),
 
                   Row(
                     children: [
@@ -142,6 +267,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 24),
 
+                  // Address Fields
+                  CustomTextField(
+                    label: "Adresse *",
+                    hintText: "123 Rue de la Liberté",
+                    controller: _addressController,
+                    validator: (value) => value == null || value.isEmpty
+                        ? "L'adresse est requise"
+                        : null,
+                  ),
+                  const SizedBox(height: 24),
+
+                  CustomTextField(
+                    label: "Complément d'adresse (facultatif)",
+                    hintText: "Bâtiment A, Appartement 12",
+                    controller: _complementAddressController,
+                  ),
+                  const SizedBox(height: 24),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          label: "Code Postal *",
+                          hintText: "75000",
+                          controller: _postalCodeController,
+                          validator: (value) =>
+                              value == null || value.isEmpty ? 'Requis.' : null,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomTextField(
+                          label: "Ville *",
+                          hintText: "Paris",
+                          controller: _cityController,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Requise.'
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  CustomTextField(
+                    label: "Pays *",
+                    hintText: "France",
+                    controller: _countryController,
+                    validator: (value) =>
+                        value == null || value.isEmpty ? 'Requis.' : null,
+                  ),
+                  const SizedBox(height: 24),
+
                   LicenseSection(
                     licenseController: _licenseController,
                     isLicensed: _isLicensed,
@@ -150,9 +328,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         _isLicensed = value;
                         if (value == false) {
                           _licenseController.clear();
-                          _selectedClub = null; // Clear club if not licensed
+                          _selectedClub = null;
                         }
                       });
+                    },
+                    validator: (value) {
+                      if (_isLicensed == true) {
+                        if (value == null || value.isEmpty) {
+                          return 'Le numéro de licence est requis.';
+                        }
+                        if (value.length != 6 || int.tryParse(value) == null) {
+                          return 'Le numéro doit comporter 6 chiffres.';
+                        }
+                      }
+                      return null;
                     },
                   ),
                   const SizedBox(height: 24),
@@ -163,7 +352,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Choisir votre club (facultatif)",
+                          "Choisir votre club *",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -171,46 +360,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        DropdownButtonFormField<ClubModel>(
-                          initialValue: _selectedClub,
-                          hint: Text(
-                            "Sélectionner un club...",
-                            style: TextStyle(color: Colors.grey.shade400),
-                          ),
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
+                        if (_isLoadingClubs)
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        else
+                          DropdownButtonFormField<ClubModel>(
+                            initialValue: _selectedClub,
+                            hint: Text(
+                              "Sélectionner un club...",
+                              style: TextStyle(color: Colors.grey.shade400),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                color: Colors.grey.shade300,
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: const BorderSide(
-                                color: Colors.orange,
-                                width: 2,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
                               ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: const BorderSide(
+                                  color: Colors.orange,
+                                  width: 2,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
                             ),
-                            filled: true,
-                            fillColor: Colors.white,
+                            items: _clubs.map((ClubModel club) {
+                              return DropdownMenuItem<ClubModel>(
+                                value: club,
+                                child: Text(club.name),
+                              );
+                            }).toList(),
+                            onChanged: (ClubModel? newValue) {
+                              setState(() {
+                                _selectedClub = newValue;
+                              });
+                            },
+                            validator: (value) => value == null
+                                ? "Veuillez sélectionner un club"
+                                : null,
                           ),
-                          items: clubs.map((ClubModel club) {
-                            return DropdownMenuItem<ClubModel>(
-                              value: club,
-                              child: Text(club.name),
-                            );
-                          }).toList(),
-                          onChanged: (ClubModel? newValue) {
-                            setState(() {
-                              _selectedClub = newValue;
-                            });
-                          },
-                        ),
                       ],
                     ),
                   ],
