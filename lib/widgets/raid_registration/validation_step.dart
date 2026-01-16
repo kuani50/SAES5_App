@@ -59,7 +59,7 @@ class ValidationStep extends StatelessWidget {
                 children: [
                   const Text("Course", style: TextStyle(fontSize: 16)),
                   Text(
-                    "${course?.name ?? 'Parcourse'} ($count pers.)",
+                    "${course?.name ?? 'Parcourse'} (${count} pers.)",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
